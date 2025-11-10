@@ -1,0 +1,1330 @@
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  SafeAreaView,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  TextInput,
+  Platform,
+  StatusBar,
+  Modal,
+  KeyboardAvoidingView,
+} from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import ProductCart from '../components/ProductCart';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import commonstyles from '../commonstyles/commonstyles';
+import RazorpayCheckout from 'react-native-razorpay';
+import {
+  responsiveWidth,
+  responsiveHeight,
+  responsiveFontSize,
+} from 'react-native-responsive-dimensions';
+import { Location } from '../assets/Svgs';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchPincodes } from '../redux/slices/pincodeSlice';
+import { placeOrder, updatePaymentDetails } from '../redux/slices/orderSlice';
+import { fetchApplicationData } from '../redux/slices/applicationDataSlice';
+import { addCustomerDeliveryAddress, getCustomerAddresses } from '../redux/slices/authSlice';
+import { updateCartQuantity, updateCartSize } from '../redux/slices/cartSlice';
+
+const Payment = ({ navigation, route }) => {
+  const insets = useSafeAreaInsets();
+  const dispatch = useDispatch();
+  const { selectedDelivery = 'standard', cartItems: routeCartItems = [], selectedCoupon } = route.params || {};
+  const { addressList = [], customerId, customerName, customerMobile, deliveryAddressStatus, deliveryAddressError } = useSelector((state) => state.Auth || {});
+  const { pincodes = [], loading: pincodeLoading, error: pincodeError } = useSelector((state) => state.pincode || {});
+  const { order, loading: orderLoading, error: orderError } = useSelector((state) => state.order || {});
+  const { applicationData, loading: appDataLoading, error: appDataError } = useSelector((state) => state.applicationData || {});
+
+  const handleQtyChange = async (id, qty) => {
+    try {
+      await dispatch(updateCartQuantity({ cartId: id, quantity: qty })).unwrap();
+      setLocalCartItems((prevItems) =>
+        prevItems.map((item) =>
+          item.cart_id === id ? { ...item, quantity: qty } : item
+        )
+      );
+      console.log(`Changed quantity for item ${id} to ${qty}`);
+    } catch (error) {
+      console.error('Failed to update quantity:', error);
+      setErrorMessage(`Failed to update quantity: ${error.message}`);
+      setErrorModalVisible(true);
+    }
+  };
+
+  const handleSizeChange = async (id, size) => {
+    try {
+      const cartItem = localCartItems.find((item) => item.cart_id === id);
+      if (!cartItem) {
+        throw new Error('Cart item not found');
+      }
+      const selectedSizeObj = cartItem.sizes.find((s) => s.size === size);
+      if (!selectedSizeObj) {
+        throw new Error('Selected size not found');
+      }
+      const varient_size_id = selectedSizeObj.size_id;
+
+      await dispatch(updateCartSize({ cartId: id, varient_size_id })).unwrap();
+      setLocalCartItems((prevItems) =>
+        prevItems.map((item) =>
+          item.cart_id === id ? { ...item, selected_size: size } : item
+        )
+      );
+      console.log(`Changed size for item ${id} to ${size}`);
+    } catch (error) {
+      console.error('Failed to update size:', error);
+      setErrorMessage(`Failed to update size: ${error.message}`);
+      setErrorModalVisible(true);
+    }
+  };
+
+  const extractPincodeFromAddress = (fullAddress) => {
+    if (!fullAddress) return '';
+    const parts = fullAddress.split(',').map(part => part.trim());
+    const lastPart = parts[parts.length - 1];
+    if (lastPart.includes('India -')) {
+      return lastPart.split('-')[1]?.trim() || '';
+    }
+    return lastPart.match(/^\d{6}$/) ? lastPart : '';
+  };
+
+  const getInitialPincode = () => {
+    const selectedAddress = addressList[0];
+    if (selectedAddress) {
+      if (selectedAddress.pincode && selectedAddress.pincode !== 0) {
+        return selectedAddress.pincode.toString();
+      }
+      return extractPincodeFromAddress(selectedAddress.full_address);
+    }
+    return '';
+  };
+
+  // State declarations
+  const [addressModalVisible, setAddressModalVisible] = useState(false);
+  const [addAddressModalVisible, setAddAddressModalVisible] = useState(false);
+  const [contactModalVisible, setContactModalVisible] = useState(false);
+  const [pincodeModalVisible, setPincodeModalVisible] = useState(false);
+  const [errorModalVisible, setErrorModalVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [pincodeMessage, setPincodeMessage] = useState('');
+  const [localCartItems, setLocalCartItems] = useState(routeCartItems);
+  const [selectedAddressIndex, setSelectedAddressIndex] = useState(0);
+  const [addressType, setAddressType] = useState('home');
+  const [customAddressType, setCustomAddressType] = useState('');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [addressLine, setAddressLine] = useState('');
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('');
+  const [phone, setPhone] = useState('');
+  const [errors, setErrors] = useState({});
+  const [pincode, setPincode] = useState(getInitialPincode());
+  const [paymentMethod, setPaymentMethod] = useState('COD');
+  const [addAddressPincodeMessage, setAddAddressPincodeMessage] = useState('');
+
+  const defaultAddress = addressList[selectedAddressIndex]?.full_address || 'Magadi Main Rd, nr Prasanna Theatre, Chikkabidarakallu, Bengaluru, Karnataka 560023';
+  const defaultContact = addressList[selectedAddressIndex]?.customer_mobile_number
+    ? `${addressList[selectedAddressIndex].customer_mobile_number}, ${addressList[selectedAddressIndex].customer_email || 'gmail@example.com'}`
+    : '+91-9164321, gmail@example.com';
+
+  const [shippingAddress, setShippingAddress] = useState(defaultAddress);
+  const [contactInfo, setContactInfo] = useState(defaultContact);
+
+  const transactionKey = 'GXXChkeXanR52ns8v77tFCQA';
+
+  useEffect(() => {
+    dispatch(fetchPincodes());
+    dispatch(fetchApplicationData());
+    if (customerId) {
+      dispatch(getCustomerAddresses({ customerId }));
+    }
+  }, [dispatch, customerId]);
+
+  useEffect(() => {
+    setLocalCartItems(routeCartItems);
+  }, [routeCartItems]);
+
+  useEffect(() => {
+    setShippingAddress(defaultAddress);
+    setContactInfo(defaultContact);
+    const selectedAddress = addressList[selectedAddressIndex];
+    if (selectedAddress) {
+      const newPincode = selectedAddress.pincode && selectedAddress.pincode !== 0
+        ? selectedAddress.pincode.toString()
+        : extractPincodeFromAddress(selectedAddress.full_address);
+      setPincode(newPincode);
+    }
+  }, [addressList, selectedAddressIndex]);
+
+  useEffect(() => {
+    if (deliveryAddressError) {
+      setErrorMessage(`Failed to add address: ${deliveryAddressError}`);
+      setErrorModalVisible(true);
+    }
+  }, [deliveryAddressError]);
+
+  // Validate pincode in the main screen
+  useEffect(() => {
+    if (pincode.length === 6 && pincodes.length > 0) {
+      const isValidPincode = pincodes.some((item) => item.pincode === parseInt(pincode));
+      setPincodeMessage(
+        isValidPincode
+          ? 'Yes, delivery is available to this pincode.'
+          : 'No services available, try with another pincode.'
+      );
+    } else {
+      setPincodeMessage('');
+    }
+  }, [pincode, pincodes]);
+
+  // Validate pincode in the add address modal
+  useEffect(() => {
+    if (pincode.length === 6 && pincodes.length > 0) {
+      const isValidPincode = pincodes.some((item) => item.pincode === parseInt(pincode));
+      setAddAddressPincodeMessage(
+        isValidPincode
+          ? 'Delivery is available to this pincode.'
+          : 'No services available for this pincode.'
+      );
+    } else {
+      setAddAddressPincodeMessage('');
+    }
+  }, [pincode, pincodes]);
+
+  const deliveryCost = applicationData?.data?.[0]
+    ? subtotal < parseFloat(applicationData.data[0].order_value_limit)
+      ? parseFloat(applicationData.data[0].charge_below_limit)
+      : parseFloat(applicationData.data[0].charge_above_limit)
+    : 50;
+
+  const subtotal = localCartItems.reduce((sum, item) => {
+    const selectedSizeObj = item.sizes.find((size) => size.size === item.selected_size) || item.sizes[0];
+    const price = selectedSizeObj ? parseFloat(selectedSizeObj.selling_price) : parseFloat(item.selling_price);
+    return sum + price * (item.quantity || 1);
+  }, 0);
+
+  const actualTotal = localCartItems.reduce((sum, item) => {
+    const selectedSizeObj = item.sizes.find((size) => size.size === item.selected_size) || item.sizes[0];
+    const price = selectedSizeObj ? parseFloat(selectedSizeObj.actual_price) : parseFloat(item.actual_price);
+    return sum + price * (item.quantity || 1);
+  }, 0);
+
+  const couponAmount = selectedCoupon?.coupon_amount ? parseFloat(selectedCoupon.coupon_amount) : 0;
+  const totalSaving = actualTotal - subtotal;
+  const grandTotal = subtotal + deliveryCost - couponAmount;
+
+  const handleSelectAddress = (index) => {
+    setSelectedAddressIndex(index);
+    setAddressModalVisible(false);
+    const selectedAddress = addressList[index];
+    if (selectedAddress) {
+      const newPincode = selectedAddress.pincode && selectedAddress.pincode !== 0
+        ? selectedAddress.pincode.toString()
+        : extractPincodeFromAddress(selectedAddress.full_address);
+      setPincode(newPincode);
+    }
+  };
+
+  const handleProceed = async () => {
+    let orderPincode = pincode;
+
+    if (!orderPincode) {
+      const selectedAddress = addressList[selectedAddressIndex];
+      if (selectedAddress) {
+        orderPincode = selectedAddress.pincode && selectedAddress.pincode !== 0
+          ? selectedAddress.pincode.toString()
+          : extractPincodeFromAddress(selectedAddress.full_address);
+      }
+    }
+
+    if (!orderPincode || orderPincode.length !== 6 || !pincodes.some((item) => item.pincode === parseInt(orderPincode))) {
+      setErrorMessage('Please enter a valid 6-digit pincode with available delivery service.');
+      setErrorModalVisible(true);
+      return;
+    }
+
+    const subOrderArray = localCartItems.map((item) => {
+      const selectedSizeObj = item.sizes.find((size) => size.size === item.selected_size) || item.sizes[0];
+      const actualPrice = parseFloat(selectedSizeObj.actual_price);
+      const sellingPrice = parseFloat(selectedSizeObj.selling_price);
+      const quantity = parseInt(item.quantity);
+      return {
+        product_id: item.product_id.toString(),
+        product_name: item.product_name,
+        product_image: item.product_image,
+        category_id: item.category_id.toString(),
+        sub_category_id: item.subcategory_id.toString(),
+        brand_name: item.brand_name,
+        varient_id: item.varient_id.toString(),
+        color: item.product_color,
+        size_id: selectedSizeObj.size_id.toString(),
+        size: item.selected_size,
+        actualitem_price: actualPrice.toString(),
+        item_price: sellingPrice.toString(),
+        sub_item_count: quantity.toString(),
+        item_total_amount: (sellingPrice * quantity).toString(),
+        saving_price: ((actualPrice - sellingPrice) * quantity).toString(),
+      };
+    });
+
+    const orderPayload = {
+      customer_id: customerId,
+      customer_name: customerName || addressList[selectedAddressIndex]?.customer_name || 'user88',
+      customer_mobile_number: addressList[selectedAddressIndex]?.customer_mobile_number || '7661967141',
+      item_count: localCartItems.length.toString(),
+      actual_total_amount: actualTotal.toString(),
+      total_amount: subtotal.toString(),
+      total_saving_amount: totalSaving.toString(),
+      coupon_amount: couponAmount.toString(),
+      delivery_charges: deliveryCost.toString(),
+      grand_total: grandTotal.toString(),
+      payment_type: paymentMethod,
+      order_status: paymentMethod === 'COD' ? '1' : '7',
+      coupon_id: selectedCoupon?.id || '0',
+      order_pincode: orderPincode,
+      delivery_address: shippingAddress,
+      sub_order_array: subOrderArray,
+    };
+
+    try {
+      if (paymentMethod === 'COD') {
+        console.log('Placing COD order with payload:', orderPayload);
+        const response = await dispatch(placeOrder(orderPayload)).unwrap();
+        console.log('COD order response:', response);
+        navigation.navigate('OrderDetails', {
+          cartItems: localCartItems,
+          shippingAddress,
+          contactInfo,
+          orderId: response.id,
+          orderDate: response.order_date,
+        });
+      } else if (paymentMethod === 'Pay Online') {
+        console.log('Creating Razorpay order with payload:', orderPayload);
+        const orderResponse = await dispatch(placeOrder(orderPayload)).unwrap();
+        console.log('Order creation response:', orderResponse);
+
+        if (orderResponse.status !== 200 || !orderResponse.razorpay_order_id) {
+          throw new Error('Failed to create order or no Razorpay order ID received');
+        }
+
+        const options = {
+          description: 'Payment for order',
+          image: 'https://your-website.com/logo.png',
+          currency: 'INR',
+          key: 'rzp_test_DlqMsqLoQJpVqr',
+          amount: (grandTotal * 100).toString(),
+          name: 'Your Company Name',
+          order_id: orderResponse.razorpay_order_id,
+          prefill: {
+            email: addressList[selectedAddressIndex]?.customer_email || 'customer@example.com',
+            contact: addressList[selectedAddressIndex]?.customer_mobile_number || '7661967141',
+            name: customerName || addressList[selectedAddressIndex]?.customer_name || 'user88',
+          },
+          theme: { color: '#262757' },
+        };
+
+        console.log('Opening Razorpay with options:', options);
+        RazorpayCheckout.open(options)
+          .then((data) => {
+            console.log('Payment success:', data);
+            const paymentUpdatePayload = {
+              payment_id: data.razorpay_payment_id,
+              order_status: 1,
+              order_id: orderResponse.id,
+            };
+            console.log('Updating payment details with payload:', paymentUpdatePayload);
+            dispatch(updatePaymentDetails(paymentUpdatePayload))
+              .unwrap()
+              .then((response) => {
+                console.log('Payment details updated successfully:', response);
+                try {
+                  navigation.navigate('OrderDetails', {
+                    cartItems: localCartItems,
+                    shippingAddress,
+                    contactInfo,
+                    orderId: orderResponse.id,
+                    orderDate: orderResponse.order_date,
+                    paymentId: data.razorpay_payment_id,
+                  });
+                  console.log('Navigation to OrderDetails triggered');
+                } catch (navError) {
+                  console.error('Navigation error:', navError);
+                  setErrorMessage('Failed to navigate to order details page');
+                  setErrorModalVisible(true);
+                }
+              })
+              .catch((error) => {
+                console.error('Payment update error:', error);
+                setErrorMessage(`Failed to update payment details: ${error.message}`);
+                setErrorModalVisible(true);
+              });
+          })
+          .catch((error) => {
+            console.error('Razorpay error:', error);
+            setErrorMessage(`Payment failed or was cancelled: ${error.description || error.message}`);
+            setErrorModalVisible(true);
+          });
+      }
+    } catch (error) {
+      console.error('Order creation error:', error);
+      setErrorMessage(`Error initiating payment: ${error.message}`);
+      setErrorModalVisible(true);
+    }
+  };
+
+  const handleRemove = (id) => {
+    setLocalCartItems((prevItems) => prevItems.filter((item) => item.cart_id !== id));
+    console.log(`Removed item ${id} from cart`);
+  };
+
+  const handlePincodeChange = (text) => {
+    setPincode(text);
+    setAddAddressPincodeMessage('');
+  };
+
+  const clearFields = () => {
+    setAddressType('home');
+    setCustomAddressType('');
+    setName('');
+    setEmail('');
+    setAddressLine('');
+    setCity('');
+    setState('');
+    setPhone('');
+    setPincode('');
+    setErrors({});
+    setAddAddressPincodeMessage('');
+  };
+
+  const validateInputs = () => {
+    const newErrors = {};
+    if (!addressType) newErrors.addressType = 'Address type is required';
+    if (addressType === 'other' && !customAddressType)
+      newErrors.customAddressType = 'Custom address type is required';
+    if (!name) newErrors.name = 'Name is required';
+    if (!email || !/\S+@\S+\.\S+/.test(email)) newErrors.email = 'Valid email is required';
+    if (!addressLine) newErrors.addressLine = 'Address line is required';
+    if (!city) newErrors.city = 'City is required';
+    if (!state) newErrors.state = 'State is required';
+    if (!pincode || pincode.length !== 6) newErrors.pincode = 'Valid 6-digit pincode is required';
+    else if (!pincodes.some((item) => item.pincode === parseInt(pincode)))
+      newErrors.pincode = 'Pincode is not serviceable';
+    if (!phone || phone.length !== 10) newErrors.phone = 'Valid 10-digit phone number is required';
+    return newErrors;
+  };
+
+  const handleSave = async () => {
+    const newErrors = validateInputs();
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    const fullAddress = `${addressLine}, ${city}, ${state}, India - ${pincode}`;
+    const payload = {
+      userId: customerId,
+      addressType: addressType === 'other' ? customAddressType : addressType,
+      fullAddress,
+      customerName: name,
+      customerEmail: email,
+      customerPhone: phone,
+      pincode,
+    };
+
+    try {
+      const response = await dispatch(addCustomerDeliveryAddress(payload)).unwrap();
+      await dispatch(getCustomerAddresses({ customerId })).unwrap();
+      const newAddressIndex = addressList.findIndex(
+        (address) => address.address_id === response.address_id
+      );
+      setSelectedAddressIndex(newAddressIndex !== -1 ? newAddressIndex : addressList.length);
+      setAddAddressModalVisible(false);
+      clearFields();
+    } catch (error) {
+      setErrorMessage(`Failed to add address: ${error.message}`);
+      setErrorModalVisible(true);
+    }
+  };
+
+  const updateCustomerAddress = async (payload) => {
+    console.log('Updating address with payload:', payload);
+    return { address_id: payload.addressId };
+  };
+
+  const handleSaveContact = async () => {
+    const selectedAddress = addressList[selectedAddressIndex];
+    if (!selectedAddress) {
+      setErrorMessage('No address selected to update contact info.');
+      setErrorModalVisible(true);
+      return;
+    }
+
+    const [newPhone, newEmail] = contactInfo.split(',').map((item) => item.trim());
+    if (!newPhone || !newEmail || !/\S+@\S+\.\S+/.test(newEmail) || newPhone.length !== 10) {
+      setErrorMessage('Please enter a valid phone number (10 digits) and email.');
+      setErrorModalVisible(true);
+      return;
+    }
+
+    const payload = {
+      userId: customerId,
+      addressId: selectedAddress.address_id,
+      customerPhone: newPhone,
+      customerEmail: newEmail,
+      addressType: selectedAddress.address_type,
+      fullAddress: selectedAddress.full_address,
+      customerName: selectedAddress.customer_name,
+      pincode: selectedAddress.pincode || extractPincodeFromAddress(selectedAddress.full_address),
+    };
+
+    try {
+      await updateCustomerAddress(payload);
+      await dispatch(getCustomerAddresses({ customerId })).unwrap();
+      setContactModalVisible(false);
+    } catch (error) {
+      setErrorMessage(`Failed to update contact info: ${error.message}`);
+      setErrorModalVisible(true);
+    }
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <StatusBar
+        translucent={false}
+        backgroundColor="#ffffff"
+        barStyle="dark-content"
+      />
+      <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={24} color="#000" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Payment</Text>
+      </View>
+
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={[
+          styles.contentContainer,
+          { paddingBottom: insets.bottom + responsiveHeight(12) },
+        ]}
+      >
+        <View style={styles.content}>
+          {appDataLoading && (
+            <Text style={styles.loadingText}>Loading application data...</Text>
+          )}
+          {appDataError && (
+            <Text style={styles.errorText}>Error: {appDataError}</Text>
+          )}
+
+          {/* Shipping Address */}
+          <View style={styles.addressSection}>
+            <Text style={[commonstyles.text9, commonstyles.marginBottom16]}>
+              Shipping Address
+            </Text>
+            {Array.isArray(addressList) && addressList.length > 0 ? (
+              <View style={styles.card}>
+                <View style={styles.nameRow}>
+                  <Text style={[commonstyles.text6, { color: '#262757', flex: 1 }]}>
+                    {addressList[selectedAddressIndex]?.customer_name || 'User'}
+                  </Text>
+                  <TouchableOpacity
+                    style={styles.changeButton}
+                    onPress={() => setAddressModalVisible(true)}
+                  >
+                    <Text style={[commonstyles.text4, { color: '#262757', fontWeight: '600' }]}>
+                      Change
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                <Text
+                  style={[
+                    commonstyles.text4,
+                    { fontFamily: 'Obviously-RegularItalic', lineHeight: 20 },
+                  ]}
+                >
+                  {shippingAddress}
+                </Text>
+                <Text
+                  style={[
+                    commonstyles.text4,
+                    { fontFamily: 'Obviously-RegularItalic', lineHeight: 20 },
+                  ]}
+                >
+                  Phone :{' '}
+                  <Text style={[{ fontWeight: '500' }, commonstyles.text4]}>
+                    {addressList[selectedAddressIndex]?.customer_mobile_number || 'N/A'}
+                  </Text>
+                </Text>
+                {addressList[selectedAddressIndex]?.customer_email && (
+                  <Text
+                    style={[
+                      commonstyles.text4,
+                      { fontFamily: 'Obviously-RegularItalic', lineHeight: 20 },
+                    ]}
+                  >
+                    Email :{' '}
+                    <Text style={[{ fontWeight: '500' }, commonstyles.text4]}>
+                      {addressList[selectedAddressIndex]?.customer_email}
+                    </Text>
+                  </Text>
+                )}
+              </View>
+            ) : (
+              <TouchableOpacity
+                style={styles.addNewAddressButton}
+                onPress={() => setAddAddressModalVisible(true)}
+              >
+                <Text style={[commonstyles.text4, { color: '#262757', fontWeight: '600' }]}>
+                  Add New Address
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
+
+          {/* Cart Items */}
+          <View style={styles.cartSection}>
+            <Text style={[commonstyles.text9, commonstyles.marginBottom16]}>
+              Order Summary
+            </Text>
+            {localCartItems.length === 0 ? (
+              <Text style={styles.emptyText}>No items in cart.</Text>
+            ) : (
+              localCartItems.map((item) => (
+                <ProductCart
+                  key={item.cart_id}
+                  product={{
+                    id: item.cart_id,
+                    title: item.brand_name,
+                    description: item.product_name,
+                    price: item.selling_price,
+                    actual_price: item.actual_price,
+                    image: { uri: item.product_image },
+                    sizes: item.sizes,
+                    offer: 'Special Offer',
+                  }}
+                  selectedSize={item.selected_size}
+                  selectedQty={item.quantity}
+                  onRemove={() => handleRemove(item.cart_id)}
+                  onSizeChange={(size) => handleSizeChange(item.cart_id, size)}
+                  onQtyChange={(qty) => handleQtyChange(item.cart_id, qty)}
+                />
+              ))
+            )}
+          </View>
+
+          {/* Order Details */}
+          <View style={styles.orderDetailsSection}>
+            <Text style={[commonstyles.text9, commonstyles.marginBottom16]}>
+              Order Details
+            </Text>
+            <View style={styles.priceRow}>
+              <Text style={commonstyles.text4}>Total MRP</Text>
+              <Text style={commonstyles.text4}>₹{actualTotal.toFixed(0)}</Text>
+            </View>
+            <View style={styles.priceRow}>
+              <Text style={commonstyles.text4}>Discount on MRP</Text>
+              <Text style={commonstyles.text4}>-₹{(actualTotal - subtotal).toFixed(0)}</Text>
+            </View>
+            <View style={styles.priceRow}>
+              <Text style={commonstyles.text4}>Coupon Discount</Text>
+              <Text style={commonstyles.text4}>-₹{couponAmount.toFixed(0)}</Text>
+            </View>
+            <View style={styles.priceRow}>
+              <Text style={commonstyles.text4}>Delivery Charges</Text>
+              <Text style={commonstyles.text4}>₹{deliveryCost.toFixed(0)}</Text>
+            </View>
+            <View style={[styles.priceRow, { borderTopWidth: 1, borderTopColor: '#ddd', paddingTop: 8, marginTop: 8 }]}>
+              <Text style={[commonstyles.text6, { fontWeight: '600' }]}>Total Amount to Pay</Text>
+              <Text style={[commonstyles.text6, { fontWeight: '600' }]}>₹{grandTotal.toFixed(0)}</Text>
+            </View>
+          </View>
+
+          {/* Payment Methods */}
+          <View style={styles.paymentSection}>
+            <Text style={[commonstyles.text9, commonstyles.marginBottom16]}>
+              Select Payment Method
+            </Text>
+            <View style={styles.card}>
+              <TouchableOpacity
+                style={styles.paymentOption}
+                onPress={() => setPaymentMethod('COD')}
+              >
+                <Ionicons
+                  name={paymentMethod === 'COD' ? 'radio-button-on' : 'radio-button-off'}
+                  size={20}
+                  color={paymentMethod === 'COD' ? '#262757' : '#ccc'}
+                />
+                <Text style={[commonstyles.text4, { marginLeft: 8 }]}>Cash on Delivery (COD)</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.paymentOption}
+                onPress={() => setPaymentMethod('Pay Online')}
+              >
+                <Ionicons
+                  name={paymentMethod === 'Pay Online' ? 'radio-button-on' : 'radio-button-off'}
+                  size={20}
+                  color={paymentMethod === 'Pay Online' ? '#262757' : '#ccc'}
+                />
+                <Text style={[commonstyles.text4, { marginLeft: 8 }]}>Pay Online</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </ScrollView>
+
+      {/* Footer */}
+      <View style={[styles.footer, { paddingBottom: insets.bottom }]}>
+        <TouchableOpacity
+          style={styles.pincodeNotice}
+          onPress={() => setPincodeModalVisible(true)}
+        >
+          <Ionicons name="location-outline" size={14} color="#fff" />
+          <Text style={styles.pincodeText}>
+            Please check your pincode before placing the order
+          </Text>
+          <Ionicons name="chevron-up" size={16} color="#fff" />
+        </TouchableOpacity>
+
+        <View style={styles.footerContent}>
+          <View style={styles.priceSummary}>
+            <Text style={styles.totalPrice}>₹{grandTotal.toFixed(0)}</Text>
+            <Text style={styles.viewDetails}>VIEW DETAILS</Text>
+          </View>
+          <TouchableOpacity
+            style={[styles.proceedButton, orderLoading && { opacity: 0.6 }]}
+            onPress={handleProceed}
+            disabled={orderLoading}
+          >
+            <Text style={styles.proceedButtonText}>
+              {orderLoading ? 'Placing Order...' : 'PROCEED'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* Address Selection Modal */}
+      <Modal
+        visible={addressModalVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setAddressModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <Text style={[commonstyles.text9, commonstyles.marginBottom12]}>
+              Select Address
+            </Text>
+            <ScrollView style={{ maxHeight: responsiveHeight(50) }}>
+              {addressList.map((address, index) => (
+                <TouchableOpacity
+                  key={address.address_id}
+                  style={styles.addressItem}
+                  onPress={() => handleSelectAddress(index)}
+                >
+                  <Text style={[commonstyles.text6, { color: '#262757' }]}>
+                    {address.customer_name}
+                  </Text>
+                  <Text style={[commonstyles.text4, { lineHeight: 20 }]}>
+                    {address.full_address}
+                  </Text>
+                  <Text style={[commonstyles.text4, { lineHeight: 20 }]}>
+                    Phone: {address.customer_mobile_number}
+                  </Text>
+                  {address.customer_email && (
+                    <Text style={[commonstyles.text4, { lineHeight: 20 }]}>
+                      Email: {address.customer_email}
+                    </Text>
+                  )}
+                </TouchableOpacity>
+              ))}
+              <TouchableOpacity
+                style={styles.addNewAddress}
+                onPress={() => {
+                  setAddressModalVisible(false);
+                  setAddAddressModalVisible(true);
+                }}
+              >
+                <Text style={[commonstyles.text4, { color: '#262757', fontWeight: '600' }]}>
+                  Add New Address
+                </Text>
+              </TouchableOpacity>
+            </ScrollView>
+            <TouchableOpacity
+              style={styles.buttonOutlinedFull}
+              onPress={() => setAddressModalVisible(false)}
+            >
+              <Text style={[commonstyles.text4, { textAlign: 'center' }]}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Add/Edit Address Modal */}
+      <Modal
+        visible={addAddressModalVisible}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setAddAddressModalVisible(false)}
+      >
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.modalOverlay}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+        >
+          <View style={styles.modalContainer}>
+            <ScrollView
+              contentContainerStyle={styles.modalScrollContent}
+              keyboardShouldPersistTaps="handled"
+            >
+              <Text style={[commonstyles.text9, commonstyles.marginBottom12]}>
+                Add Address
+              </Text>
+              <View style={{ marginBottom: 12 }}>
+                <Text style={commonstyles.text4}>Address Type</Text>
+                <View style={[{ flexDirection: 'row', marginTop: 8, gap: 12 }, commonstyles.marginBottom12]}>
+                  {['home', 'work', 'other'].map((type) => (
+                    <TouchableOpacity
+                      key={type}
+                      onPress={() => setAddressType(type)}
+                      style={{
+                        padding: 8,
+                        borderWidth: 1,
+                        borderColor: addressType === type ? '#262757' : '#ccc',
+                        backgroundColor: addressType === type ? '#262757' : '#fff',
+                        borderRadius: 4,
+                      }}
+                    >
+                      <Text style={{ color: addressType === type ? '#fff' : '#000' }}>
+                        {type.charAt(0).toUpperCase() + type.slice(1)}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+                {errors.addressType && (
+                  <Text style={styles.errorText}>{errors.addressType}</Text>
+                )}
+                {addressType === 'other' && (
+                  <>
+                    <TextInput
+                      placeholder="Enter Address Type"
+                      style={styles.input}
+                      placeholderTextColor="#000"
+                      value={customAddressType}
+                      onChangeText={setCustomAddressType}
+                    />
+                    {errors.customAddressType && (
+                      <Text style={styles.errorText}>{errors.customAddressType}</Text>
+                    )}
+                  </>
+                )}
+              </View>
+
+              <TextInput
+                placeholder="Name"
+                style={styles.input}
+                placeholderTextColor="#000"
+                value={name}
+                onChangeText={setName}
+              />
+              {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
+
+              <TextInput
+                placeholder="Email"
+                style={styles.input}
+                placeholderTextColor="#000"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+              />
+              {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
+
+              <TextInput
+                placeholder="Address Line"
+                style={styles.input}
+                placeholderTextColor="#000"
+                value={addressLine}
+                onChangeText={setAddressLine}
+              />
+              {errors.addressLine && <Text style={styles.errorText}>{errors.addressLine}</Text>}
+
+              <TextInput
+                placeholder="City"
+                style={styles.input}
+                placeholderTextColor="#000"
+                value={city}
+                onChangeText={setCity}
+              />
+              {errors.city && <Text style={styles.errorText}>{errors.city}</Text>}
+
+              <TextInput
+                placeholder="State"
+                style={styles.input}
+                placeholderTextColor="#000"
+                value={state}
+                onChangeText={setState}
+              />
+              {errors.state && <Text style={styles.errorText}>{errors.state}</Text>}
+
+              <TextInput
+                placeholder="Pincode"
+                style={styles.input}
+                placeholderTextColor="#000"
+                keyboardType="numeric"
+                value={pincode}
+                onChangeText={handlePincodeChange}
+                maxLength={6}
+              />
+              {errors.pincode && <Text style={styles.errorText}>{errors.pincode}</Text>}
+              {pincodeLoading && <Text style={styles.infoText}>Checking pincode...</Text>}
+              {addAddressPincodeMessage && (
+                <Text
+                  style={[
+                    styles.infoText,
+                    { color: addAddressPincodeMessage.includes('available') ? 'green' : 'red' },
+                  ]}
+                >
+                  {addAddressPincodeMessage}
+                </Text>
+              )}
+
+              <TextInput
+                placeholder="Phone Number"
+                style={styles.input}
+                placeholderTextColor="#000"
+                keyboardType="numeric"
+                value={phone}
+                onChangeText={setPhone}
+                maxLength={10}
+              />
+              {errors.phone && <Text style={styles.errorText}>{errors.phone}</Text>}
+
+              <View style={styles.modalActions}>
+                <TouchableOpacity
+                  style={styles.buttonOutlinedFull}
+                  onPress={() => {
+                    setAddAddressModalVisible(false);
+                    clearFields();
+                  }}
+                >
+                  <Text style={[commonstyles.text4, { textAlign: 'center' }]}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.buttonFilled}
+                  onPress={handleSave}
+                  disabled={deliveryAddressStatus === 'loading'}
+                >
+                  <Text style={{ color: '#fff', textAlign: 'center' }}>
+                    {deliveryAddressStatus === 'loading' ? 'Saving...' : 'Save'}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
+
+      {/* Contact Info Modal */}
+      <Modal
+        visible={contactModalVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setContactModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.pincodeModalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Edit Contact Information</Text>
+            </View>
+            <TextInput
+              style={styles.pincodeInput}
+              multiline
+              value={contactInfo}
+              onChangeText={setContactInfo}
+              placeholder="Enter contact info (phone, email)"
+              placeholderTextColor="#000"
+            />
+            <View style={styles.modalActions}>
+              <TouchableOpacity
+                style={styles.modalButton}
+                onPress={() => setContactModalVisible(false)}
+              >
+                <Text style={styles.modalButtonText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalButton, { backgroundColor: '#1f1c47' }]}
+                onPress={handleSaveContact}
+              >
+                <Text style={[styles.modalButtonText, { color: '#fff' }]}>Save</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Pincode Modal */}
+      <Modal
+        visible={pincodeModalVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setPincodeModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.pincodeModalContent}>
+            <View style={styles.modalHeader}>
+              <Location />
+              <Text style={styles.modalTitle}>
+                Check your pincode before placing the order.
+              </Text>
+            </View>
+            <View style={styles.inputRow}>
+              <TextInput
+                style={styles.pincodeInput}
+                placeholder="Enter Pincode"
+                placeholderTextColor="#000"
+                keyboardType="numeric"
+                maxLength={6}
+                value={pincode}
+                onChangeText={setPincode}
+              />
+              <TouchableOpacity
+                style={styles.pincodeButton}
+                onPress={() => setPincodeModalVisible(false)}
+              >
+                <Text style={styles.pincodeButtonText}>Close</Text>
+              </TouchableOpacity>
+            </View>
+            {pincodeMessage && (
+              <Text
+                style={[
+                  styles.pincodeMessage,
+                  {
+                    color: pincodeMessage.includes('Yes') ? 'green' : 'red',
+                  },
+                ]}
+              >
+                {pincodeMessage}
+              </Text>
+            )}
+          </View>
+        </View>
+      </Modal>
+
+      {/* Error Modal */}
+      <Modal
+        visible={errorModalVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setErrorModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.errorModalContent}>
+            <Text style={styles.modalTitle}>Error</Text>
+            <Text style={styles.errorMessage}>{errorMessage}</Text>
+            <TouchableOpacity
+              style={{
+                backgroundColor: '#1f1c47',
+                paddingVertical: 10,
+                paddingHorizontal: 20,
+                borderRadius: 6,
+                alignItems: 'center',
+                marginTop: 10,
+              }}
+              onPress={() => setErrorModalVisible(false)}
+            >
+              <Text style={{ color: '#fff', fontSize: 16 }}>OK</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#f1f1f1' },
+  scrollView: { flex: 1, backgroundColor: '#f1f1f1' },
+  contentContainer: {
+    padding: responsiveWidth(4),
+    paddingBottom: responsiveHeight(12),
+  },
+  content: { flexGrow: 1 },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    padding: 12,
+  },
+  headerTitle: {
+    flex: 1,
+    marginLeft: 12,
+    color: '#000',
+    fontSize: 24,
+    fontWeight: '660',
+  },
+  addressSection: {
+    marginBottom: responsiveHeight(2),
+  },
+  card: {
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 6,
+    marginBottom: 16,
+    borderColor: '#919191',
+    borderWidth: 0.5,
+  },
+  nameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  changeButton: {
+    padding: 8,
+    borderRadius: 4,
+  },
+  cartSection: { marginBottom: responsiveHeight(2) },
+  emptyText: {
+    color: '#000',
+    fontSize: responsiveFontSize(2),
+    textAlign: 'center',
+    marginTop: responsiveHeight(4),
+  },
+  addNewAddressButton: {
+    backgroundColor: '#fff',
+    padding: 12,
+    borderRadius: 6,
+    borderColor: '#262757',
+    borderWidth: 1,
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  footer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#fff',
+    padding: 0,
+  },
+  footerContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    padding: responsiveWidth(4),
+  },
+  pincodeNotice: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#262757',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    width: '100%',
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  pincodeText: {
+    flex: 1,
+    marginLeft: 6,
+    fontSize: 12,
+    color: '#fff',
+  },
+  totalPrice: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#000',
+  },
+  viewDetails: {
+    fontSize: 12,
+    color: '#888',
+  },
+  proceedButton: {
+    backgroundColor: '#1f1c47',
+    paddingVertical: 10,
+    paddingHorizontal: 24,
+    borderRadius: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '60%',
+  },
+  proceedButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContainer: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    maxHeight: responsiveHeight(80),
+    width: '100%',
+  },
+  modalScrollContent: {
+    paddingBottom: 20,
+  },
+  addressItem: {
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  addNewAddress: {
+    padding: 12,
+    alignItems: 'center',
+  },
+  pincodeModalContent: {
+    backgroundColor: '#fff',
+    padding: 10,
+    maxHeight: '40%',
+  },
+  errorModalContent: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginHorizontal: responsiveWidth(5),
+  },
+  modalHeader: {
+    borderBottomColor: '#ddd',
+    paddingBottom: 8,
+    marginBottom: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#000',
+    textAlign: 'center',
+    flex: 1,
+  },
+  inputRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  pincodeInput: {
+    borderBottomWidth: 1,
+    borderColor: '#ccc',
+    padding: 10,
+    flex: 1,
+    marginRight: 10,
+    fontSize: 16,
+  },
+  pincodeButton: {
+    backgroundColor: '#1f1c47',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 6,
+    alignItems: 'center',
+  },
+  pincodeButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  modalActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 10,
+  },
+  modalButton: {
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 6,
+    flex: 1,
+    alignItems: 'center',
+    marginHorizontal: 5,
+  },
+  modalButtonText: {
+    fontSize: 16,
+    color: '#000',
+  },
+  pincodeMessage: {
+    fontSize: 14,
+    marginTop: 10,
+    textAlign: 'center',
+  },
+  errorMessage: {
+    fontSize: 14,
+    color: 'red',
+    textAlign: 'center',
+    marginVertical: 10,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 4,
+    padding: 10,
+    marginBottom: 12,
+    fontSize: 16,
+    color: '#000',
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 12,
+    marginBottom: 8,
+  },
+  infoText: {
+    color: '#000',
+    fontSize: 12,
+    marginBottom: 8,
+  },
+  buttonFilled: {
+    backgroundColor: '#262757',
+    padding: 12,
+    borderRadius: 4,
+    flex: 1,
+    alignItems: 'center',
+    marginLeft: 5,
+  },
+  buttonOutlinedFull: {
+    borderWidth: 1,
+    borderColor: '#262757',
+    padding: 12,
+    borderRadius: 4,
+    flex: 1,
+    alignItems: 'center',
+    marginRight: 5,
+  },
+  orderDetailsSection: {
+    marginBottom: responsiveHeight(2),
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 6,
+    borderColor: '#919191',
+    borderWidth: 0.5,
+  },
+  paymentSection: {
+    marginBottom: responsiveHeight(2),
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 6,
+    borderColor: '#919191',
+    borderWidth: 0.5,
+  },
+  priceRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  paymentOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+});
+
+export default Payment;
+// above code is for remove and quantity and size change provesion 

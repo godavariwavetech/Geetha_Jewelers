@@ -1,0 +1,2353 @@
+// import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+// import { endpoints } from '../../config/config';
+// import api from '../../utils/api';
+
+// export const fetchCategories = createAsyncThunk(
+//   'category/fetchCategories',
+//   async (_, { fulfillWithValue, rejectWithValue }) => {
+//     try {
+//       const res = await api.get(endpoints.GET_CATEGORIES);
+//       if (res.data?.data) {
+//         const limitedCategories = res.data.data.slice(0, 4);
+//         return fulfillWithValue(limitedCategories);
+//       } else {
+//         return rejectWithValue('No category data found');
+//       }
+//     } catch (err) {
+//       console.log(err);
+//       return rejectWithValue(
+//         err.response?.data?.message || 'Failed to fetch categories'
+//       );
+//     }
+//   }
+// );
+
+// export const fetchSubcategories = createAsyncThunk(
+//   'category/fetchSubcategories',
+//   async (categoryId, { fulfillWithValue, rejectWithValue }) => {
+//     try {
+//       const res = await api.post(endpoints.GET_SUBCATEGORY, {
+//         category_id: categoryId,
+//       });
+//       if (res.data?.data) {
+//         return fulfillWithValue(res.data.data);
+//       } else {
+//         return rejectWithValue('No subcategory data found');
+//       }
+//     } catch (err) {
+//       console.log(err);
+//       return rejectWithValue(
+//         err.response?.data?.message || 'Failed to fetch subcategories'
+//       );
+//     }
+//   }
+// );
+
+// export const fetchBanners = createAsyncThunk(
+//     'category/fetchBanners',
+//     async (categoryId, { fulfillWithValue, rejectWithValue }) => {
+//       try {
+//         const res = await api.post(endpoints.GET_BANNERS, {
+//           category_id: categoryId,
+//         });
+//         if (res.data?.data) {
+//           return fulfillWithValue(res.data.data);
+//         } else {
+//           return rejectWithValue('No banner data found');
+//         }
+//       } catch (err) {
+//         console.log(err);
+//         return rejectWithValue(
+//           err.response?.data?.message || 'Failed to fetch banners'
+//         );
+//       }
+//     }
+//   );
+  
+
+// const categorySlice = createSlice({
+//   name: 'category',
+//   initialState: {
+//     categories: [],
+//     subcategories: [],
+//     loading: false,
+//     error: null,
+//     subLoading: false,
+//     subError: null,
+//     banners: [],
+// bannersLoading: false,
+// bannersError: null,
+//   },
+//   reducers: {},
+//   extraReducers: (builder) => {
+//     builder
+//       .addCase(fetchCategories.pending, (state) => {
+//         state.loading = true;
+//         state.error = null;
+//       })
+//       .addCase(fetchCategories.fulfilled, (state, action) => {
+//         state.loading = false;
+//         state.categories = action.payload;
+//       })
+//       .addCase(fetchCategories.rejected, (state, action) => {
+//         state.loading = false;
+//         state.error = action.payload;
+//       })
+//       .addCase(fetchSubcategories.pending, (state) => {
+//         state.subLoading = true;
+//         state.subError = null;
+//       })
+//       .addCase(fetchSubcategories.fulfilled, (state, action) => {
+//         state.subLoading = false;
+//         state.subcategories = action.payload;
+//       })
+//       .addCase(fetchSubcategories.rejected, (state, action) => {
+//         state.subLoading = false;
+//         state.subError = action.payload;
+//       });
+      
+//   },
+// });
+
+// export default categorySlice.reducer;
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { endpoints } from '../../config/config';
+import api from '../../utils/api';
+
+export const fetchCategories = createAsyncThunk(
+  'category/fetchCategories',
+  async (_, { fulfillWithValue, rejectWithValue }) => {
+    try {
+      const res = await api.get(endpoints.GET_CATEGORIES);
+      if (res.data?.data) {
+        const limitedCategories = res.data.data.slice(0, 4);
+        return fulfillWithValue(limitedCategories);
+      } else {
+        return rejectWithValue('No category data found');
+      }
+    } catch (err) {
+      console.log(err);
+      return rejectWithValue(
+        err.response?.data?.message || 'Failed to fetch categories'
+      );
+    }
+  }
+);
+
+export const fetchSubcategories = createAsyncThunk(
+  'category/fetchSubcategories',
+  async (categoryId, { fulfillWithValue, rejectWithValue }) => {
+    try {
+      const res = await api.post(endpoints.GET_SUBCATEGORY, {
+        category_id: categoryId,
+      });
+      if (res.data?.data) {
+        return fulfillWithValue(res.data.data);
+      } else {
+        return rejectWithValue('No subcategory data found');
+      }
+    } catch (err) {
+      console.log(err);
+      return rejectWithValue(
+        err.response?.data?.message || 'Failed to fetch subcategories'
+      );
+    }
+  }
+);
+
+export const fetchBanners = createAsyncThunk(
+  'category/fetchBanners',
+  async (categoryId, { fulfillWithValue, rejectWithValue }) => {
+    try {
+      const res = await api.post(endpoints.GET_BANNERS, {
+        category_id: categoryId,
+      });
+      if (res.data?.data) {
+        return fulfillWithValue(res.data.data);
+      } else {
+        return rejectWithValue('No banner data found');
+      }
+    } catch (err) {
+      console.log(err);
+      return rejectWithValue(
+        err.response?.data?.message || 'Failed to fetch banners'
+      );
+    }
+  }
+);
+
+export const fetchBrands = createAsyncThunk(
+  'category/fetchBrands',
+  async (_, { fulfillWithValue, rejectWithValue }) => {
+    try {
+      const res = await api.get(endpoints.GET_BRANDS);
+      if (res.data?.data) {
+        return fulfillWithValue(res.data.data);
+      } else {
+        return rejectWithValue('No brands data found');
+      }
+    } catch (err) {
+      console.log(err);
+      return rejectWithValue(
+        err.response?.data?.message || 'Failed to fetch brands'
+      );
+    }
+  }
+);
+
+export const fetchDiscountBanners = createAsyncThunk(
+  'category/fetchDiscountBanners',
+  async (categoryId, { fulfillWithValue, rejectWithValue }) => {
+    try {
+      const res = await api.post(endpoints.GET_OFFERBANNER, {
+        category_id: categoryId,
+      });
+      if (res.data?.data) {
+        return fulfillWithValue(res.data.data);
+      } else {
+        return rejectWithValue('No discount banners found');
+      }
+    } catch (err) {
+      console.log(err);
+      return rejectWithValue(
+        err.response?.data?.message || 'Failed to fetch discount banners'
+      );
+    }
+  }
+);
+
+const categorySlice = createSlice({
+  name: 'category',
+  initialState: {
+    categories: [],
+    subcategories: [],
+    loading: false,
+    error: null,
+    subLoading: false,
+    subError: null,
+    banners: [],
+    bannersLoading: false,
+    bannersError: null,
+    brands: [],
+    brandsLoading: false,
+    brandsError: null,
+    discountBanners: [],
+    discountBannersLoading: false,
+    discountBannersError: null,
+  },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchCategories.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchCategories.fulfilled, (state, action) => {
+        state.loading = false;
+        state.categories = action.payload;
+      })
+      .addCase(fetchCategories.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      .addCase(fetchSubcategories.pending, (state) => {
+        state.subLoading = true;
+        state.subError = null;
+      })
+      .addCase(fetchSubcategories.fulfilled, (state, action) => {
+        state.subLoading = false;
+        state.subcategories = action.payload;
+      })
+      .addCase(fetchSubcategories.rejected, (state, action) => {
+        state.subLoading = false;
+        state.subError = action.payload;
+      })
+
+      .addCase(fetchBanners.pending, (state) => {
+        state.bannersLoading = true;
+        state.bannersError = null;
+      })
+      .addCase(fetchBanners.fulfilled, (state, action) => {
+        state.bannersLoading = false;
+        state.banners = action.payload;
+      })
+      .addCase(fetchBanners.rejected, (state, action) => {
+        state.bannersLoading = false;
+        state.bannersError = action.payload;
+      })
+
+      .addCase(fetchBrands.pending, (state) => {
+        state.brandsLoading = true;
+        state.brandsError = null;
+      })
+      .addCase(fetchBrands.fulfilled, (state, action) => {
+        state.brandsLoading = false;
+        state.brands = action.payload;
+      })
+      .addCase(fetchBrands.rejected, (state, action) => {
+        state.brandsLoading = false;
+        state.brandsError = action.payload;
+      })
+
+      .addCase(fetchDiscountBanners.pending, (state) => {
+        state.discountBannersLoading = true;
+        state.discountBannersError = null;
+      })
+      .addCase(fetchDiscountBanners.fulfilled, (state, action) => {
+        state.discountBannersLoading = false;
+        state.discountBanners = action.payload;
+      })
+      .addCase(fetchDiscountBanners.rejected, (state, action) => {
+        state.discountBannersLoading = false;
+        state.discountBannersError = action.payload;
+      });
+  },
+});
+
+export default categorySlice.reducer;
+
+
+
+
+
+
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TextInput,
+  ScrollView,
+  TouchableOpacity,
+  StatusBar, SafeAreaView, Dimensions
+} from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+
+import LinearGradient from 'react-native-linear-gradient';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
+import BannerSkeleton from '../components/BannerSkeleton';
+import CategorySkeleton from '../components/CategoryCardSkeleton';
+import PromoCard from '../components/promocards';
+import CategoryCard from '../components/CategoryCard';
+import BrandCard from '../components/BrandCard';
+import commonstyles from '../commonstyles/commonstyles';
+import UnderPriceCard from '../components/UnderPriceCard';
+import ProductCard from '../components/ProductCard';
+import YoloWelcomeModal from '../components/YoloWelcomeModal';
+import AdsCard from '../components/AdsCard';
+import { Location } from '../assets/Svgs';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchSubcategories, fetchBanners,fetchBrands,fetchDiscountBanners } from '../redux/slices/categorySlice';
+const HomeScreen = () => {
+  const insets = useSafeAreaInsets();
+  const route = useRoute();
+  const dispatch = useDispatch();
+  const [showFirstModal, setShowFirstModal] = useState(true);
+  const [showSecondModal, setShowSecondModal] = useState(false);
+  const navigation = useNavigation(); // Get navigation object
+  const { categories, subcategories, subLoading, banners = [], bannersLoading, bannersError, brands, brandsLoading, brandsError, 
+    // discountBanners, 
+    discountBannersLoading, discountBannersError  } = useSelector((state) => state.category);
+  const [selectedCategory, setSelectedCategory] = useState(
+    route.params?.selectedCategory || 'Men'
+  );
+  // Fetch subcategories whenever selectedCategory changes
+  useEffect(() => {
+    const cat = categories.find((c) => c.category_name === selectedCategory);
+    if (cat?.id) {
+      dispatch(fetchSubcategories(cat.id));
+      dispatch(fetchBanners(cat.id));
+      // dispatch(fetchDiscountBanners(cat.id));
+      
+    }
+  }, [selectedCategory, categories]);
+  useEffect(() => {
+    dispatch(fetchBrands());
+  }, []);
+  
+  const discountBanners = [
+    { id: 1, banner_image: require('../assets/discountbanner.png') },
+    { id: 2, banner_image: require('../assets/discountbanner.png') },
+    { id: 3, banner_image: require('../assets/discountbanner.png') },
+  ];
+
+
+  const brands1 = [
+    {
+      id: '1',
+      productImage: require('../assets/men.png'),
+      logo: require('../assets/puma.png'),
+    },
+    {
+      id: '2',
+      productImage: require('../assets/women.png'),
+      logo: require('../assets/levis.png'),
+    },
+    {
+      id: '3',
+      productImage: require('../assets/footwear.png'),
+      logo: require('../assets/adidas.png'),
+    },
+    {
+      id: '4',
+      productImage: require('../assets/accessories.png'),
+      logo: require('../assets/women.png'),
+    },
+  ];
+
+  const underPricePromos = [
+    {
+      id: 1,
+      headline: 'Everything Under 499',
+      subtext1: 'Look that slay',
+      subtext2: 'Prices that do too',
+      imageSource: require('../assets/underprice1.png'),
+    },
+    {
+      id: 2,
+      headline: 'Style Under 999',
+      subtext1: 'Daily glam looks',
+      subtext2: 'No glam price tags',
+      imageSource: require('../assets/underprice2.png'),
+    },
+    {
+      id: 3,
+      headline: 'Style Under 999',
+      subtext1: 'Daily glam looks',
+      subtext2: 'No glam price tags',
+      imageSource: require('../assets/underprice2.png'),
+    },
+  ];
+
+  const products = [
+    {
+      id: '1',
+      image: require('../assets/men.png'),
+      title: 'Classic Denim Shirt',
+      brand: 'Levis',
+      rating: 4,
+      reviews: 120,
+      likes: '9.1k',
+      mrp: 1299,
+      salePrice: 899,
+      code: 'SALE20',
+      isWishlisted: false,
+      badge: 'Hot Deal',
+    },
+    {
+      id: '2',
+      image: require('../assets/footwear.png'),
+      title: 'Slim Fit Blazer',
+      brand: 'Zara',
+      rating: 5,
+      reviews: 85,
+      likes: '7.3k',
+      mrp: 3999,
+      salePrice: 2999,
+      code: 'BLZ30',
+      isWishlisted: true,
+      badge: 'New',
+    },
+    {
+      id: '3',
+      image: require('../assets/footwear.png'),
+      title: 'Running Shoes',
+      brand: 'Adidas',
+      rating: 4,
+      reviews: 200,
+      likes: '12.4k',
+      mrp: 2999,
+      salePrice: 1999,
+      code: 'RUN50',
+      isWishlisted: false,
+      badge: 'Best Seller',
+    },
+    {
+      id: '4',
+      image: require('../assets/women.png'),
+      title: 'Crop Top',
+      brand: 'Only',
+      rating: 4,
+      reviews: 85,
+      likes: '5.6k',
+      mrp: 799,
+      salePrice: 499,
+      code: 'TOP25',
+      isWishlisted: false,
+      badge: 'Hot Deal',
+    },
+    {
+      id: '5',
+      image: require('../assets/women.png'),
+      title: 'Crop Top',
+      brand: 'Only',
+      rating: 4,
+      reviews: 85,
+      likes: '5.6k',
+      mrp: 799,
+      salePrice: 499,
+      code: 'TOP25',
+      isWishlisted: false,
+      badge: 'Hot Deal',
+    },
+    {
+      id: '6',
+      image: require('../assets/women.png'),
+      title: 'Crop Top',
+      brand: 'Only',
+      rating: 4,
+      reviews: 85,
+      likes: '5.6k',
+      mrp: 799,
+      salePrice: 499,
+      code: 'TOP25',
+      isWishlisted: false,
+      badge: 'Hot Deal',
+    },
+  ];
+
+  return (
+    <SafeAreaView style={{ flex: 1 }}>
+      <StatusBar
+        translucent={true}         // Makes it transparent
+        backgroundColor="transparent"
+        barStyle="dark-content"    // Dark icons/text
+      />
+      <ScrollView style={{ flex: 1, backgroundColor: '#fff' }}>
+        <View style={{ flex: 1, backgroundColor: '#fff', paddingBottom: insets.bottom + 50 }}>
+          <LinearGradient
+            colors={['#5E61EB', '#262757']}
+            style={[styles.background, { paddingTop: insets.top + 15 }]}
+          >
+
+            {/* Header */}
+            <View style={styles.header}>
+              <View>
+                <View style={styles.badge}>
+                  <Text style={styles.badgeText}>⚡ 90 Minutes</Text>
+                </View>
+              </View>
+              {/* <Profile /> */}
+              <TouchableOpacity onPress={() => { navigation.navigate("Profile") }}>
+                <Image source={require("../assets/profile.png")} style={{ width: 28, height: 28 }} /></TouchableOpacity>
+            </View>
+
+            {/* Delivery Info */}
+            <View style={styles.deliveryContainer}>
+              <Location />
+              <Text style={styles.deliveryText}> Deliver to Rehmath Nagar Colony, - 533...</Text>
+            </View>
+
+            {/* Search Bar */}
+            <View style={styles.searchContainer}>
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Search here.."
+                placeholderTextColor="#888"
+              />
+            </View>
+
+            {/* Horizontal Categories */}
+
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ marginTop: 10, gap: 15 }}
+            >
+              {categories.map((cat) => (
+                <TouchableOpacity
+                  key={cat.id}
+                  style={{ width: 90, alignItems: 'center' }}
+                  onPress={() => {
+                    // navigation.navigate("IndividualCategory", { category: cat.category_name });
+                    setSelectedCategory(cat.category_name);
+                  }}
+                >
+                  <LinearGradient
+                    colors={['rgba(255, 255, 255, 0)', '#FFFFFF']}
+                    start={{ x: 0.5, y: 0 }}
+                    end={{ x: 0.5, y: 1 }}
+                    style={{ width: 90, height: 80, borderRadius: 10, overflow: 'hidden', justifyContent: 'center', alignItems: 'center' }}
+                  >
+                    <Image source={{ uri: cat.category_image }} style={{ width: 80, height: 80 }} resizeMode="contain" />
+                  </LinearGradient>
+                  <View style={{ marginTop: 4, alignItems: 'center' }}>
+                    <Text style={{ color: '#fff', fontSize: 12 }}>{cat.category_name}</Text>
+                    {selectedCategory === cat.category_name && <View style={{ width: 100, height: 2.5, backgroundColor: '#fff', marginTop: 2, borderRadius: 1 ,marginBottom:3}} />}
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </LinearGradient>
+
+          {/* PromoCard */}
+          {/* <View style={[{ backgroundColor: '#fff' }, commonstyles.marginTop24, commonstyles.marginBottom12]}>
+            {bannersLoading ? (
+              <Text style={[{ textAlign: 'center' },commonstyles.text4]}>Loading banners…</Text>
+            ) : bannersError ? (
+              <Text style={{ textAlign: 'center', color: 'red' }}>{bannersError}</Text>
+            ) : Array.isArray(banners) && banners.length > 0 ? (
+              <PromoCard
+                banners={banners.map(b => ({
+                  id: b.id,
+                  banner_image: { uri: b.banner_image }
+                }))}
+              />
+            ) : (
+              <Text style={[{ textAlign: 'center' },commonstyles.text4]}>No banners found</Text>
+            )}
+          </View> */}
+          <View style={[{ backgroundColor: '#fff' }, commonstyles.marginTop24, commonstyles.marginBottom12]}>
+          {bannersLoading ? (
+  <BannerSkeleton />
+) : bannersError ? (
+  <Text style={{ textAlign: 'center', color: 'red' }}>{bannersError}</Text>
+) : Array.isArray(banners) && banners.length > 0 ? (
+  <PromoCard
+    banners={banners.map(b => ({
+      id: b.id,
+      banner_image: { uri: b.banner_image }
+    }))}
+  />
+) : (
+  <Text style={[{ textAlign: 'center' }, commonstyles.text4]}>No banners found</Text>
+)}
+</View>
+
+          {/* CATEGORY */}
+          <Text style={[commonstyles.text3, { paddingLeft: 10 }, commonstyles.marginBottom16]}>
+            CATEGORY
+          </Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+              justifyContent: 'flex-start',
+
+              paddingHorizontal: 12,
+              gap: 17
+            }}
+          >
+           {subLoading ? (
+  <CategorySkeleton />
+) : subcategories.length > 0 ? (
+  subcategories.map((sub) => (
+    <CategoryCard
+      key={sub.id}
+      title={sub.sub_category_name}
+      imageSource={{ uri: sub.sub_category_image }}
+    />
+  ))
+) : (
+  <Text style={[{textAlign:"center",marginBottom:5},commonstyles.text4]}>
+    No subcategories found
+  </Text>
+)}
+
+          </View>
+
+
+          <Text style={[commonstyles.text3, { paddingLeft: 10 }, commonstyles.marginBottom16]}>
+  BRAND VERSE
+</Text>
+
+<ScrollView
+  horizontal
+  showsHorizontalScrollIndicator={false}
+  contentContainerStyle={[styles.brandsContainerHorizontal, commonstyles.marginBottom24]}
+>
+  {brandsLoading ? (
+    <Text style={{ textAlign: 'center' }}>Loading brands…</Text>
+  ) : brandsError ? (
+    <Text style={{ color: 'red', textAlign: 'center' }}>{brandsError}</Text>
+  ) : brands.length > 0 ? (
+    brands.map((brand) => (
+      <BrandCard
+        key={brand.id}
+        productImage={{ uri: brand.brand_image }}
+        brandLogo={{ uri: brand.brand_logo }}
+      />
+    ))
+  ) : (
+    <Text style={{ textAlign: 'center' }}>No brands found</Text>
+  )}
+</ScrollView>
+
+
+          <Text style={[commonstyles.text3, { paddingLeft: 10 }, commonstyles.marginBottom16]}>
+            BRAND CRUSH
+          </Text>
+
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={[styles.brandsContainerHorizontal, commonstyles.marginBottom24]}
+          >
+            {brands1.map((brand) => (
+              <BrandCard
+                key={brand.id}
+                productImage={brand.productImage}
+                brandLogo={brand.logo}
+              />
+            ))}
+          </ScrollView>
+
+          {/* Discount PromoCard */}
+          <View style={[{ backgroundColor: '#fff' }, commonstyles.marginBottom24, commonstyles.marginTop24]}>
+            <PromoCard banners={discountBanners} type="discount" />
+          </View>
+{/* <View style={[{ backgroundColor: '#fff' }, commonstyles.marginBottom24, commonstyles.marginTop24]}>
+  {discountBannersLoading ? (
+    <BannerSkeleton />
+  ) : discountBannersError ? (
+    <Text style={{ color: 'red', textAlign: 'center' }}>{discountBannersError}</Text>
+  ) : discountBanners.length > 0 ? (
+    <PromoCard
+      banners={discountBanners.map(b => ({
+        id: b.id,
+        banner_image: { uri: b.banner_image }
+      }))}
+      type="discount"
+    />
+  ) : (
+    <Text style={{ textAlign: 'center' }}>No discount banners found</Text>
+  )}
+</View> */}
+
+          <Text style={[commonstyles.text3, { paddingLeft: 10 }, commonstyles.marginBottom16]}>
+            DEALS UNDER
+          </Text>
+
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={[styles.brandsContainerHorizontal, commonstyles.marginBottom24]}
+          >
+            {underPricePromos.map((promo) => (
+              <UnderPriceCard
+                key={promo.id}
+                headline={promo.headline}
+                subline1={promo.subtext1}
+                subline2={promo.subtext2}
+                promoImage={promo.imageSource}
+              />
+            ))}
+          </ScrollView>
+
+
+
+          {/* HOT PICKS - 2 Column Layout */}
+          <Text style={[commonstyles.text3, { paddingLeft: 10 }, commonstyles.marginbottom16]}>
+            HOT PICKS
+          </Text>
+          <View style={styles.twoColumnWrapper}>
+            {/* Column 1 */}
+            <View style={styles.column}>
+              {products.map(
+                (item, index) =>
+                  index % 2 === 0 && (
+                    <View key={item.id} style={styles.productCardContainer}>
+                      <ProductCard {...item}
+                      onPress={() =>
+                        navigation.navigate('IndividualCategory', { product: item })
+                      }
+                      />
+                    </View>
+                  )
+              )}
+              <View style={styles.adCardWrapper}>
+                <AdsCard title="Yolo Fashion" buttonText="Shop Now" onPress={() => { }} />
+              </View>
+            </View>
+
+            {/* Column 2 */}
+            <View style={styles.column}>
+              <View style={styles.adCardWrapper}>
+                <AdsCard title="Yolo Fashion" buttonText="Shop Now" onPress={() => { }} />
+              </View>
+              {products.map(
+                (item, index) =>
+                  index % 2 === 1 && (
+                    <View key={item.id} style={styles.productCardContainer}>
+                      <ProductCard {...item}
+                      onPress={() =>
+                        navigation.navigate('IndividualCategory', { product: item })
+                      }
+                      />
+                    </View>
+                  )
+              )}
+            </View>
+          </View>
+
+          {/* Modals */}
+          <YoloWelcomeModal
+            visible={showFirstModal}
+            onClose={() => setShowFirstModal(false)}
+            onExplore={() => {
+              setShowFirstModal(false);
+              setShowSecondModal(true);
+            }}
+            title="Welcome to YOLO!"
+            // subtitle={Handpicked brands & killer designs —\nwaiting just for you.}
+            subtitle="Get your order today, within just 90 mins"
+
+            imageSource={require('../assets/yolowelcomeimage.png')}
+            buttonText="Let's Explore!"
+          />
+
+          <YoloWelcomeModal
+            visible={showSecondModal}
+            onClose={() => setShowSecondModal(false)}
+            onExplore={() => {
+              setShowSecondModal(false);
+              console.log('Order Now pressed');
+            }}
+            title="We're Open from 8 AM – 9 PM"
+            subtitle="Get your order today, within just 90 mins"
+            imageSource={require('../assets/yolotimer.png')}
+            buttonText="Order Now"
+          />
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
+
+export default HomeScreen;
+
+const styles = StyleSheet.create({
+  background: {
+    paddingHorizontal: 15,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  badge: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#34C759',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 6,
+    marginBottom: 4,
+  },
+  badgeText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 12,
+  },
+  deliveryContainer: {
+    marginTop: 8,
+    flexDirection: "row",
+    gap: 5
+  },
+  deliveryText: {
+    color: '#fff',
+    fontSize: 14,
+  },
+  searchContainer: {
+    marginVertical: 12,
+  },
+  searchInput: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    height: 40,
+    fontSize: 14,
+  },
+  categoriesContainer: {
+    marginTop: 10,
+    gap: 15,
+  },
+  card: {
+    width: 90,
+    alignItems: 'center',
+  },
+  cardGradient: {
+    width: 90,
+    height: 100,
+    borderRadius: 10,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cardImage: {
+    width: 100,
+    height: 120,
+  },
+  cardLabelWrapper: {
+    marginTop: 4,
+    alignItems: 'center',
+  },
+  cardLabel: {
+    color: '#fff',
+    fontSize: 12,
+  },
+  underline: {
+    width: 20,
+    height: 2,
+    backgroundColor: '#fff',
+    marginTop: 2,
+    borderRadius: 1,
+  },
+  brandsContainerHorizontal: {
+    paddingLeft: 10,
+    gap: 10,
+    paddingRight: 10,
+  },
+  twoColumnWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 12,
+    gap: 12,
+    marginBottom: 24,
+  },
+  column: {
+    flex: 1,
+  },
+  productCardContainer: {
+    marginBottom: 12,
+  },
+  adCardWrapper: {
+    marginBottom: 12,
+  },
+});
+
+
+
+// for recommonded products  update in redux store directly 
+// redux/slices/categorySlice.js
+import { createSlice } from '@reduxjs/toolkit';
+
+const categorySlice = createSlice({
+  name: 'category',
+  initialState: {
+    productDetails: null,
+    recommendedProducts: [],
+    subcategories: [],
+    productDetailsLoading: false,
+    recommendedProductsLoading: false,
+    subLoading: false,
+    subError: null,
+  },
+  reducers: {
+    updateRecommendedProductWishlist: (state, action) => {
+      const { product_id, wishlist_flag, wishlist_id } = action.payload;
+      state.recommendedProducts = state.recommendedProducts.map((prod) =>
+        prod.product_id === product_id
+          ? { ...prod, wishlist_flag, wishlist_id }
+          : prod
+      );
+    },
+  },
+  extraReducers: (builder) => {
+    // Existing fetchProductDetails, fetchRecommendedProducts, fetchSubcategories cases
+  },
+});
+
+export const { updateRecommendedProductWishlist } = categorySlice.actions;
+export default categorySlice.reducer;
+
+const handleRecommendedWishlistToggle = async (item) => {
+  const productId = item.product_id;
+  if (recommendedWishlistLoading[productId]) return;
+
+  setRecommendedWishlistLoading((prev) => ({ ...prev, [productId]: true }));
+  const newWishlistStatus = !item.wishlist_flag;
+
+  // Optimistic update via Redux
+  dispatch(
+    updateRecommendedProductWishlist({
+      product_id: productId,
+      wishlist_flag: newWishlistStatus,
+      wishlist_id: newWishlistStatus ? item.wishlist_id : null,
+    })
+  );
+
+  try {
+    if (newWishlistStatus) {
+      if (!item.varient_id && !item.variant_id) {
+        throw new Error('Variant ID is missing');
+      }
+      const result = await dispatch(
+        addToWishlist({
+          user_id,
+          product_id: productId,
+          varient_id: item.varient_id || item.variant_id,
+        })
+      ).unwrap();
+      dispatch(
+        updateRecommendedProductWishlist({
+          product_id: productId,
+          wishlist_flag: true,
+          wishlist_id: result.wishlist_id,
+        })
+      );
+    } else {
+      if (!item.wishlist_id) throw new Error('Wishlist ID is missing');
+      await dispatch(removeFromWishlist({ wishlist_id: item.wishlist_id })).unwrap();
+      dispatch(
+        updateRecommendedProductWishlist({
+          product_id: productId,
+          wishlist_flag: false,
+          wishlist_id: null,
+        })
+      );
+    }
+    // Optional: Refetch to ensure consistency
+    dispatch(fetchRecommendedProducts({ user_id, subcategory_id: product.subcategory_id }));
+  } catch (error) {
+    // Revert optimistic update
+    dispatch(
+      updateRecommendedProductWishlist({
+        product_id: productId,
+        wishlist_flag: !newWishlistStatus,
+        wishlist_id: item.wishlist_id,
+      })
+    );
+    console.error('Recommended Wishlist error:', error);
+    const errorMessage = typeof error === 'string' ? error : error.message || JSON.stringify(error);
+    Alert.alert('Error', errorMessage || 'Wishlist action failed');
+  } finally {
+    setRecommendedWishlistLoading((prev) => ({ ...prev, [productId]: false }));
+  }
+};
+
+//////// till here recommonded product wish list managment in redux store 
+
+
+
+
+
+
+
+
+
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+  SafeAreaView,
+  StatusBar,
+  ActivityIndicator,
+  Alert,
+} from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {
+  responsiveWidth,
+  responsiveHeight,
+  responsiveFontSize,
+} from 'react-native-responsive-dimensions';
+import commonstyles from '../commonstyles/commonstyles';
+import { TextInput } from 'react-native-gesture-handler';
+import ProductCard from '../components/ProductCard';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  fetchProductDetails,
+  fetchRecommendedProducts,
+  fetchSubcategories,
+} from '../redux/slices/categorySlice';
+import { addToWishlist, removeFromWishlist, toggleWishlistItem } from '../redux/slices/wishlistSlice';
+import { useRoute } from '@react-navigation/native';
+
+const { width } = Dimensions.get('window');
+
+const ProductDetailsScreen = ({ navigation }) => {
+  const route = useRoute();
+  const dispatch = useDispatch();
+  const { user_id, product_id } = route.params;
+  const product = useSelector((state) => state.category.productDetails);
+  const recommendedProducts = useSelector((state) => state.category.recommendedProducts);
+  const subcategories = useSelector((state) => state.category.subcategories);
+  const loading = useSelector((state) => state.category.productDetailsLoading);
+  const recommendedLoading = useSelector((state) => state.category.recommendedProductsLoading);
+  const subLoading = useSelector((state) => state.category.subLoading);
+  const subError = useSelector((state) => state.category.subError);
+  const wishlistLoading = useSelector((state) => state.wishlist.loading);
+  const wishlistError = useSelector((state) => state.wishlist.error);
+  const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
+  const [selectedSizeId, setSelectedSizeId] = useState(null);
+  const [isWishlisted, setIsWishlisted] = useState(false);
+  const [wishlistId, setWishlistId] = useState(null);
+  // Local state for recommended products to handle UI updates
+  const [localRecommendedProducts, setLocalRecommendedProducts] = useState([]);
+  // Track wishlist loading states for recommended products
+  const [recommendedWishlistLoading, setRecommendedWishlistLoading] = useState({});
+  const insets = useSafeAreaInsets();
+  // Sync localRecommendedProducts with Redux recommendedProducts
+  useEffect(() => {
+    setLocalRecommendedProducts(recommendedProducts);
+  }, [recommendedProducts]);
+  useEffect(() => {
+    dispatch(fetchProductDetails({ user_id, product_id }));
+  }, [user_id, product_id, dispatch]);
+
+  useEffect(() => {
+    if (product?.subcategory_id) {
+      dispatch(fetchRecommendedProducts({ user_id, subcategory_id: product.subcategory_id ,product_id}));
+    } else if (product?.category_id) {
+      dispatch(fetchSubcategories(product.category_id));
+    }
+  }, [product, user_id, dispatch]);
+
+  useEffect(() => {
+    if (subcategories.length > 0 && !product?.subcategory_id && product?.subcategory_name) {
+      const subcategory = subcategories.find(
+        (sub) => sub.sub_category_name === product.subcategory_name
+      );
+      if (subcategory?.id) {
+        dispatch(fetchRecommendedProducts({ user_id, subcategory_id: subcategory.id }));
+      }
+    }
+  }, [subcategories, product, user_id, dispatch]);
+
+  useEffect(() => {
+    if (product?.variants?.length > 0) {
+      const defaultSizeId = product.variants[0].sizes?.[0]?.size_id;
+      setSelectedSizeId(defaultSizeId);
+      setIsWishlisted(product.variants[0].is_wishlisted || false);
+      setWishlistId(product.variants[0].wishlist_id || null);
+    }
+  }, [product]);
+
+  const handleVariantChange = (index) => {
+    setSelectedVariantIndex(index);
+    const variant = product.variants[index];
+    setSelectedSizeId(variant.sizes[0]?.size_id || null);
+    setIsWishlisted(variant.is_wishlisted || false);
+    setWishlistId(variant.wishlist_id || null);
+  };
+
+  const toggleWishlist = async () => {
+    if (wishlistLoading) return;
+    const variant = product.variants[selectedVariantIndex];
+    const newWishlistStatus = !isWishlisted;
+    setIsWishlisted(newWishlistStatus);
+    dispatch(toggleWishlistItem(true));
+
+    try {
+      if (newWishlistStatus) {
+        const result = await dispatch(
+          addToWishlist({ user_id, product_id, varient_id: variant.variant_id })
+        ).unwrap();
+        setWishlistId(result.wishlist_id);
+        product.variants[selectedVariantIndex].is_wishlisted = true;
+        product.variants[selectedVariantIndex].wishlist_id = result.wishlist_id;
+      } else {
+        if (!wishlistId) throw new Error('Wishlist ID is missing');
+        await dispatch(removeFromWishlist({ wishlist_id: wishlistId })).unwrap();
+        setWishlistId(null);
+        product.variants[selectedVariantIndex].is_wishlisted = false;
+        product.variants[selectedVariantIndex].wishlist_id = null;
+      }
+    } catch (error) {
+      setIsWishlisted(!newWishlistStatus);
+      console.error('Wishlist error:', error);
+      const errorMessage = typeof error === 'string' ? error : error.message || JSON.stringify(error);
+      Alert.alert('Error', errorMessage || 'Wishlist action failed');
+    } finally {
+      dispatch(toggleWishlistItem(false));
+    }
+  };
+
+  const handleRecommendedWishlistToggle = async (item) => {
+    const productId = item.product_id;
+    if (recommendedWishlistLoading[productId]) return;
+
+    // Set loading state
+    setRecommendedWishlistLoading((prev) => ({ ...prev, [productId]: true }));
+    const newWishlistStatus = !item.wishlist_flag;
+
+    // Optimistic update
+    setLocalRecommendedProducts((prev) =>
+      prev.map((prod) =>
+        prod.product_id === productId
+          ? { ...prod, wishlist_flag: newWishlistStatus, wishlist_id: newWishlistStatus ? prod.wishlist_id : null }
+          : prod
+      )
+    );
+
+    try {
+      if (newWishlistStatus) {
+        // Add to wishlist
+        if (!item.varient_id && !item.variant_id) {
+          throw new Error('Variant ID is missing');
+        }
+        const result = await dispatch(
+          addToWishlist({
+            user_id,
+            product_id: productId,
+            varient_id: item.varient_id || item.variant_id,
+          })
+        ).unwrap();
+        // Update local state with wishlist_id
+        setLocalRecommendedProducts((prev) =>
+          prev.map((prod) =>
+            prod.product_id === productId
+              ? { ...prod, wishlist_flag: true, wishlist_id: result.wishlist_id }
+              : prod
+          )
+        );
+        // Optionally refetch to ensure consistency
+        dispatch(fetchRecommendedProducts({ user_id, subcategory_id: product.subcategory_id }));
+      } else {
+        // Remove from wishlist
+        if (!item.wishlist_id) throw new Error('Wishlist ID is missing');
+        await dispatch(removeFromWishlist({ wishlist_id: item.wishlist_id })).unwrap();
+        // Update local state
+        setLocalRecommendedProducts((prev) =>
+          prev.map((prod) =>
+            prod.product_id === productId
+              ? { ...prod, wishlist_flag: false, wishlist_id: null }
+              : prod
+          )
+        );
+        // Optionally refetch to ensure consistency
+        dispatch(fetchRecommendedProducts({ user_id, subcategory_id: product.subcategory_id }));
+      }
+    } catch (error) {
+      // Revert optimistic update
+      setLocalRecommendedProducts((prev) =>
+        prev.map((prod) =>
+          prod.product_id === productId
+            ? { ...prod, wishlist_flag: !newWishlistStatus, wishlist_id: item.wishlist_id }
+            : prod
+        )
+      );
+      console.error('Recommended Wishlist error:', error);
+      const errorMessage = typeof error === 'string' ? error : error.message || JSON.stringify(error);
+      Alert.alert('Error', errorMessage || 'Wishlist action failed');
+    } finally {
+      setRecommendedWishlistLoading((prev) => ({ ...prev, [productId]: false }));
+    }
+  };
+
+  const handleAddToBag = () => {
+    navigation.navigate('Cart');
+  };
+
+  if (loading || !product || !product.variants) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
+        <View style={styles.loaderContainer}>
+          <ActivityIndicator size="large" color="#000" />
+          <Text>Loading product details...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  const selectedVariant = product.variants[selectedVariantIndex];
+  const selectedSize = selectedVariant.sizes.find((s) => s.size_id === selectedSizeId);
+  const salePrice = selectedSize
+    ? parseInt(selectedSize.size_price)
+    : parseInt(product.variants[0].sizes[0].size_price);
+  const mrp = salePrice + 200;
+
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={{
+          paddingBottom: insets.bottom + responsiveHeight(8),
+        }}
+      >
+        {/* Top Image */}
+        <View style={{ position: 'relative' }}>
+          <Image
+            source={{ uri: selectedVariant.variant_image }}
+            style={{ width: '100%', height: 450, resizeMode: 'cover' }}
+          />
+          <View style={styles.topOverlay}>
+            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconButton}>
+              <Ionicons name="arrow-back" size={20} color="#000" />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={toggleWishlist} style={styles.iconButton} disabled={!!wishlistLoading}>
+              {wishlistLoading ? (
+                <ActivityIndicator size="small" color="#000" />
+              ) : (
+                <Ionicons
+                  name={isWishlisted ? 'heart' : 'heart-outline'}
+                  size={20}
+                  color={isWishlisted ? 'red' : '#000'}
+                />
+              )}
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Product Info */}
+        <View style={{ padding: 10, backgroundColor: '#fff' }}>
+          <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#000' }}>{product.brand_name}</Text>
+          <Text style={{ fontSize: 15, color: '#333', marginVertical: 4 }}>{product.product_name}</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#000' }}>₹{salePrice}</Text>
+            <Text style={{ fontSize: 14, textDecorationLine: 'line-through', color: '#999' }}>
+              ₹{mrp}
+            </Text>
+          </View>
+        </View>
+
+        {/* Variant Images */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.imageScrollContainer}
+        >
+          {product.variants.map((variant, index) => (
+            <TouchableOpacity
+              key={variant.variant_id}
+              onPress={() => handleVariantChange(index)}
+            >
+              <Image
+                source={{ uri: variant.variant_image }}
+                style={[
+                  styles.productImage,
+                  selectedVariantIndex === index && styles.selectedVariantImage,
+                ]}
+                resizeMode="contain"
+              />
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+
+        {/* Sizes Section */}
+        <View style={styles.infoSection}>
+          <View style={styles.sizeHeader}>
+            <Text style={styles.sizeHeaderText}>
+              Select Size: {selectedSize?.size_name || selectedVariant.sizes[0]?.size_name}
+            </Text>
+            <Text style={styles.sizeGuide}>SIZE GUIDE</Text>
+          </View>
+          <View style={styles.sizeRow}>
+            {selectedVariant.sizes?.map((size) => (
+              <View key={size.size_id} style={{ alignItems: 'center' }}>
+                <TouchableOpacity
+                  style={[
+                    styles.sizeBox,
+                    selectedSizeId === size.size_id && styles.selectedSizeBox,
+                    size.size_name === 'L' && selectedSizeId !== size.size_id && styles.lowStockBox,
+                  ]}
+                  onPress={() => setSelectedSizeId(size.size_id)}
+                >
+                  <Text
+                    style={[
+                      styles.sizeText,
+                      selectedSizeId === size.size_id && styles.selectedSizeText,
+                    ]}
+                  >
+                    {size.size_name}
+                  </Text>
+                </TouchableOpacity>
+                {size.size_name === 'L' && <Text style={styles.lowStockText}>2 left</Text>}
+              </View>
+            ))}
+          </View>
+        </View>
+
+        {/* Pincode Check Section */}
+        <View style={{ padding: 16, backgroundColor: '#fff' }}>
+          <View style={[commonstyles.row, { gap: 5, justifyContent: 'flex-start' }]}>
+            <Ionicons name="location-outline" size={24} color="#000" />
+            <Text style={{ fontSize: 14, color: '#333' }}>
+              Check your pincode before placing the order.
+            </Text>
+          </View>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginTop: 8,
+              borderBottomWidth: 1,
+              borderBottomColor: '#ccc',
+              paddingBottom: 4,
+            }}
+          >
+            <TextInput
+              style={{ flex: 1, fontSize: 14, color: '#333' }}
+              placeholder="Enter Pin code"
+              placeholderTextColor="#000"
+              keyboardType="numeric"
+            />
+            <TouchableOpacity
+              style={{
+                backgroundColor: '#2c2c60',
+                paddingHorizontal: 12,
+                paddingVertical: 6,
+                borderRadius: 4,
+              }}
+            >
+              <Text style={{ color: '#fff', fontSize: 14 }}>Check</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Info Cards */}
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-around',
+            paddingVertical: 16,
+            backgroundColor: '#fff',
+          }}
+        >
+          <View
+            style={{
+              alignItems: 'center',
+              flex: 1,
+              borderWidth: 1,
+              borderColor: '#ddd',
+              marginHorizontal: 4,
+              padding: 8,
+              borderRadius: 6,
+            }}
+          >
+            <Image source={require('../assets/secure.png')} style={{ width: 30, height: 30 }} />
+            <Text style={{ fontWeight: '600', textAlign: 'center' }}>Secure payments</Text>
+            <Text style={{ fontSize: 12, textAlign: 'center', color: '#666' }}>
+              Your transactions are safe with us
+            </Text>
+          </View>
+          <View
+            style={{
+              alignItems: 'center',
+              flex: 1,
+              borderWidth: 1,
+              borderColor: '#ddd',
+              marginHorizontal: 4,
+              padding: 8,
+              borderRadius: 6,
+            }}
+          >
+            <Image source={require('../assets/genuine.png')} style={{ width: 30, height: 30 }} />
+            <Text style={{ fontWeight: '600', marginTop: 4, textAlign: 'center' }}>
+              Genuine Products
+            </Text>
+            <Text style={{ fontSize: 12, textAlign: 'center', color: '#666' }}>
+              100% authentic, quality checked
+            </Text>
+          </View>
+          <View
+            style={{
+              alignItems: 'center',
+              flex: 1,
+              borderWidth: 1,
+              borderColor: '#ddd',
+              marginHorizontal: 4,
+              padding: 8,
+              borderRadius: 6,
+            }}
+          >
+            <Image source={require('../assets/return.png')} style={{ width: 30, height: 30 }} />
+            <Text style={{ fontWeight: '600', marginTop: 4 }}>7 Days Return</Text>
+            <Text style={{ fontSize: 12, textAlign: 'center', color: '#666' }}>
+              Easy returns within 7 days
+            </Text>
+          </View>
+        </View>
+
+        {/* Product Description */}
+        <View style={{ padding: 16, backgroundColor: '#fff' }}>
+          <Text style={{ fontWeight: '700', fontSize: 16, color: '#000' }}>
+            Product Description:
+          </Text>
+          <Text style={{ fontSize: 13, color: '#444', marginTop: 4 }}>
+            {product.product_description}
+          </Text>
+        </View>
+
+        {/* Manufactured By */}
+        <View style={{ padding: 16, backgroundColor: '#fff' }}>
+          <Text style={{ fontWeight: '700', fontSize: 16, color: '#000' }}>
+            Manufactured By:
+          </Text>
+          <Text style={{ fontSize: 13, color: '#444', marginTop: 4 }}>
+            {product.manufactured_by}
+          </Text>
+        </View>
+
+        {/* Recommended Products Horizontal List */}
+        <View style={{ paddingVertical: 10, backgroundColor: '#fff' }}>
+          <Text
+            style={{
+              fontWeight: '700',
+              fontSize: 16,
+              color: '#000',
+              paddingHorizontal: 10,
+              marginBottom: 8,
+            }}
+          >
+            You may also like
+          </Text>
+          {recommendedLoading ? (
+            <View style={styles.loaderContainer}>
+              <ActivityIndicator size="small" color="#000" />
+              <Text>Loading recommended products...</Text>
+            </View>
+          ) : localRecommendedProducts.length > 0 ? (
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingHorizontal: 10, gap: 8 }}
+            >
+              {localRecommendedProducts.map((item) => (
+                <View style={{ width: responsiveWidth(45) }} key={item.product_id}>
+                  <ProductCard
+                    image={{ uri: item.image }}
+                    title={item.product_name}
+                    brand={item.brand_name}
+                    salePrice={parseInt(item.product_price)}
+                    badge={item.wishlist_flag ? 'Wishlisted' : null}
+                    isWishlisted={item.wishlist_flag}
+                    isLoading={recommendedWishlistLoading[item.product_id] || false}
+                    onPress={() =>
+                      navigation.navigate('ProductDetailsScreen', {
+                        user_id,
+                        product_id: item.product_id,
+                        subcategory_id: item.subcategory_id,
+                      })
+                    }
+                    onWishlistPress={() => handleRecommendedWishlistToggle(item)}
+                  />
+                </View>
+              ))}
+            </ScrollView>
+          ) : (
+            <Text style={{ paddingHorizontal: 16, color: '#666' }}>
+              No recommended products available.
+            </Text>
+          )}
+        </View>
+      </ScrollView>
+
+      {/* Footer */}
+      <View style={[styles.footer, { paddingBottom: insets.bottom + responsiveHeight(2) }]}>
+        <TouchableOpacity style={styles.button} onPress={handleAddToBag}>
+          <Text style={styles.buttontext}>Add To Bag</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  safeArea: { flex: 1, backgroundColor: '#fff' },
+  container: { flex: 1, backgroundColor: '#fff' },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  infoSection: { padding: responsiveWidth(4) },
+  imageScrollContainer: {
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    gap: 10,
+  },
+  productImage: {
+    width: 72,
+    height: 96,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    aspectRatio: 3.2 / 4,
+  },
+  selectedVariantImage: {
+    borderColor: '#2c2c60',
+    borderWidth: 2,
+  },
+  sizeHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  sizeHeaderText: {
+    fontSize: 14,
+    color: '#333',
+    fontWeight: '500',
+  },
+  sizeGuide: {
+    fontSize: 12,
+    color: '#666',
+    textDecorationLine: 'underline',
+  },
+  sizeRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+    marginTop: 8,
+  },
+  sizeBox: {
+    width: 40,
+    height: 40,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  selectedSizeBox: {
+    backgroundColor: '#2c2c60',
+    borderColor: '#2c2c60',
+  },
+  selectedSizeText: {
+    color: '#fff',
+  },
+  lowStockBox: {
+    borderColor: 'red',
+  },
+  sizeText: {
+    fontSize: 14,
+    color: '#333',
+  },
+  lowStockText: {
+    fontSize: 10,
+    color: 'red',
+    marginTop: 2,
+  },
+  topOverlay: {
+    position: 'absolute',
+    top: 50,
+    left: 16,
+    right: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    zIndex: 2,
+  },
+  iconButton: {
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 8,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  footer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#fff',
+    padding: responsiveWidth(4),
+    borderTopColor: '#333',
+    alignItems: 'center',
+  },
+  button: {
+    backgroundColor: '#262757',
+    width: '100%',
+    padding: 10,
+    borderRadius: 6,
+  },
+  buttontext: {
+    fontSize: 14,
+    color: '#fff',
+    alignSelf: 'center',
+    fontWeight: '700',
+  },
+});
+
+export default ProductDetailsScreen;
+
+
+
+//cart code 
+
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+  SafeAreaView,
+  StatusBar,
+  ActivityIndicator,
+  Alert,
+} from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {
+  responsiveWidth,
+  responsiveHeight,
+  responsiveFontSize,
+} from 'react-native-responsive-dimensions';
+import commonstyles from '../commonstyles/commonstyles';
+import { TextInput } from 'react-native-gesture-handler';
+import ProductCard from '../components/ProductCard';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  fetchProductDetails,
+  fetchRecommendedProducts,
+  fetchSubcategories,
+} from '../redux/slices/categorySlice';
+import { addToWishlist, removeFromWishlist, toggleWishlistItem } from '../redux/slices/wishlistSlice';
+import { addToCart, clearError, resetLastAddedItem } from '../redux/slices/cartSlice';
+import { useRoute } from '@react-navigation/native';
+
+const { width } = Dimensions.get('window');
+
+const ProductDetailsScreen = ({ navigation }) => {
+  const route = useRoute();
+  const dispatch = useDispatch();
+  const { user_id, product_id } = route.params;
+  const product = useSelector((state) => state.category.productDetails);
+  const recommendedProducts = useSelector((state) => state.category.recommendedProducts);
+  const subcategories = useSelector((state) => state.category.subcategories);
+  const loading = useSelector((state) => state.category.productDetailsLoading);
+  const recommendedLoading = useSelector((state) => state.category.recommendedProductsLoading);
+  const subLoading = useSelector((state) => state.category.subLoading);
+  const subError = useSelector((state) => state.category.subError);
+  const wishlistLoading = useSelector((state) => state.wishlist.loading);
+  const wishlistError = useSelector((state) => state.wishlist.error);
+  const cartLoading = useSelector((state) => state.cart?.loading || false);
+  const cartError = useSelector((state) => state.cart?.error || null);
+  // Move useSelector to top level for debugging
+  const reduxState = useSelector((state) => state);
+  const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
+  const [selectedSizeId, setSelectedSizeId] = useState(null);
+  const [isWishlisted, setIsWishlisted] = useState(false);
+  const [wishlistId, setWishlistId] = useState(null);
+  const [localRecommendedProducts, setLocalRecommendedProducts] = useState([]);
+  const [recommendedWishlistLoading, setRecommendedWishlistLoading] = useState({});
+
+  const insets = useSafeAreaInsets();
+
+  // Log Redux state for debugging
+  useEffect(() => {
+    console.log('Redux State:', reduxState);
+  }, [reduxState]);
+
+  // Sync localRecommendedProducts with Redux recommendedProducts
+  useEffect(() => {
+    setLocalRecommendedProducts(recommendedProducts);
+  }, [recommendedProducts]);
+
+  useEffect(() => {
+    dispatch(fetchProductDetails({ user_id, product_id }));
+  }, [user_id, product_id, dispatch]);
+
+  useEffect(() => {
+    if (product?.subcategory_id) {
+      dispatch(fetchRecommendedProducts({ user_id, subcategory_id: product.subcategory_id, product_id }));
+    } else if (product?.category_id) {
+      dispatch(fetchSubcategories(product.category_id));
+    }
+  }, [product, user_id, dispatch]);
+
+  useEffect(() => {
+    if (subcategories.length > 0 && !product?.subcategory_id && product?.subcategory_name) {
+      const subcategory = subcategories.find(
+        (sub) => sub.sub_category_name === product.subcategory_name
+      );
+      if (subcategory?.id) {
+        dispatch(fetchRecommendedProducts({ user_id, subcategory_id: subcategory.id }));
+      }
+    }
+  }, [subcategories, product, user_id, dispatch]);
+
+  useEffect(() => {
+    if (product?.variants?.length > 0) {
+      const defaultSizeId = product.variants[0].sizes?.[0]?.size_id;
+      setSelectedSizeId(defaultSizeId);
+      setIsWishlisted(product.variants[0].is_wishlisted || false);
+      setWishlistId(product.variants[0].wishlist_id || null);
+    }
+  }, [product]);
+
+  // Handle cart error
+  useEffect(() => {
+    if (cartError) {
+      Alert.alert('Error', cartError || 'Failed to add to cart');
+      dispatch(clearError());
+    }
+  }, [cartError, dispatch]);
+
+  const handleVariantChange = (index) => {
+    setSelectedVariantIndex(index);
+    const variant = product.variants[index];
+    setSelectedSizeId(variant.sizes[0]?.size_id || null);
+    setIsWishlisted(variant.is_wishlisted || false);
+    setWishlistId(variant.wishlist_id || null);
+  };
+
+  const toggleWishlist = async () => {
+    if (wishlistLoading) return;
+    const variant = product.variants[selectedVariantIndex];
+    const newWishlistStatus = !isWishlisted;
+    setIsWishlisted(newWishlistStatus);
+    dispatch(toggleWishlistItem(true));
+
+    try {
+      if (newWishlistStatus) {
+        const result = await dispatch(
+          addToWishlist({ user_id, product_id, varient_id: variant.variant_id })
+        ).unwrap();
+        setWishlistId(result.wishlist_id);
+        product.variants[selectedVariantIndex].is_wishlisted = true;
+        product.variants[selectedVariantIndex].wishlist_id = result.wishlist_id;
+      } else {
+        if (!wishlistId) throw new Error('Wishlist ID is missing');
+        await dispatch(removeFromWishlist({ wishlist_id: wishlistId })).unwrap();
+        setWishlistId(null);
+        product.variants[selectedVariantIndex].is_wishlisted = false;
+        product.variants[selectedVariantIndex].wishlist_id = null;
+      }
+    } catch (error) {
+      setIsWishlisted(!newWishlistStatus);
+      console.error('Wishlist error:', error);
+      const errorMessage = typeof error === 'string' ? error : error.message || JSON.stringify(error);
+      Alert.alert('Error', errorMessage || 'Wishlist action failed');
+    } finally {
+      dispatch(toggleWishlistItem(false));
+    }
+  };
+
+  const handleRecommendedWishlistToggle = async (item) => {
+    const productId = item.product_id;
+    if (recommendedWishlistLoading[productId]) return;
+
+    setRecommendedWishlistLoading((prev) => ({ ...prev, [productId]: true }));
+    const newWishlistStatus = !item.wishlist_flag;
+
+    setLocalRecommendedProducts((prev) =>
+      prev.map((prod) =>
+        prod.product_id === productId
+          ? { ...prod, wishlist_flag: newWishlistStatus, wishlist_id: newWishlistStatus ? prod.wishlist_id : null }
+          : prod
+      )
+    );
+
+    try {
+      if (newWishlistStatus) {
+        if (!item.varient_id && !item.variant_id) {
+          throw new Error('Variant ID is missing');
+        }
+        const result = await dispatch(
+          addToWishlist({
+            user_id,
+            product_id: productId,
+            varient_id: item.varient_id || item.variant_id,
+          })
+        ).unwrap();
+        setLocalRecommendedProducts((prev) =>
+          prev.map((prod) =>
+            prod.product_id === productId
+              ? { ...prod, wishlist_flag: true, wishlist_id: result.wishlist_id }
+              : prod
+          )
+        );
+        dispatch(fetchRecommendedProducts({ user_id, subcategory_id: product.subcategory_id }));
+      } else {
+        if (!item.wishlist_id) throw new Error('Wishlist ID is missing');
+        await dispatch(removeFromWishlist({ wishlist_id: item.wishlist_id })).unwrap();
+        setLocalRecommendedProducts((prev) =>
+          prev.map((prod) =>
+            prod.product_id === productId
+              ? { ...prod, wishlist_flag: false, wishlist_id: null }
+              : prod
+          )
+        );
+        dispatch(fetchRecommendedProducts({ user_id, subcategory_id: product.subcategory_id }));
+      }
+    } catch (error) {
+      setLocalRecommendedProducts((prev) =>
+        prev.map((prod) =>
+          prod.product_id === productId
+            ? { ...prod, wishlist_flag: !newWishlistStatus, wishlist_id: item.wishlist_id }
+            : prod
+        )
+      );
+      console.error('Recommended Wishlist error:', error);
+      const errorMessage = typeof error === 'string' ? error : error.message || JSON.stringify(error);
+      Alert.alert('Error', errorMessage || 'Wishlist action failed');
+    } finally {
+      setRecommendedWishlistLoading((prev) => ({ ...prev, [productId]: false }));
+    }
+  };
+
+  const handleAddToBag = async () => {
+    if (cartLoading) return;
+
+    const selectedVariant = product.variants[selectedVariantIndex];
+    if (!selectedSizeId) {
+      Alert.alert('Error', 'Please select a size');
+      return;
+    }
+
+    const payload = {
+      user_id: user_id,
+      product_id: product.product_id,
+      varient_id: selectedVariant.variant_id,
+      varient_size_id: selectedSizeId,
+      product_name: product.product_name,
+      brand_name: product.brand_name,
+      product_color: selectedVariant.color_name,
+      product_image: selectedVariant.variant_image || null,
+    };
+
+    console.log('Add to Cart Payload:', payload);
+
+    try {
+      const result = await dispatch(addToCart(payload)).unwrap();
+      Alert.alert('Success', 'Item added to cart successfully', [
+        {
+          text: 'Go to Cart',
+          onPress: () => navigation.navigate('Cart'),
+        },
+        { text: 'Continue Shopping', style: 'cancel' },
+      ]);
+      dispatch(resetLastAddedItem());
+    } catch (error) {
+      console.error('Add to cart error:', error);
+    }
+  };
+
+  if (loading || !product || !product.variants) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <StatusBar backgroundColor="transparent" barStyle="dark-content" />
+        <View style={styles.loaderContainer}>
+          <ActivityIndicator size="large" color="#000" />
+          <Text>Loading product details...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  const selectedVariant = product.variants[selectedVariantIndex];
+  const selectedSize = selectedVariant.sizes.find((s) => s.size_id === selectedSizeId);
+  const salePrice = selectedSize
+    ? parseInt(selectedSize.size_price)
+    : parseInt(product.variants[0].sizes?.[0]?.size_price);
+  const mrp = salePrice + 200;
+
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar backgroundColor="transparent" />
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={{
+          paddingBottom: insets.bottom + responsiveHeight(10),
+        }}
+      >
+        {/* Top Image */}
+        <View style={{ position: 'relative' }}>
+          <Image
+            source={{ uri: selectedVariant.variant_image }}
+            style={{ width: '100%', height: 450, resizeMode: 'contain' }}
+          />
+          <View style={styles.topOverlay}>
+            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.overlayButton}>
+              <Ionicons name="arrow-back" size={20} color="black" />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={toggleWishlist} style={styles.overlayButton} disabled={!!wishlistLoading}>
+              {wishlistLoading ? (
+                <ActivityIndicator size="small" color="#666" />
+              ) : (
+                <Ionicons
+                  name={isWishlisted ? 'heart' : 'heart-outline'}
+                  size={20}
+                  color={isWishlisted ? 'red' : 'black'}
+                />
+              )}
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Product Info */}
+        <View style={{ padding: 10, backgroundColor: '#fff' }}>
+          <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#000' }}>{product.brand_name}</Text>
+          <Text style={{ fontSize: 15, color: '#333', marginVertical: 4 }}>{product.product_name}</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#000' }}>₹{salePrice}</Text>
+            <Text style={{ fontSize: 14, textDecorationLine: 'line-through', color: '#999' }}>
+              ₹{mrp}
+            </Text>
+          </View>
+        </View>
+
+        {/* Variant Images */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.imageScrollContainer}
+        >
+          {product.variants.map((variant, index) => (
+            <TouchableOpacity
+              key={variant.variant_id}
+              onPress={() => handleVariantChange(index)}
+            >
+              <Image
+                source={{ uri: variant.variant_image }}
+                style={[
+                  styles.productImage,
+                  selectedVariantIndex === index && styles.selectedVariantImage,
+                ]}
+                resizeMode="contain"
+              />
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+
+        {/* Sizes Section */}
+        <View style={styles.infoSection}>
+          <View style={styles.sizeHeader}>
+            <Text style={styles.sizeHeaderText}>
+              Select Size: {selectedSize?.size_name || selectedVariant.sizes[0]?.size_name}
+            </Text>
+            <Text style={styles.sizeGuide}>SIZE GUIDE</Text>
+          </View>
+          <View style={styles.sizeRow}>
+            {selectedVariant.sizes?.map((size) => (
+              <View key={size.size_id} style={{ alignItems: 'center' }}>
+                <TouchableOpacity
+                  style={[
+                    styles.sizeBox,
+                    selectedSizeId === size.size_id && styles.selectedSizeBox,
+                    size.size_name === 'L' && selectedSizeId !== size.size_id && styles.lowStockBox,
+                  ]}
+                  onPress={() => setSelectedSizeId(size.size_id)}
+                >
+                  <Text
+                    style={[
+                      styles.sizeText,
+                      selectedSizeId === size.size_id && styles.selectedSizeText,
+                    ]}
+                  >
+                    {size.size_name}
+                  </Text>
+                </TouchableOpacity>
+                {size.size_name === 'L' && <Text style={styles.lowStockText}>2 left</Text>}
+              </View>
+            ))}
+          </View>
+        </View>
+
+        {/* Pincode Check Section */}
+        <View style={{ padding: 16, backgroundColor: '#fff' }}>
+          <View style={[commonstyles.row, { gap: 5, justifyContent: 'flex-start' }]}>
+            <Ionicons name="location-outline" size={24} color="#000" />
+            <Text style={{ fontSize: 14, color: '#333' }}>
+              Check your pincode before placing the order.
+            </Text>
+          </View>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginTop: 8,
+              borderBottomWidth: 1,
+              borderBottomColor: '#ccc',
+              paddingBottom: 4,
+            }}
+          >
+            <TextInput
+              style={{ flex: 1, fontSize: 14, color: '#333' }}
+              placeholder="Enter Pin code"
+              placeholderTextColor="#999"
+              keyboardType="numeric"
+            />
+            <TouchableOpacity
+              style={{
+                backgroundColor: '#2c2c60',
+                paddingHorizontal: 12,
+                paddingVertical: 6,
+                borderRadius: 4,
+              }}
+            >
+              <Text style={{ color: '#fff', fontSize: 14 }}>Check</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Info Cards */}
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-around',
+            paddingVertical: 16,
+            backgroundColor: '#fff',
+          }}
+        >
+          <View
+            style={{
+              alignItems: 'center',
+              flex: 1,
+              borderWidth: 1,
+              borderColor: '#ddd',
+              marginHorizontal: 4,
+              padding: 8,
+              borderRadius: 6,
+            }}
+          >
+            <Image source={require('../assets/secure.png')} style={{ width: 30, height: 30 }} />
+            <Text style={{ fontWeight: '600', textAlign: 'center' }}>Secure payments</Text>
+            <Text style={{ fontSize: 12, textAlign: 'center', color: '#666' }}>
+              Your transactions are safe with us
+            </Text>
+          </View>
+          <View
+            style={{
+              alignItems: 'center',
+              flex: 1,
+              borderWidth: 1,
+              borderColor: '#ddd',
+              marginHorizontal: 4,
+              padding: 8,
+              borderRadius: 6,
+            }}
+          >
+            <Image source={require('../assets/genuine.png')} style={{ width: 30, height: 30 }} />
+            <Text style={{ fontWeight: '600', marginTop: 4, textAlign: 'center' }}>
+              Genuine Products
+            </Text>
+            <Text style={{ fontSize: 12, textAlign: 'center', color: '#666' }}>
+              100% authentic, quality checked
+            </Text>
+          </View>
+          <View
+            style={{
+              alignItems: 'center',
+              flex: 1,
+              borderWidth: 1,
+              borderColor: '#ddd',
+              marginHorizontal: 4,
+              padding: 8,
+              borderRadius: 6,
+            }}
+          >
+            <Image source={require('../assets/return.png')} style={{ width: 30, height: 30 }} />
+            <Text style={{ fontWeight: '600', marginTop: 4 }}>7 Days Return</Text>
+            <Text style={{ fontSize: 12, textAlign: 'center', color: '#666' }}>
+              Easy returns within 7 days
+            </Text>
+          </View>
+        </View>
+
+        {/* Product Description */}
+        <View style={{ padding: 16, backgroundColor: '#fff' }}>
+          <Text style={{ fontWeight: '700', fontSize: 16, color: '#000' }}>
+            Product Description:
+          </Text>
+          <Text style={{ fontSize: 13, color: '#444', marginTop: 4 }}>
+            {product.product_description}
+          </Text>
+        </View>
+
+        {/* Manufactured By */}
+        <View style={{ padding: 16, backgroundColor: '#fff' }}>
+          <Text style={{ fontWeight: '700', fontSize: 16, color: '#000' }}>
+            Manufactured By:
+          </Text>
+          <Text style={{ fontSize: 13, color: '#444', marginTop: 4 }}>
+            {product.manufactured_by}
+          </Text>
+        </View>
+
+        {/* Recommended Products Horizontal List */}
+        <View style={{ paddingVertical: 10, backgroundColor: '#fff' }}>
+          <Text
+            style={{
+              fontWeight: '700',
+              fontSize: 16,
+              color: '#000',
+              paddingHorizontal: 10,
+              marginBottom: 8,
+            }}
+          >
+            You may also like
+          </Text>
+          {recommendedLoading ? (
+            <View style={styles.loaderContainer}>
+              <ActivityIndicator size="small" color="#000" />
+              <Text>Loading recommended products...</Text>
+            </View>
+          ) : localRecommendedProducts.length > 0 ? (
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingHorizontal: 10, gap: 8 }}
+            >
+              {localRecommendedProducts.map((item) => (
+                <View style={{ width: responsiveWidth(45) }} key={item.product_id}>
+                  <ProductCard
+                    image={{ uri: item.image }}
+                    title={item.product_name}
+                    brand={item.brand_name}
+                    salePrice={parseInt(item.product_price)}
+                    badge={item.wishlist_flag ? 'Wishlisted' : null}
+                    isWishlisted={item.wishlist_flag}
+                    isLoading={recommendedWishlistLoading[item.product_id] || false}
+                    onPress={() =>
+                      navigation.navigate('ProductDetailsScreen', {
+                        user_id,
+                        product_id: item.product_id,
+                        subcategory_id: item.subcategory_id,
+                      })
+                    }
+                    onWishlistPress={() => handleRecommendedWishlistToggle(item)}
+                  />
+                </View>
+              ))}
+            </ScrollView>
+          ) : (
+            <Text style={{ paddingHorizontal: 16, color: '#666' }}>
+              No recommended products available.
+            </Text>
+          )}
+        </View>
+      </ScrollView>
+
+      {/* Footer */}
+      <View style={[styles.footer, { paddingBottom: insets.bottom + responsiveHeight(2) }]}>
+        <TouchableOpacity style={styles.button} onPress={handleAddToBag} disabled={cartLoading}>
+          {cartLoading ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : (
+            <Text style={styles.buttontext}>Add To Bag</Text>
+          )}
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  safeArea: { flex: 1, backgroundColor: '#fff' },
+  container: { flex: 1, backgroundColor: '#fff' },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  infoSection: { padding: responsiveWidth(4) },
+  imageScrollContainer: {
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    gap: 10,
+  },
+  productImage: {
+    width: 72,
+    height: 96,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    aspectRatio: 3.2 / 4,
+  },
+  selectedVariantImage: {
+    borderColor: '#2c2c60',
+    borderWidth: 2,
+  },
+  sizeHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  sizeHeaderText: {
+    fontSize: 14,
+    color: '#333',
+    fontWeight: '500',
+  },
+  sizeGuide: {
+    fontSize: 12,
+    color: '#666',
+    textDecorationLine: 'underline',
+  },
+  sizeRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+    marginTop: 8,
+  },
+  sizeBox: {
+    width: 40,
+    height: 40,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  selectedSizeBox: {
+    backgroundColor: '#2c2c60',
+    borderColor: '#2c2c60',
+  },
+  selectedSizeText: {
+    color: '#fff',
+  },
+  lowStockBox: {
+    borderColor: 'red',
+  },
+  sizeText: {
+    fontSize: 14,
+    color: '#333',
+  },
+  lowStockText: {
+    fontSize: 10,
+    color: 'red',
+    marginTop: 2,
+  },
+  topOverlay: {
+    position: 'absolute',
+    top: 50,
+    left: 16,
+    right: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    zIndex: 2,
+  },
+  overlayButton: {
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 8,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  footer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#fff',
+    padding: responsiveWidth(4),
+    borderTopWidth: 1,
+    borderTopColor: '#ddd',
+    alignItems: 'center',
+  },
+  button: {
+    backgroundColor: '#262757',
+    width: '100%',
+    padding: 12,
+    borderRadius: 6,
+  },
+  buttontext: {
+    fontSize: 14,
+    color: '#fff',
+    textAlign: 'center',
+    fontWeight: '700',
+  },
+});
+
+export default ProductDetailsScreen;

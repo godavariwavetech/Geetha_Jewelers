@@ -1,0 +1,61 @@
+  {/* Pincode Check Section */}
+        <View style={{ padding: 16, backgroundColor: '#fff' }}>
+          <View style={[commonstyles.row, { gap: 5, justifyContent: 'flex-start' }]}>
+            <Ionicons name="location-outline" size={24} color="#000" />
+            <Text style={{ fontSize: 14, color: '#333' }}>
+              Check your pincode before placing the order.
+            </Text>
+          </View>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginTop: 8,
+              borderBottomWidth: 1,
+              borderBottomColor: '#ccc',
+              paddingBottom: 4,
+            }}
+          >
+            <TextInput
+              style={{ flex: 1, fontSize: 14, color: '#333' }}
+              placeholder="Enter Pin code"
+              placeholderTextColor="#000"
+              keyboardType="numeric"
+              maxLength={6}
+              value={pincode}
+              onChangeText={handlePincodeChange}
+            />
+            <TouchableOpacity
+              style={{
+                backgroundColor: '#2c2c60',
+                paddingHorizontal: 12,
+                paddingVertical: 6,
+                borderRadius: 4,
+              }}
+              onPress={handlePincodeCheck}
+              disabled={pincodeLoading}
+            >
+              {pincodeLoading ? (
+                <ActivityIndicator size="small" color="#fff" />
+              ) : (
+                <Text style={{ color: '#fff', fontSize: 14 }}>Check</Text>
+              )}
+            </TouchableOpacity>
+          </View>
+          {pincodeMessage ? (
+            <Text
+              style={[
+                styles.pincodeMessage,
+                { color: pincodeMessage.includes('Yes') ? 'green' : 'red' },
+              ]}
+            >
+              {pincodeMessage}
+            </Text>
+          ) : null}
+          {pincodeError ? (
+            <Text style={[styles.pincodeMessage, { color: 'red' }]}>
+              Error: {pincodeError}
+            </Text>
+          ) : null}
+        </View>
+        // product details page lo pin code checking process 

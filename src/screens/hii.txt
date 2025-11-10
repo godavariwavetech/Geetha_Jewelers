@@ -1,0 +1,397 @@
+import React, { useState, useRef } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  Dimensions,
+  FlatList,
+  SafeAreaView,
+  Modal,
+  Linking,
+  ScrollView,
+} from 'react-native';
+import MapView, { Marker, Callout } from 'react-native-maps';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';const { width, height } = Dimensions.get('window');const locations = [
+  {
+    id: 1,
+    name: "SOWBHAGYA TOWER JN Road\nRAJAMUNDRY",
+    timing: "09:00 AM to 11:00 PM",
+    distance: "1.1 KM Away",
+    coords: { latitude: 28.629375, longitude: 77.276085 },
+    markerImg: require('../assets/uptoplogo.png'),
+    coverImg: require('../assets/uptoplogo.png'),
+    address:
+      'Grnd Flr, G-1 & 2 Sowbhagya Tower, Residential Survey No. 291, Building No.79/1/6, JN Rd, Rajamundry, 533103',
+    phone: '18001025042',
+    website: 'www.uptopcafe.com',
+  },
+  {
+    id: 2,
+    name: "Another Cafe\nCITY CENTER",
+    timing: "08:00 AM to 10:00 PM",
+    distance: "0.9 KM Away",
+    coords: { latitude: 28.629375, longitude: 77.276585 },
+    markerImg: require('../assets/uptoplogo.png'),
+    coverImg: require('../assets/uptoplogo.png'),
+    address: '12 Center Avenue, City Center, 560001',
+    phone: '180011223344',
+    website: 'www.yetanothercafe.com',
+  },
+];export default function LocationMapScreen() {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalShop, setModalShop] = useState(null);
+  const insets = useSafeAreaInsets();  // Modal open handler (from Card/Callout button)
+  const openMenuModal = (shop) => {
+    setModalShop(shop);
+    setModalVisible(true);
+  };  // Modal close handler
+  const closeMenuModal = () => {
+    setModalVisible(false);
+    setModalShop(null);
+  };  // Height for 2 full cards at bottom (based on card height + margin)
+  const BOTTOM_CARD_HEIGHT = 110 + 18 + 18;  return (
+    <SafeAreaView style={styles.container}>
+      {/* MAP */}
+      <View style={StyleSheet.absoluteFill}>
+        <MapView
+          style={StyleSheet.absoluteFill}
+          initialRegion={{
+            latitude: 28.629375,
+            longitude: 77.276085,
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.01,
+          }}
+          onMapLoaded={() => {
+            // Map loaded handler
+          }}
+        >
+          {locations.map((loc) => (
+            <Marker
+              key={loc.id}
+              coordinate={loc.coords}
+              anchor={{ x: 0.5, y: 0.5 }}
+              tracksViewChanges={true}
+            >
+              <View style={styles.markerOuter}>
+                <Image 
+                  onError={() => {
+                    console.log(">>>>>>>>>>>>>>>Error")
+                  }}
+                  onLoad={() => {
+                    console.log(">>>>>>>>>>>>>>>CALLING")
+                  }} 
+                  source={loc.markerImg} 
+                  style={styles.markerImg} 
+                />
+              </View>
+              <Callout tooltip>
+                <View style={styles.mapCard}>
+                  {loc.coverImg && (
+                    <Image style={styles.cardImg} source={loc.coverImg} />
+                  )}
+                  <Text numberOfLines={2} style={styles.cardTitle}>{loc.name}</Text>
+                  <Text style={styles.cardTime}>Timing: {loc.timing}</Text>
+                  <View style={styles.cardBtns}>
+                    <TouchableOpacity style={styles.cardBtn}>
+                      <MaterialIcons name="directions" size={16} color="#874e40" />
+                      <Text style={styles.cardBtnText}>Directions</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={[styles.cardBtn, { backgroundColor: "#371c1b" }]}
+                      onPress={() => openMenuModal(loc)}
+                    >
+                      <MaterialIcons name="menu-book" size={16} color="#fff" />
+                      <Text style={[styles.cardBtnText, { color: "#fff" }]}>Menu</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </Callout>
+            </Marker>
+          ))}
+        </MapView>
+      </View>  {/* BOTTOM SHEET with safe area insets */}
+  <View style={[
+    styles.bottomSheet, 
+    { 
+      height: BOTTOM_CARD_HEIGHT,
+      bottom: insets.bottom + 65 // Add tab bar height + safe area bottom
+    }
+  ]}>
+    <View style={styles.sheetHandle} />
+    <FlatList
+      data={locations}
+      keyExtractor={(item) => `${item.id}`}
+      renderItem={({ item }) => (
+        <View style={styles.locationCard}>
+          <Text style={styles.locationTitle}>{item.name}</Text>
+          <Text style={styles.locationTime}>
+            Timing: {item.timing} | {item.distance}
+          </Text>
+          <View style={styles.cardBtns}>
+            <TouchableOpacity style={styles.cardBtn}>
+              <MaterialIcons name="directions" size={16} color="#874e40" />
+              <Text style={styles.cardBtnText}>Directions</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.cardBtn, { backgroundColor: "#371c1b" }]}
+              onPress={() => openMenuModal(item)}
+            >
+              <MaterialIcons name="menu-book" size={16} color="#fff" />
+              <Text style={[styles.cardBtnText, { color: "#fff" }]}>Menu</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
+      horizontal={false}
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{ paddingBottom: 16 }}
+      style={{ flex: 1 }}
+    />
+  </View>
+
+  {/* MODAL FOR MENU/DETAILS */}
+  <Modal
+    visible={modalVisible}
+    animationType="slide"
+    transparent={true}
+    onRequestClose={closeMenuModal}
+  >
+    <View style={styles.modalBackdrop}>
+      <View style={[styles.modalCard, { paddingBottom: insets.bottom + 20 }]}>
+        <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
+          {/* Close button */}
+          <TouchableOpacity
+            style={styles.modalCloseBtn}
+            onPress={closeMenuModal}
+          >
+            <MaterialIcons name="close" size={28} color="#874e40" />
+          </TouchableOpacity>
+          {/* Shop headings */}
+          <Text style={styles.modalShopName}>{modalShop?.name}</Text>
+          <Text style={styles.modalShopTime}>{modalShop?.timing} | {modalShop?.distance}</Text>
+          {modalShop?.coverImg && (
+            <Image source={modalShop.coverImg} style={styles.modalImg} />
+          )}
+          {/* Details */}
+          <Text style={styles.detailsHeading}>Details</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginBottom: 5 }}>
+            <MaterialIcons name="location-on" size={20} color="#874e40" />
+            <Text style={styles.detailText}>{modalShop?.address}</Text>
+          </View>
+          {modalShop?.phone && (
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
+              <MaterialIcons name="phone" size={18} color="#874e40" />
+              <Text style={styles.detailText}>{modalShop.phone}</Text>
+            </View>
+          )}
+          {modalShop?.website && (
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+              <MaterialCommunityIcons name="web" size={18} color="#874e40" />
+              <Text
+                style={[styles.detailText, { color: "#0861d2", textDecorationLine: 'underline' }]}
+                onPress={() => Linking.openURL(`https://${modalShop.website.replace(/^(https?:\/\/)?/, '')}`)}
+              >
+                {modalShop.website}
+              </Text>
+            </View>
+          )}
+          {/* 2 Buttons */}
+          <View style={styles.modalBtnsRow}>
+            <TouchableOpacity style={styles.modalActionBtn}>
+              <MaterialIcons name="directions" size={18} color="#874e40" />
+              <Text style={styles.modalBtnText}>Directions</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.modalMenuBtn}>
+              <MaterialIcons name="menu-book" size={18} color="#fff" />
+              <Text style={styles.modalMenuBtnText}>Menu</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </View>
+    </View>
+  </Modal>
+</SafeAreaView>  );
+}const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#fff' },
+  markerOuter: {
+    width: 46,
+    height: 46,
+    borderRadius: 23,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#fcfcfc',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    marginBottom: 6
+  },
+  markerImg: { width: 38, height: 38, borderRadius: 19 },
+  mapCard: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 12,
+    minWidth: 210,
+    maxWidth: 250,
+    alignItems: 'center',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOpacity: 0.11,
+    shadowRadius: 8,
+  },
+  cardImg: { width: 98, height: 60, borderRadius: 10, marginBottom: 6, backgroundColor:'#eaeaea' },
+  cardTitle: {
+    fontWeight: '700',
+    fontSize: 13,
+    color: '#222',
+    marginTop: 4,
+    marginBottom: 2,
+    textAlign: 'center'
+  },
+  cardTime: { fontSize: 11, color: '#555', marginBottom: 7 },
+  cardBtns: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginTop: 2,
+  },
+  cardBtn: {
+    backgroundColor: '#f7eae5', padding: 6, borderRadius: 7,
+    flexDirection: 'row', alignItems: 'center', marginHorizontal: 2, flex: 1, justifyContent: 'center'
+  },
+  cardBtnText: { marginLeft: 4, color: '#874e40', fontWeight: '700', fontSize: 13 },  bottomSheet: {
+    position: 'absolute',
+    left: 0, 
+    right: 0, 
+    backgroundColor: '#fff', 
+    borderTopLeftRadius: 18, 
+    borderTopRightRadius: 18,
+    shadowColor: '#000', 
+    shadowOpacity: 0.08, 
+    shadowRadius: 12, 
+    elevation: 8,
+    paddingTop: 10, 
+    paddingHorizontal: 0,
+  },
+  sheetHandle: {
+    width: 46, height: 5, borderRadius: 3, backgroundColor: '#d7beb9',
+    alignSelf: 'center', marginBottom: 8,
+  },
+  locationCard: {
+    backgroundColor: '#fff', borderRadius: 12, marginHorizontal: 16, marginVertical: 9, padding: 12,
+    elevation: 2, shadowRadius: 5, shadowOpacity: 0.07, shadowColor: "#000"
+  },
+  locationTitle: { fontSize: 15, fontWeight: '700', color: '#351c13', marginBottom: 2 },
+  locationTime: { fontSize: 12, color: '#60504b', marginBottom: 8 },  // Modal styles
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(32,16,5,0.38)',
+    justifyContent: 'flex-end',
+  },
+  modalCard: {
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 18,
+    borderTopRightRadius: 18,
+    paddingTop: 16,
+    paddingHorizontal: 18,
+    minHeight: 390,
+    maxHeight: height * 0.75,
+    elevation: 10,
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowRadius: 24,
+    borderWidth: 1,
+    borderColor: '#eee'
+  },
+  modalCloseBtn: {
+    position: 'absolute',
+    right: 5,
+    top: 9,
+    zIndex: 2,
+    padding: 2,
+  },
+  modalShopName: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    color: "#31110f",
+    marginBottom: 0,
+    marginTop: 10,
+  },
+  modalShopTime: {
+    fontSize: 12,
+    color: "#a98777",
+    marginBottom: 11,
+    fontWeight: "600"
+  },
+  modalImg: {
+    width: "100%",
+    height: 250,
+    borderRadius: 13,
+    marginBottom: 8, 
+    marginTop: 3,
+    backgroundColor:'#eaeaea'
+  },
+  detailsHeading: {
+    fontWeight: 'bold',
+    fontSize: 14,
+    color: "#31110f",
+    marginBottom: 4,
+    marginTop: 6,
+  },
+  detailText: {
+    color: "#43281f",
+    fontSize: 12.7,
+    fontWeight: "600",
+    marginLeft: 7,
+    marginRight: 5,
+    flex: 1,
+    flexWrap: 'wrap'
+  },
+  modalBtnsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 17,
+    paddingBottom: 17,
+    gap: 13
+  },
+  modalActionBtn: {
+    flex: 1,
+    backgroundColor: "#fff",
+    borderWidth: 1.8,
+    borderColor: "#371c1b",
+    paddingVertical: 12,
+    borderRadius: 8,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  modalBtnText: {
+    color: "#874e40",
+    fontWeight: "700",
+    fontSize: 14.3,
+    marginLeft: 6
+  },
+  modalMenuBtn: {
+    flex: 1,
+    backgroundColor: "#371c1b",
+    paddingVertical: 12,
+    borderRadius: 8,
+    flexDirection: 'row',
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  modalMenuBtnText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 15,
+    marginLeft: 6
+  }
+});
+
+location screen code back up 
