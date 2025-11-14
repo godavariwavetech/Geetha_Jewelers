@@ -49,7 +49,7 @@ const WishList = ({ navigation }) => {
           <Text style={styles.mrp}>₹40,000</Text>
         </View>
         <Text style={styles.discount}>10% off making charges</Text>
-        <TouchableOpacity style={styles.cartBtn}>
+        <TouchableOpacity style={styles.cartBtn} onPress={()=>{navigation.navigate("Cart")}}>
           <Text style={styles.cartBtnText}>ADD TO CART</Text>
         </TouchableOpacity>
       </View>

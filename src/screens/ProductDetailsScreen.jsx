@@ -1,507 +1,773 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from 'react';
 import {
   View,
   Text,
+  ScrollView,
   Image,
   TouchableOpacity,
   StyleSheet,
-  ScrollView,
-  Dimensions,
   SafeAreaView,
-  Modal,
-} from "react-native";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { responsiveHeight, responsiveWidth, responsiveFontSize } from "react-native-responsive-dimensions";
+  Dimensions,
+  StatusBar,
+  FlatList
+} from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-native-responsive-dimensions';
+import { useNavigation } from '@react-navigation/native';
 
-const { width } = Dimensions.get("window");
+const { width, height } = Dimensions.get('window');
 
-const ProductDetailsScreen = ({navigation}) => {
+const ProductDetailsScreen = ({ route }) => {
+  const navigation = useNavigation();
   const insets = useSafeAreaInsets();
-  const [selectedSize, setSelectedSize] = useState("17");
-  const [quantity, setQuantity] = useState(1);
-  const [selectedImage, setSelectedImage] = useState(0);
-  const [showProductModal, setShowProductModal] = useState(false);
-  const [showPriceModal, setShowPriceModal] = useState(false);
-
-  const sizes = ["16", "17", "17.5", "18"];
-  const images = [
-    require("../assets/earrings.png"),
-    require("../assets/earrings.png"), // Duplicate for demo; replace with actual angle images
-    require("../assets/earrings.png"),
-    require("../assets/earrings.png"),
+  
+  // Sample product images - replace with your actual images
+  const productImages = [
+    require('../assets/earrings.png'),
+    require('../assets/earrings.png'),
+    require('../assets/earrings.png'),
+    require('../assets/earrings.png'),
   ];
 
-  const productDetails = [
-    { key: "Material", value: "Gold" },
-    { key: "Purity", value: "22K" },
-    { key: "Gross Weight", value: "3.5 g" },
-    { key: "Design", value: "Arch of Royalty" },
-    { key: "Occasion", value: "Daily Wear & Special" },
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [selectedSize, setSelectedSize] = useState('16');
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [expandedSection, setExpandedSection] = useState(null);
+  
+  const scrollViewRef = useRef(null);
+
+  const sizes = [
+    { size: '16', items: '2 items' },
+    { size: '17', items: '' },
+    { size: '17.5', items: '' },
+    { size: '18', items: '' },
   ];
 
-  const priceDetails = [
-    { key: "Base Price", value: "₹35,000" },
-    { key: "Making Charges", value: "₹2,000" },
-    { key: "GST (3%)", value: "₹869" },
-    { key: "Total", value: "₹37,869" },
-  ];
+  const toggleSection = (section) => {
+    setExpandedSection(expandedSection === section ? null : section);
+  };
+
+  const renderThumbnail = ({ item, index }) => (
+    <TouchableOpacity
+      onPress={() => setSelectedImageIndex(index)}
+      style={[
+        styles.thumbnailContainer,
+        selectedImageIndex === index && styles.selectedThumbnail
+      ]}
+    >
+      <Image source={item} style={styles.thumbnailImage} resizeMode="contain" />
+    </TouchableOpacity>
+  );
 
   return (
-    <SafeAreaView style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 120 }} // Adjusted for bottom bar and insets
-      >
-        {/* Search Bar */}
-        <View style={styles.header}>
-          <View style={styles.searchContainer}>
-            <Ionicons name="search" size={20} color="#08765A" />
-            <Text style={styles.placeholderText}>
-              Search here Your favourite Jewellery
-            </Text>
-            <Ionicons name="heart-outline" size={20} color="#08765A" />
-            <Ionicons
-              name="share-outline"
-              size={20}
-              color="#555"
-              style={{ marginLeft: 8 }}
-            />
-          </View>
-        </View>
+    <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
+      <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
+      
+      {/* Header */}
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#f0f0f0' }}>
+  <TouchableOpacity onPress={() => navigation.goBack()} style={{ padding: 4 }}>
+    <Ionicons name="arrow-back" size={24} color="#000" />
+  </TouchableOpacity>
+  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+    <TouchableOpacity style={{ padding: 4 }}>
+      <Ionicons name="search-outline" size={24} color="#000" />
+    </TouchableOpacity>
+    <TouchableOpacity style={{ padding: 4 }}>
+      <Ionicons name="home-outline" size={24} color="#000" />
+    </TouchableOpacity>
+    <TouchableOpacity style={{ padding: 4 }}>
+      <Ionicons name="notifications-outline" size={24} color="#000" />
+    </TouchableOpacity>
+  </View>
+</View>
 
+      <ScrollView
+        ref={scrollViewRef}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
         {/* Main Product Image */}
-        <View style={styles.imageContainer}>
+        <View style={styles.mainImageContainer}>
+          <TouchableOpacity
+            style={styles.favoriteButton}
+            onPress={() => setIsFavorite(!isFavorite)}
+          >
+            <Ionicons
+              name={isFavorite ? "heart" : "heart-outline"}
+              size={24}
+              color={isFavorite ? "#FF0000" : "#000"}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.shareButton}>
+            <Ionicons name="arrow-redo-outline" size={24} color="#000" />
+          </TouchableOpacity>
+          
           <Image
-            source={images[selectedImage]}
-            style={styles.mainProductImage}
+            source={productImages[selectedImageIndex]}
+            style={styles.mainImage}
             resizeMode="contain"
           />
         </View>
 
-        {/* Thumbnail Angles */}
-        <ScrollView
+        {/* Thumbnail Images */}
+        <FlatList
+          data={productImages}
+          renderItem={renderThumbnail}
+          keyExtractor={(item, index) => index.toString()}
           horizontal
           showsHorizontalScrollIndicator={false}
-          style={styles.thumbnailsContainer}
-          contentContainerStyle={{ paddingHorizontal: 16 }}
-        >
-          {images.map((img, index) => (
-            <TouchableOpacity
-              key={index}
-              style={[
-                styles.thumbnail,
-                selectedImage === index && styles.thumbnailSelected,
-              ]}
-              onPress={() => setSelectedImage(index)}
-            >
-              <Image
-                source={img}
-                style={styles.thumbnailImage}
-                resizeMode="cover"
-              />
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+          contentContainerStyle={styles.thumbnailList}
+        />
 
         {/* Product Info */}
-        <View style={styles.detailsContainer}>
-          <Text style={styles.title}>Arch of Royalty Gold Finger Ring</Text>
-
-          {/* Ratings */}
-          <View style={styles.ratingRow}>
-            <Ionicons name="star" color="#FFD700" size={16} />
-            <Ionicons name="star" color="#FFD700" size={16} />
-            <Ionicons name="star" color="#FFD700" size={16} />
-            <Ionicons name="star-half" color="#FFD700" size={16} />
-            <Ionicons name="star-outline" color="#FFD700" size={16} />
-            <Text style={styles.ratingText}>(90+ ratings)</Text>
-          </View>
-
-          {/* Sizes */}
-          <Text style={styles.sectionTitle}>Available Sizes</Text>
-          <View style={styles.sizeContainer}>
-            {sizes.map((size) => (
-              <TouchableOpacity
-                key={size}
-                style={[
-                  styles.sizeButton,
-                  selectedSize === size && styles.sizeSelected,
-                ]}
-                onPress={() => setSelectedSize(size)}
-              >
-                <Text
-                  style={[
-                    styles.sizeText,
-                    selectedSize === size && styles.sizeTextSelected,
-                  ]}
-                >
-                  {size}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-
+        <View style={styles.productInfo}>
+          <Text style={styles.productName}>Arch of Royalty Gold Ear Ring</Text>
+          <Text style={styles.productSku}>SKU ID : 455445645454564ED454</Text>
+          
           {/* Price */}
-          <View style={styles.priceRow}>
-            <Text style={styles.currentPrice}>₹37,869</Text>
-            <Text style={styles.oldPrice}>₹40,869</Text>
-          </View>
-          <Text style={styles.taxText}>(Inclusive of all Taxes)</Text>
-
-          {/* Weight & Quantity */}
-          <View style={styles.weightRow}>
-            <View>
-              <Text style={styles.weightLabel}>3.5 g</Text>
-              <Text style={styles.weightSub}>Gross Weight (G)</Text>
-            </View>
-            <View style={styles.qtyContainer}>
-              <Text style={styles.weightSub}>Net Qty</Text>
-              <View style={styles.qtyButtons}>
-                <TouchableOpacity
-                  onPress={() => setQuantity(Math.max(1, quantity - 1))}
-                >
-                  <Text style={styles.qtyBtn}>-</Text>
-                </TouchableOpacity>
-                <Text style={styles.qtyValue}>{quantity}</Text>
-                <TouchableOpacity onPress={() => setQuantity(quantity + 1)}>
-                  <Text style={styles.qtyBtn}>+</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-
-          {/* Product Details Link */}
-          <TouchableOpacity
-            style={styles.detailsLinkContainer}
-            onPress={() => setShowProductModal(true)}
-          >
-            <View style={styles.linkRow}>
-              <Text style={styles.detailsLink}>Product Details</Text>
-              <Ionicons name="chevron-forward" size={18} color="#08765A" />
-            </View>
+          <Text style={styles.price}>₹37,869</Text>
+          <TouchableOpacity>
+            <Text style={styles.priceBreakup}>Price Breakup</Text>
           </TouchableOpacity>
 
-          {/* Price Details Link */}
-          <TouchableOpacity
-            style={styles.detailsLinkContainer}
-            onPress={() => setShowPriceModal(true)}
-          >
-            <View style={styles.linkRow}>
-              <Text style={styles.detailsLink}>Price Details</Text>
-              <Ionicons name="chevron-forward" size={18} color="#08765A" />
+          {/* Gold Weight and Karat Info */}
+          <View style={styles.infoRow}>
+            <View style={styles.infoCard}>
+              <Ionicons name="ellipse" size={16} color="#FFD700" />
+              <Text style={styles.infoLabel}>18 Karat</Text>
             </View>
+            <View style={styles.infoCard}>
+              <Ionicons name="scale-outline" size={16} color="#FFD700" />
+              <Text style={styles.infoLabel}>3.096g</Text>
+            </View>
+          </View>
+
+          {/* Available Sizes */}
+          <View style={styles.sizesSection}>
+            <View style={styles.sizeHeader}>
+              <Text style={styles.sizeTitle}>Available Sizes</Text>
+              <TouchableOpacity>
+                <Text style={styles.howToMeasure}>How To Measure</Text>
+              </TouchableOpacity>
+            </View>
+            
+            <View style={styles.sizeOptions}>
+              {sizes.map((item, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={[
+                    styles.sizeButton,
+                    selectedSize === item.size && styles.selectedSizeButton
+                  ]}
+                  onPress={() => setSelectedSize(item.size)}
+                >
+                  <Text
+                    style={[
+                      styles.sizeText,
+                      selectedSize === item.size && styles.selectedSizeText
+                    ]}
+                  >
+                    {item.size}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+            <Text style={styles.itemsAvailable}>2 items</Text>
+          </View>
+
+          {/* Product Details Section */}
+          <Text style={styles.sectionTitle}>Product Details</Text>
+
+          {/* Metal Details Accordion */}
+          <TouchableOpacity
+            style={styles.accordionHeader}
+            onPress={() => toggleSection('metal')}
+          >
+            <View style={styles.accordionHeaderLeft}>
+              <Ionicons name="diamond-outline" size={20} color="#000" />
+              <Text style={styles.accordionTitle}>METAL DETAILS</Text>
+            </View>
+            <Ionicons
+              name={expandedSection === 'metal' ? "chevron-up" : "chevron-down"}
+              size={20}
+              color="#000"
+            />
+          </TouchableOpacity>
+          {expandedSection === 'metal' && (
+            <View style={styles.accordionContent}>
+              <View style={styles.detailRow}>
+                <View style={styles.detailItem}>
+                  <Text style={styles.detailLabel}>18K</Text>
+                  <Text style={styles.detailValue}>Karatage</Text>
+                </View>
+                <View style={styles.detailItem}>
+                  <Text style={styles.detailLabel}>Yellow</Text>
+                  <Text style={styles.detailValue}>Material Colour</Text>
+                </View>
+              </View>
+              <View style={styles.detailRow}>
+                <View style={styles.detailItem}>
+                  <Text style={styles.detailLabel}>3.096g</Text>
+                  <Text style={styles.detailValue}>Gross Weight</Text>
+                </View>
+                <View style={styles.detailItem}>
+                  <Text style={styles.detailLabel}>Gold</Text>
+                  <Text style={styles.detailValue}>Metal</Text>
+                </View>
+              </View>
+            </View>
+          )}
+
+          {/* General Details Accordion */}
+          <TouchableOpacity
+            style={styles.accordionHeader}
+            onPress={() => toggleSection('general')}
+          >
+            <View style={styles.accordionHeaderLeft}>
+              <Ionicons name="information-circle-outline" size={20} color="#000" />
+              <Text style={styles.accordionTitle}>GENERAL DETAILS</Text>
+            </View>
+            <Ionicons
+              name={expandedSection === 'general' ? "chevron-up" : "chevron-down"}
+              size={20}
+              color="#000"
+            />
+          </TouchableOpacity>
+          {expandedSection === 'general' && (
+            <View style={styles.accordionContent}>
+              <Text style={styles.accordionText}>General details content goes here...</Text>
+            </View>
+          )}
+
+          {/* Description Accordion */}
+          <TouchableOpacity
+            style={styles.accordionHeader}
+            onPress={() => toggleSection('description')}
+          >
+            <View style={styles.accordionHeaderLeft}>
+              <Ionicons name="document-text-outline" size={20} color="#000" />
+              <Text style={styles.accordionTitle}>DESCRIPTION</Text>
+            </View>
+            <Ionicons
+              name={expandedSection === 'description' ? "chevron-up" : "chevron-down"}
+              size={20}
+              color="#000"
+            />
+          </TouchableOpacity>
+          {expandedSection === 'description' && (
+            <View style={styles.accordionContent}>
+              <Text style={styles.accordionText}>Product description goes here...</Text>
+            </View>
+          )}
+
+          {/* Smart Savings Banner */}
+          <TouchableOpacity style={styles.savingsBanner}>
+            <Image
+              source={require('../assets/diamondbanner.png')}
+              style={styles.savingsBannerImage}
+              resizeMode="cover"
+            />
+            <View style={styles.savingsBannerContent}>
+              <Text style={styles.savingsBannerTitle}>Smart Savings Schemes</Text>
+              <Text style={styles.savingsBannerText}>
+                Join flexible gold saving plans and grow your wealth with ease.
+              </Text>
+            </View>
+            <TouchableOpacity style={styles.exploreBadge}>
+              <Ionicons name="arrow-forward-circle" size={28} color="#fff" />
+            </TouchableOpacity>
+          </TouchableOpacity>
+
+          {/* You May Also Like */}
+          <Text style={styles.sectionTitle}>You may also like</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <View style={styles.similarProducts}>
+              {[1, 2].map((item, index) => (
+                <View key={index} style={styles.similarProductCard}>
+                  <TouchableOpacity style={styles.similarFavorite}>
+                    <Ionicons name="heart-outline" size={18} color="#666" />
+                  </TouchableOpacity>
+                  <Image
+                    source={require('../assets/earrings.png')}
+                    style={styles.similarProductImage}
+                    resizeMode="contain"
+                  />
+                  <Text style={styles.similarProductName} numberOfLines={2}>
+                    Arch of Royalty Gold Finger Ring
+                  </Text>
+                  <View style={styles.similarPriceRow}>
+                    <Text style={styles.similarPrice}>₹37,869</Text>
+                    <Text style={styles.similarOriginalPrice}>₹40,869</Text>
+                  </View>
+                  <View style={styles.similarDiscount}>
+                    <Text style={styles.similarDiscountText}>10%off making charges</Text>
+                  </View>
+                  <View style={styles.similarRating}>
+                    <Ionicons name="star" size={12} color="#FFD700" />
+                    <Text style={styles.similarRatingText}>4.5 (20k reviews)</Text>
+                  </View>
+                  <View style={styles.similarButtons}>
+                    <TouchableOpacity style={styles.viewSimilarBtn}>
+                      <Text style={styles.viewSimilarBtnText}>View Similar</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.cartBtn}>
+                      <Ionicons name="cart-outline" size={16} color="#08765A" />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ))}
+            </View>
+          </ScrollView>
+
+          {/* Bottom Banner */}
+          <Image
+            source={require('../assets/diamondbanner.png')}
+            style={styles.bottomBanner}
+            resizeMode="cover"
+          />
+          <TouchableOpacity style={styles.exploreNowButton}>
+            <Text style={styles.exploreNowText}>Explore Now</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
 
-      {/* Bottom Buttons */}
-      <View style={[styles.bottomBar, { bottom: insets.bottom }]}>
-        <View>
-          <Text style={styles.bottomPrice}>₹37,869</Text>
-          <Text style={styles.taxSmall}>(Inclusive of all Taxes)</Text>
-        </View>
-        <View style={styles.actionButtons} >
-          <TouchableOpacity style={styles.cartButton} onPress={()=>{navigation.navigate("Cart")}} >
-            <Text style={styles.cartText}>ADD TO CART</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.buyButton}>
-            <Text style={styles.buyText}>BUY NOW</Text>
-          </TouchableOpacity>
-        </View>
+      {/* Add to Cart Button - Fixed at bottom */}
+      <TouchableOpacity >
+      <View style={[styles.addToCartContainer, { bottom: insets.bottom+15 }]}>
+        <TouchableOpacity style={styles.addToCartButton}onPress={()=>{navigation.navigate("Cart")}} >
+          <Ionicons name="cart-outline" size={20} color="#fff" />
+          <Text style={styles.addToCartText}>Add to Cart</Text>
+        </TouchableOpacity>
       </View>
-
-      {/* Product Details Modal */}
-      <Modal
-        visible={showProductModal}
-        onRequestClose={() => setShowProductModal(false)}
-        animationType="slide"
-        presentationStyle="pageSheet"
-      >
-        <SafeAreaView style={styles.modalContainer}>
-          <View style={styles.modalHeader}>
-            <Text style={styles.modalTitle}>Product Details</Text>
-            <TouchableOpacity onPress={() => setShowProductModal(false)}>
-              <Ionicons name="close" size={24} color="#333" />
-            </TouchableOpacity>
-          </View>
-          <ScrollView style={styles.modalContent}>
-            {productDetails.map((item, index) => (
-              <React.Fragment key={item.key}>
-                <View style={styles.modalRow}>
-                  <Text style={styles.modalKey}>{item.key}</Text>
-                  <Text style={styles.modalValue}>{item.value}</Text>
-                </View>
-                {index < productDetails.length - 1 && <View style={styles.divider} />}
-              </React.Fragment>
-            ))}
-          </ScrollView>
-        </SafeAreaView>
-      </Modal>
-
-      {/* Price Details Modal */}
-      <Modal
-        visible={showPriceModal}
-        onRequestClose={() => setShowPriceModal(false)}
-        animationType="slide"
-        presentationStyle="pageSheet"
-      >
-        <SafeAreaView style={styles.modalContainer}>
-          <View style={styles.modalHeader}>
-            <Text style={styles.modalTitle}>Price Details</Text>
-            <TouchableOpacity onPress={() => setShowPriceModal(false)}>
-              <Ionicons name="close" size={24} color="#333" />
-            </TouchableOpacity>
-          </View>
-          <ScrollView style={styles.modalContent}>
-            {priceDetails.map((item, index) => (
-              <React.Fragment key={item.key}>
-                <View style={styles.modalRow}>
-                  <Text style={styles.modalKey}>{item.key}</Text>
-                  <Text style={styles.modalValue}>{item.value}</Text>
-                </View>
-                {index < priceDetails.length - 1 && <View style={styles.divider} />}
-              </React.Fragment>
-            ))}
-          </ScrollView>
-        </SafeAreaView>
-      </Modal>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };
 
-export default ProductDetailsScreen;
-
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    backgroundColor: "#fff" 
-  },
-  header: { paddingHorizontal: 16, paddingVertical: 8 },
-  searchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#f6f6f6",
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    height: 45,
-  },
-  placeholderText: {
+  container: {
     flex: 1,
-    marginHorizontal: 8,
-    color: "#999",
-    fontSize: responsiveFontSize(1.7),
+    backgroundColor: '#fff',
   },
-  imageContainer: { alignItems: "center", marginTop: 10 },
-  mainProductImage: {
-    width: width * 0.85,
-    height: responsiveHeight(30),
-  },
-  thumbnailsContainer: {
-    marginTop: 10,
-    marginBottom: 10,
-  },
-  thumbnail: {
-    marginRight: 8,
-    borderRadius: 8,
-    overflow: "hidden",
-    borderWidth: 2,
-    borderColor: "transparent",
-  },
-  thumbnailSelected: {
-    borderColor: "#08765A",
-  },
-  thumbnailImage: {
-    width: 60,
-    height: 60,
-  },
-  detailsContainer: { paddingHorizontal: 16, marginTop: 12 },
-  title: {
-    fontSize: responsiveFontSize(2),
-    fontWeight: "600",
-    color: "#222",
-  },
-  ratingRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginVertical: 6,
-  },
-  ratingText: { marginLeft: 6, color: "#777", fontSize: responsiveFontSize(1.6) },
-  sectionTitle: {
-    fontSize: responsiveFontSize(1.8),
-    fontWeight: "600",
-    marginTop: 8,
-  },
-  sizeContainer: { flexDirection: "row", marginTop: 8 },
-  sizeButton: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    paddingVertical: 6,
-    paddingHorizontal: 14,
-    marginRight: 8,
-  },
-  sizeSelected: {
-    backgroundColor: "#08765A",
-    borderColor: "#08765A",
-  },
-  sizeText: { fontSize: responsiveFontSize(1.8), color: "#333" },
-  sizeTextSelected: { color: "#fff" },
-  priceRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 10,
-  },
-  currentPrice: {
-    color: "#08765A",
-    fontWeight: "700",
-    fontSize: responsiveFontSize(2),
-  },
-  oldPrice: {
-    textDecorationLine: "line-through",
-    color: "#999",
-    marginLeft: 8,
-    fontSize: responsiveFontSize(1.7),
-  },
-  taxText: { color: "#777", fontSize: responsiveFontSize(1.6), marginTop: 2 },
-  weightRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginTop: 14,
-  },
-  weightLabel: { fontSize: responsiveFontSize(2), fontWeight: "600" },
-  weightSub: { fontSize: responsiveFontSize(1.6), color: "#777" },
-  qtyContainer: { alignItems: "center" },
-  qtyButtons: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 6,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    overflow: "hidden",
-  },
-  qtyBtn: {
-    fontSize: responsiveFontSize(2.4),
-    color: "#08765A",
-    paddingHorizontal: 10,
-    fontWeight: "600",
-  },
-  qtyValue: {
-    paddingHorizontal: 10,
-    fontSize: responsiveFontSize(1.9),
-    fontWeight: "500",
-  },
-  detailsLinkContainer: {
-    marginTop: 16,
-    borderTopWidth: 1,
-    borderColor: "#eee",
-    paddingTop: 10,
-  },
-  linkRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  detailsLink: {
-    color: "#08765A",
-    fontWeight: "600",
-    fontSize: responsiveFontSize(1.9),
-  },
-  bottomBar: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderTopWidth: 1,
-    borderColor: "#eee",
-    backgroundColor: "#fff",
-    position: "absolute",
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  bottomPrice: {
-    fontSize: responsiveFontSize(2),
-    fontWeight: "700",
-    color: "#08765A",
-  },
-  taxSmall: {
-    fontSize: responsiveFontSize(1.4),
-    color: "#777",
-  },
-  actionButtons: { flexDirection: "row", gap: 10 },
-  cartButton: {
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: "#08765A",
-    borderRadius: 8,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-  },
-  cartText: {
-    color: "#08765A",
-    fontWeight: "600",
-    fontSize: responsiveFontSize(1.6),
-  },
-  buyButton: {
-    backgroundColor: "#08765A",
-    borderRadius: 8,
-    paddingHorizontal: 18,
-    paddingVertical: 8,
-  },
-  buyText: {
-    color: "#fff",
-    fontWeight: "600",
-    fontSize: responsiveFontSize(1.6),
-  },
-  // Modal Styles
-  modalContainer: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  modalHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "#eee",
+    borderBottomColor: '#f0f0f0',
   },
-  modalTitle: {
-    fontSize: responsiveFontSize(2),
-    fontWeight: "600",
-    color: "#333",
+  headerButton: {
+    padding: 4,
   },
-  modalContent: {
-    flex: 1,
+  scrollContent: {
+    paddingBottom: 100,
+  },
+  mainImageContainer: {
+    width: width,
+    height: width * 0.8,
+    backgroundColor: '#f9f9f9',
+    position: 'relative',
+  },
+  mainImage: {
+    width: '100%',
+    height: '100%',
+  },
+  favoriteButton: {
+    position: 'absolute',
+    top: 16,
+    right: 16,
+    zIndex: 10,
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  shareButton: {
+    position: 'absolute',
+    top: 60,
+    right: 16,
+    zIndex: 10,
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  thumbnailList: {
     paddingHorizontal: 16,
-    paddingTop: 12,
-  },
-  modalRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
     paddingVertical: 12,
   },
-  modalKey: {
-    fontSize: responsiveFontSize(1.8),
-    color: "#555",
+  thumbnailContainer: {
+    width: 70,
+    height: 70,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: '#e0e0e0',
+    marginRight: 12,
+    padding: 4,
+    backgroundColor: '#fff',
+  },
+  selectedThumbnail: {
+    borderColor: '#08765A',
+  },
+  thumbnailImage: {
+    width: '100%',
+    height: '100%',
+  },
+  productInfo: {
+    paddingHorizontal: 16,
+  },
+  productName: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#000',
+    marginBottom: 4,
+  },
+  productSku: {
+    fontSize: 12,
+    color: '#666',
+    marginBottom: 12,
+  },
+  price: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#000',
+    marginBottom: 4,
+  },
+  priceBreakup: {
+    fontSize: 14,
+    color: '#08765A',
+    textDecorationLine: 'underline',
+    marginBottom: 16,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 20,
+  },
+  infoCard: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f9f9f9',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+  },
+  infoLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#000',
+    marginLeft: 8,
+  },
+  sizesSection: {
+    marginBottom: 24,
+  },
+  sizeHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  sizeTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#000',
+  },
+  howToMeasure: {
+    fontSize: 14,
+    color: '#08765A',
+    textDecorationLine: 'underline',
+  },
+  sizeOptions: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 8,
+  },
+  sizeButton: {
+    width: 50,
+    height: 40,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  selectedSizeButton: {
+    backgroundColor: '#08765A',
+    borderColor: '#08765A',
+  },
+  sizeText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#333',
+  },
+  selectedSizeText: {
+    color: '#fff',
+  },
+  itemsAvailable: {
+    fontSize: 12,
+    color: '#FF0000',
+    marginTop: 4,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#000',
+    marginTop: 8,
+    marginBottom: 12,
+  },
+  accordionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 16,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    marginBottom: 12,
+    backgroundColor: '#fff',
+  },
+  accordionHeaderLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  accordionTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#000',
+  },
+  accordionContent: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: '#f9f9f9',
+    borderRadius: 8,
+    marginBottom: 12,
+  },
+  detailRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
+  detailItem: {
     flex: 1,
   },
-  modalValue: {
-    fontSize: responsiveFontSize(1.8),
-    fontWeight: "600",
-    color: "#333",
-    textAlign: "right",
+  detailLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#000',
+    marginBottom: 4,
+  },
+  detailValue: {
+    fontSize: 12,
+    color: '#666',
+  },
+  accordionText: {
+    fontSize: 14,
+    color: '#333',
+    lineHeight: 20,
+  },
+  savingsBanner: {
+    height: 120,
+    borderRadius: 12,
+    overflow: 'hidden',
+    marginVertical: 20,
+    position: 'relative',
+  },
+  savingsBannerImage: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+  },
+  savingsBannerContent: {
+    padding: 16,
+    justifyContent: 'center',
     flex: 1,
   },
-  divider: {
-    height: 1,
-    backgroundColor: "#eee",
-    marginHorizontal: 16,
+  savingsBannerTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#fff',
+    marginBottom: 4,
+  },
+  savingsBannerText: {
+    fontSize: 12,
+    color: '#fff',
+    maxWidth: '70%',
+  },
+  exploreBadge: {
+    position: 'absolute',
+    right: 16,
+    top: '50%',
+    transform: [{ translateY: -14 }],
+  },
+  similarProducts: {
+    flexDirection: 'row',
+    gap: 12,
+    marginVertical: 12,
+  },
+  similarProductCard: {
+    width: 160,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#eee',
+    padding: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  similarFavorite: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    zIndex: 10,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 4,
+  },
+  similarProductImage: {
+    width: '100%',
+    height: 100,
+    marginBottom: 8,
+  },
+  similarProductName: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: '#222',
+    marginBottom: 4,
+    minHeight: 32,
+  },
+  similarPriceRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  similarPrice: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#08765A',
+    marginRight: 6,
+  },
+  similarOriginalPrice: {
+    fontSize: 11,
+    color: '#999',
+    textDecorationLine: 'line-through',
+  },
+  similarDiscount: {
+    backgroundColor: '#08765A',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+    alignSelf: 'flex-start',
+    marginBottom: 6,
+  },
+  similarDiscountText: {
+    color: '#fff',
+    fontSize: 8,
+    fontWeight: '600',
+  },
+  similarRating: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  similarRatingText: {
+    fontSize: 10,
+    color: '#666',
+    marginLeft: 4,
+  },
+  similarButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  viewSimilarBtn: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#08765A',
+    borderRadius: 6,
+    paddingVertical: 6,
+    alignItems: 'center',
+  },
+  viewSimilarBtnText: {
+    color: '#08765A',
+    fontSize: 10,
+    fontWeight: '600',
+  },
+  cartBtn: {
+    backgroundColor: '#fff',
+    borderRadius: 6,
+    padding: 6,
+    borderWidth: 1,
+    borderColor: '#08765A',
+  },
+  bottomBanner: {
+    width: '100%',
+    height: 200,
+    borderRadius: 12,
+    marginTop: 20,
+  },
+  exploreNowButton: {
+    position: 'absolute',
+    right: 16,
+    bottom: 16,
+    backgroundColor: '#fff',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 20,
+  },
+  exploreNowText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#000',
+  },
+  addToCartContainer: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    backgroundColor: '#fff',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#e0e0e0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    // elevation: 10,
+  },
+  addToCartButton: {
+    backgroundColor: '#08765A',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 14,
+    borderRadius: 8,
+    gap: 8,
+  },
+  addToCartText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
+
+export default ProductDetailsScreen;

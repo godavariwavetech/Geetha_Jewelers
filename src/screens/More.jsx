@@ -1,210 +1,234 @@
-import React from 'react';
+import React from "react";
 import {
   View,
   Text,
-  StyleSheet,
-  TouchableOpacity,
+  Image,
   ScrollView,
+  TouchableOpacity,
+  StyleSheet,
+  SafeAreaView,
+  Dimensions,
   StatusBar,
-} from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-const moreMenu = [
-  { label: 'My Profile', icon: 'account-outline', route: 'Profile1' },
-  { label: 'My Addresses', icon: 'map-marker-outline', route: 'MyAddresses' }, 
-  // { label: 'Notifications', icon: 'bell-outline' },
-  // { label: 'News', icon: 'bullhorn-outline' },
-  { label: 'My Orders', icon: 'package-variant-closed', route: 'MyOrders'},
-  // { label: 'My Offers', icon: 'ticket-percent-outline' },
-  // { label: 'Write To Us', icon: 'phone-outline' },
-  // { label: 'Settings', icon: 'cog-outline' },
-  { label: 'About Us', icon: 'information-outline', route: 'AboutUsScreen' },
-  { label: 'Terms & Conditions', icon: 'file-document-outline', route: 'TermsAndConditionsScreen' },
-];
-function More({ navigation }) {
-  const insets = useSafeAreaInsets();
-  return (
-    <View style={[styles.container, { paddingTop: insets.top+10, paddingBottom: insets.bottom }]}>
-      <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
-      {/* Top Bar */}
-      <View style={[styles.header, styles.headerShadow]}>
-        <TouchableOpacity onPress={() => navigation?.goBack()} style={styles.backButton}>
-          <Ionicons name="chevron-back" size={26} color="rgba(8, 118, 90, 1)" />
-        </TouchableOpacity>
-        <Text style={styles.headerText}>Profile</Text>
-      </View>
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Profile Header Section */}
-        {/* <View style={styles.profileCard}>
-          <View style={styles.avatarContainer}>
-            <View style={styles.avatar}>
-              <Text style={styles.avatarInitial}>U</Text>
-            </View>
-          </View>
-          <Text style={styles.userName}>User Name</Text>
-          <Text style={styles.userEmail}>user@example.com</Text>
-        </View> */}
+  Platform,
+} from "react-native";
+import Icon from "react-native-vector-icons/Feather";
+import MaterialIcon from "react-native-vector-icons/MaterialIcons";
 
-        {/* Menu Items */}
-        {moreMenu.map((item, idx) => (
-          <View key={item.label}>
-            <TouchableOpacity
-              style={[styles.listItem, styles.listItemShadow]}
-              activeOpacity={0.7}
-              onPress={() => navigation?.navigate(item.route)}
-            >
-              <View style={styles.iconLabelRow}>
-                <View style={styles.iconWrapper}>
-                  <MaterialCommunityIcons
-                    name={item.icon}
-                    color="rgba(8, 118, 90, 1)"
-                    size={24}
-                  />
-                </View>
-                <Text style={styles.menuLabel}>{item.label}</Text>
+const { width } = Dimensions.get("window");
+
+const ProfileScreen = ({ navigation }) => {
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+      <View style={styles.mainContainer}>
+        {/* Header - Fixed at Top */}
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Icon name="arrow-left" size={24} color="#000" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Profile</Text>
+          <View style={{ width: 24 }} />
+        </View>
+
+        <ScrollView 
+          showsVerticalScrollIndicator={false} 
+          contentContainerStyle={styles.scrollContent}
+        >
+          {/* Previously Bookings */}
+          <Text style={styles.sectionTitle}>Your Previously Bookings</Text>
+          <ScrollView 
+            horizontal 
+            showsHorizontalScrollIndicator={false} 
+            style={styles.bookingsRow}
+            contentContainerStyle={styles.bookingsContent}
+          >
+            {[1, 2, 3, 4, 5].map((item, index) => (
+              <View key={index} style={styles.bookingCard}>
+                <Image
+                  source={
+                    index % 2 === 0
+                      ? require("../assets/earrings.png")
+                      : require("../assets/mangalsutra.png")
+                  }
+                  style={styles.bookingImage}
+                />
+                <TouchableOpacity style={styles.heartIcon}>
+                  <Icon name="heart" size={18} color="#C6A06A" />
+                </TouchableOpacity>
               </View>
-              <MaterialCommunityIcons
-                name="chevron-right"
-                color="#ccc"
-                size={20}
-              />
-            </TouchableOpacity>
-            {idx !== moreMenu.length - 1 && <View style={styles.divider} />}
+            ))}
+          </ScrollView>
+
+          {/* Profile and Support */}
+          <TouchableOpacity style={styles.optionCard} onPress={()=>{navigation.navigate("Profile1")}}>
+            <View style={styles.optionLeft}>
+              <Icon name="user" size={20} color="#004830" />
+              <Text style={styles.optionText}>Profile</Text>
+            </View>
+            <Icon name="chevron-right" size={20} color="#004830" />
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.optionCard}>
+            <View style={styles.optionLeft}>
+              <MaterialIcon name="support-agent" size={20} color="#0F5132" />
+              <Text style={styles.optionText}>Support</Text>
+            </View>
+            <Icon name="chevron-right" size={20} color="#0F5132" />
+          </TouchableOpacity>
+
+          {/* Smart Savings Scheme Banner */}
+          <View style={styles.bannerCard}>
+            <Image
+              source={require("../assets/lastbanner.png")}
+              style={styles.bannerImageFull}
+              resizeMode="cover"
+            />
           </View>
-        ))}
-      </ScrollView>
-    </View>
+
+          {/* Logout Button */}
+          <View style={styles.logoutContainer}>
+            <TouchableOpacity style={styles.logoutButton}>
+              <Icon name="log-out" size={18} color="#fff" />
+              <Text style={styles.logoutText}>Logout</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </View>
+    </SafeAreaView>
   );
-}
+};
+
+export default ProfileScreen;
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    backgroundColor: '#f8f9fa' 
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#fff",
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+  },
+  mainContainer: {
+    flex: 1,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    // paddingTop: 18,
-    paddingBottom: 18,
-    paddingHorizontal: 20,
-    // backgroundColor: '#fff',
-    // borderBottomWidth: 1,
-    // borderBottomColor: '#e9ecef',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    backgroundColor: "#fff",
+    borderBottomWidth: 1,
+    borderBottomColor: "#f0f0f0",
+    gap:5
   },
-  headerShadow: {
-    // shadowColor: '#000',
-    // shadowOffset: { width: 0, height: 2 },
-    // shadowOpacity: 0.1,
-    // shadowRadius: 4,
-    // elevation: 3,
-  },
-  backButton: {
-    padding: 4,
-  },
-  headerText: {
-    fontWeight: '800',
-    fontSize: 20,
-    color: 'rgba(8, 118, 90, 1)',
-    marginLeft: 12,
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#000",
   },
   scrollContent: {
-    flexGrow: 1,
-    paddingBottom: 20,
+    paddingBottom: 100,
   },
-  profileCard: {
-    backgroundColor: '#fff',
-    padding: 24,
-    alignItems: 'center',
-    marginHorizontal: 20,
-    marginTop: 20,
-    borderRadius: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 4,
-    borderWidth: 1,
-    borderColor: 'rgba(8, 118, 90, 0.1)',
-  },
-  avatarContainer: {
-    marginBottom: 12,
-  },
-  avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: 'rgba(8, 118, 90, 0.1)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: 'rgba(8, 118, 90, 0.2)',
-  },
-  avatarInitial: {
-    color: 'rgba(8, 118, 90, 1)',
-    fontSize: 32,
-    fontWeight: 'bold',
-    fontStyle: 'italic',
-  },
-  userName: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#32190a',
-    marginBottom: 4,
-  },
-  userEmail: {
-    fontSize: 14,
-    color: '#6c757d',
-    textAlign: 'center',
-  },
-  listItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 18,
-    paddingHorizontal: 20,
-    backgroundColor: '#fff',
-    marginHorizontal: 20,
-    marginVertical: 4,
-    borderRadius: 12,
-  },
-  listItemShadow: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 3,
-    elevation: 1,
-  },
-  iconLabelRow: { 
-    flexDirection: 'row', 
-    alignItems: 'center',
-    flex: 1,
-  },
-  iconWrapper: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(8, 118, 90, 0.05)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  menuLabel: {
+  sectionTitle: {
     fontSize: 16,
-    color: '#32190a',
-    fontWeight: '500',
-    flex: 1,
+    fontWeight: "500",
+    color: "#000",
+    marginHorizontal: 16,
+    marginTop: 20,
+    marginBottom: 10,
   },
-  divider: {
-    height: 1,
-    backgroundColor: '#f1eceb',
-    marginHorizontal: 20,
-    opacity: 0.5,
+  bookingsRow: {
+    paddingLeft: 16,
+    marginBottom: 5,
+  },
+  bookingsContent: {
+    paddingRight: 16,
+  },
+  bookingCard: {
+    marginRight: 14,
+    position: "relative",
+  },
+  bookingImage: {
+    width: width * 0.22,
+    height: width * 0.22,
+    borderRadius: 10,
+    backgroundColor: "#f8f8f8",
+  },
+  heartIcon: {
+    position: "absolute",
+    top: 5,
+    right: 5,
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    padding: 4,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+  },
+  optionCard: {
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "#D9D9D9",
+    marginHorizontal: 16,
+    borderRadius: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    marginTop: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  optionLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  optionText: {
+    fontSize: 15,
+    color: "#004830",
+    fontWeight: "500",
+  },
+  bannerCard: {
+    marginHorizontal: 16,
+    borderRadius: 10,
+    marginTop: 20,
+    overflow: "hidden",
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  bannerImageFull: {
+    width: "100%",
+    height: 280,
+    borderRadius: 10,
+  },
+  logoutContainer: {
+    paddingVertical: 24,
+    paddingHorizontal: 16,
+    alignItems: "center",
+    marginTop: 20,
+  },
+  logoutButton: {
+    flexDirection: "row",
+    backgroundColor: "#E32636",
+    borderRadius: 25,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 14,
+    width: "50%",
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+  },
+  logoutText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+    marginLeft: 8,
   },
 });
-
-export default More;

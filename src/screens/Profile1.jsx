@@ -69,8 +69,8 @@ function Profile({navigation}) {
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation?.goBack()}>
-          <Ionicons name="chevron-back" size={26} color="rgba(8, 118, 90, 1)" />
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="chevron-back" size={26} color="#004830" />
         </TouchableOpacity>
         <Text style={styles.headerText}>Profile</Text>
       </View>
@@ -78,7 +78,7 @@ function Profile({navigation}) {
         <View style={styles.avatarWrap}>
           <Image source={imageUri} style={styles.avatar} />
           <TouchableOpacity style={styles.editBtn} onPress={selectImageOption}>
-            <MaterialCommunityIcons name="pencil-outline" size={20} color="rgba(8, 118, 90, 1)" />
+            <MaterialCommunityIcons name="pencil-outline" size={20} color="#004830" />
           </TouchableOpacity>
         </View>
 
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 18,
     marginLeft: 10,
-    color: 'rgba(8, 118, 90, 1)',
+    color: '#004830',
   },
  
   
@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
   saveBtn: {
     marginTop: 40,
     marginHorizontal: 18,
-    backgroundColor: 'rgba(8, 118, 90, 1)',
+    backgroundColor: '#004830',
     borderRadius: 10,
     paddingVertical: 14,
     justifyContent: 'center',

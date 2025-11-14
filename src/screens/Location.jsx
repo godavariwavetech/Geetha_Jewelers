@@ -1,395 +1,388 @@
-// import React, { useState } from "react";
-// import {
-//   View,
-//   Text,
-//   TouchableOpacity,
-//   Image,
-//   StyleSheet,
-//   FlatList,
-//   LayoutAnimation,
-//   UIManager,
-//   Platform,
-//   ScrollView,
-// } from "react-native";
-// import Ionicons from "react-native-vector-icons/Ionicons";
-// import { useSafeAreaInsets } from "react-native-safe-area-context";
-// import { useNavigation } from "@react-navigation/native";
-
-// // Enable Layout Animation for Android
-// if (
-//   Platform.OS === "android" &&
-//   UIManager.setLayoutAnimationEnabledExperimental
-// ) {
-//   UIManager.setLayoutAnimationEnabledExperimental(true);
-// }
-
-// // Common dummy items using your local images
-// const defaultItems = [
-//   { name: "Earrings", image: require("../assets/earrings.png") },
-//   { name: "Mangalasutra", image: require("../assets/mangalsutra.png") },
-//   { name: "Haaram", image: require("../assets/haaram.png") },
-//   { name: "Earrings", image: require("../assets/earrings.png") },
-//   { name: "Mangalasutra", image: require("../assets/mangalsutra.png") },
-//   { name: "Haaram", image: require("../assets/haaram.png") },
-//   { name: "Earrings", image: require("../assets/earrings.png") },
-//   { name: "Mangalasutra", image: require("../assets/mangalsutra.png") },
-//   { name: "Haaram", image: require("../assets/haaram.png") },
-// ];
-
-// const categoriesData = [
-//   { id: "1", title: "Gold", items: defaultItems },
-//   { id: "2", title: "Silver", items: defaultItems },
-//   { id: "3", title: "Diamonds", items: defaultItems },
-//   { id: "4", title: "Platinum", items: defaultItems },
-// ];
-
-// const CategoriesScreen = () => {
-//   const [expanded, setExpanded] = useState({});
-//   const insets = useSafeAreaInsets();
-//   const navigation = useNavigation();
-
-//   const toggleExpand = (id) => {
-//     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-//     setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
-//   };
-
-//   const renderCategory = ({ item }) => {
-//     const isExpanded = expanded[item.id];
-//     const itemsToShow = isExpanded ? item.items : item.items.slice(0, 4);
-
-//     return (
-//       <View style={styles.categoryContainer}>
-//         <View style={styles.headerRow}>
-//           {/* Category name */}
-//           <Text style={styles.categoryTitle}>{item.title}</Text>
-
-//           {/* Horizontal line between title and icon */}
-//           <View style={styles.line} />
-
-//           {/* Expand/Collapse icon */}
-//           <TouchableOpacity onPress={() => toggleExpand(item.id)}>
-//             <Ionicons
-//               name={isExpanded ? "chevron-up-outline" : "chevron-down-outline"}
-//               size={20}
-//               color="#006400"
-//             />
-//           </TouchableOpacity>
-//         </View>
-
-//         {/* Category items grid */}
-//         <FlatList
-//           data={itemsToShow}
-//           numColumns={4}
-//           keyExtractor={(it, index) => index.toString()}
-//           renderItem={({ item }) => (
-//             <View style={styles.itemCard}>
-//               <Image
-//                 source={item.image}
-//                 style={styles.itemImage}
-//                 resizeMode="cover"
-//               />
-//               <Text style={styles.itemLabel}>{item.name}</Text>
-//             </View>
-//           )}
-//         />
-//       </View>
-//     );
-//   };
-
-//   return (
-//     <View
-//       style={[
-//         styles.root,
-//         { paddingTop: insets.top, paddingBottom: insets.bottom +50},
-//       ]}
-//     >
-//       {/* Header with Back Arrow */}
-//       <View style={styles.headerContainer}>
-//         <TouchableOpacity onPress={() => navigation.goBack()}>
-//           <Ionicons name="arrow-back" size={22} color="#000" />
-//         </TouchableOpacity>
-//         <Text style={styles.headerTitle}>Categories</Text>
-//       </View>
-
-//       {/* Categories List */}
-//       <ScrollView contentContainerStyle={styles.container}>
-//         <FlatList
-//           data={categoriesData}
-//           renderItem={renderCategory}
-//           keyExtractor={(item) => item.id}
-//           scrollEnabled={false}
-//         />
-//       </ScrollView>
-//     </View>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   root: {
-//     flex: 1,
-//     backgroundColor: "#fff",
-//   },
-//   headerContainer: {
-//     flexDirection: "row",
-//     alignItems: "center",
-//     paddingHorizontal: 15,
-//     paddingVertical: 10,
-//     borderBottomColor: "#ddd",
-//     borderBottomWidth: 1,
-//   },
-//   headerTitle: {
-//     fontSize: 16,
-//     fontWeight: "bold",
-//     color: "#000",
-//     marginLeft: 10,
-//   },
-//   container: {
-//     paddingVertical: 10,
-//     paddingHorizontal: 15,
-//     backgroundColor: "#fff",
-//   },
-//   categoryContainer: {
-//     marginBottom: 20,
-//   },
-//   headerRow: {
-//     flexDirection: "row",
-//     alignItems: "center",
-//     marginBottom: 8,
-//   },
-//   categoryTitle: {
-//     fontSize: 15,
-//     fontWeight: "600",
-//     color: "#006400",
-//   },
-//   line: {
-//     flex: 1,
-//     height: 1,
-//     backgroundColor: "#ccc",
-//     marginHorizontal: 10,
-//   },
-//   itemCard: {
-//     flex: 1,
-//     alignItems: "center",
-//     margin: 5,
-//     backgroundColor: "#fff",
-//     borderRadius: 8,
-//     shadowColor: "#000",
-//     shadowOpacity: 0.1,
-//     shadowOffset: { width: 0, height: 1 },
-//     shadowRadius: 2,
-//     elevation: 1,
-//     paddingVertical: 8,
-//   },
-//   itemImage: {
-//     width: 60,
-//     height: 60,
-//     borderRadius: 6,
-//   },
-//   itemLabel: {
-//     marginTop: 5,
-//     fontSize: 12,
-//     color: "#333",
-//     textAlign: "center",
-//   },
-// });
-
-// export default CategoriesScreen;
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   View,
   Text,
-  TouchableOpacity,
-  Image,
-  StyleSheet,
-  FlatList,
-  LayoutAnimation,
-  UIManager,
-  Platform,
   ScrollView,
-} from "react-native";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useNavigation } from "@react-navigation/native";
+  TouchableOpacity,
+  StyleSheet,
+  SafeAreaView,
+  StatusBar,
+  TextInput,
+  Image,
+  Dimensions
+} from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useNavigation } from '@react-navigation/native';
 
-// Enable Layout Animation for Android
-if (
-  Platform.OS === "android" &&
-  UIManager.setLayoutAnimationEnabledExperimental
-) {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
-}
+const { width } = Dimensions.get('window');
 
-// Common dummy items using your local images
-const defaultItems = [
-  { name: "Earrings", image: require("../assets/earrings.png") },
-  { name: "Mangalasutra", image: require("../assets/mangalsutra.png") },
-  { name: "Haaram", image: require("../assets/haaram.png") },
-  { name: "Earrings", image: require("../assets/earrings.png") },
-  { name: "Mangalasutra", image: require("../assets/mangalsutra.png") },
-  { name: "Haaram", image: require("../assets/haaram.png") },
-  { name: "Earrings", image: require("../assets/earrings.png") },
-  { name: "Mangalasutra", image: require("../assets/mangalsutra.png") },
-  { name: "Haaram", image: require("../assets/haaram.png") },
-];
-
-const categoriesData = [
-  { id: "1", title: "Gold", items: defaultItems },
-  { id: "2", title: "Silver", items: defaultItems.slice(0, 3) },
-  { id: "3", title: "Diamonds", items: defaultItems.slice(0, 2) },
-  { id: "4", title: "Platinum", items: defaultItems.slice(0, 1) },
-];
-
-const CategoriesScreen = () => {
-  const [expanded, setExpanded] = useState({});
+const CategoryNavigationScreen = () => {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
+  const [expandedCategory, setExpandedCategory] = useState('Gold');
+  const [selectedChipIndex, setSelectedChipIndex] = useState(0);
 
-  const toggleExpand = (id) => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
+  const filterChips = ['All Jewellery', 'Earrings', 'Rings', 'Daily wear'];
+
+  const categories = [
+    {
+      id: 'gold',
+      name: 'Gold',
+      color: '#FFD700',
+      image: require('../assets/mangalsutra.png'),
+      isExpanded: true,
+      subcategories: [
+        { id: '1', name: 'Necklace', icon: require('../assets/earrings.png') },
+        { id: '2', name: 'Mangalsutra', icon: require('../assets/mangalsutra.png') },
+        { id: '3', name: 'Earrings', icon: require('../assets/earrings.png') },
+        { id: '4', name: 'Bangles', icon: require('../assets/mangalsutra.png') },
+        { id: '5', name: 'Rings', icon: require('../assets/earrings.png') },
+        { id: '6', name: 'Bracelets', icon: require('../assets/mangalsutra.png') },
+        { id: '7', name: 'Anklets', icon: require('../assets/earrings.png') },
+        { id: '8', name: 'Chains', icon: require('../assets/mangalsutra.png') },
+      ]
+    },
+    {
+      id: 'silver',
+      name: 'Silver',
+      color: '#C0C0C0',
+      image: require('../assets/earrings.png'),
+      isExpanded: false,
+      subcategories: []
+    },
+    {
+      id: 'platinum',
+      name: 'Platinum',
+      color: '#E5E4E2',
+      image: require('../assets/mangalsutra.png'),
+      isExpanded: false,
+      subcategories: []
+    }
+  ];
+
+  const toggleCategory = (categoryId) => {
+    if (expandedCategory === categoryId) {
+      setExpandedCategory(null);
+    } else {
+      setExpandedCategory(categoryId);
+    }
   };
 
-  const renderCategory = ({ item }) => {
-    const isExpanded = expanded[item.id];
-    const itemsToShow = isExpanded ? item.items : item.items.slice(0, 4);
-
-    return (
-      <View style={styles.categoryContainer}>
-        <View style={styles.headerRow}>
-          <Text style={styles.categoryTitle}>{item.title}</Text>
-          <View style={styles.line} />
-          <TouchableOpacity onPress={() => toggleExpand(item.id)}>
-            <Ionicons
-              name={isExpanded ? "chevron-up-outline" : "chevron-down-outline"}
-              size={20}
-              color="#006400"
-            />
-          </TouchableOpacity>
-        </View>
-
-        {/* Category items grid */}
-        <FlatList
-          data={itemsToShow}
-          numColumns={4}
-          keyExtractor={(it, index) => index.toString()}
-          columnWrapperStyle={styles.row} // 👈 ensures items start from left
-          renderItem={({ item: productItem }) => (
-            <TouchableOpacity
-              style={styles.itemCard}
-              onPress={() => navigation.navigate('ProductDetailsScreen', { product: productItem })}
-            >
-              <Image
-                source={productItem.image}
-                style={styles.itemImage}
-                resizeMode="cover"
-              />
-              <Text style={styles.itemLabel}>{productItem.name}</Text>
-            </TouchableOpacity>
-          )}
-        />
-      </View>
-    );
+  const handleSubcategoryPress = (subcategory) => {
+    navigation.navigate('IndividualCategory', { category: subcategory.name });
   };
 
   return (
-    <View
-      style={[
-        styles.root,
-        { paddingTop: insets.top, paddingBottom: insets.bottom + 50 },
-      ]}
-    >
-      {/* Header with Back Arrow */}
-      <View style={styles.headerContainer}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={22} color="rgba(8, 118, 90, 1)" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Categories</Text>
+    <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
+      <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
+      
+      {/* Header */}
+      <View style={styles.header}>
+        {/* <TouchableOpacity style={styles.menuButton}>
+          <Ionicons name="menu" size={24} color="#000" />
+        </TouchableOpacity> */}
+        
+        <Image 
+          source={require('../assets/geethalogo.png')} 
+          style={styles.logo}
+          resizeMode="contain"
+        />
+        
+        <View style={styles.headerIcons}>
+          <TouchableOpacity style={styles.iconButton}>
+            <Ionicons name="notifications-outline" size={22} color="#000" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.iconButton} onPress={()=>{navigation.navigate("WishList")}}>
+            <Ionicons name="heart-outline" size={22} color="#000" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.iconButton} onPress={()=>{navigation.navigate("Cart")}}>
+            <Ionicons name="cart-outline" size={22} color="#000" />
+          </TouchableOpacity>
+          {/* <TouchableOpacity style={styles.iconButton}>
+            <Ionicons name="person-outline" size={22} color="#000" />
+          </TouchableOpacity> */}
+        </View>
       </View>
 
-      {/* Categories List */}
-      <ScrollView contentContainerStyle={styles.container}>
-        <FlatList
-          data={categoriesData}
-          renderItem={renderCategory}
-          keyExtractor={(item) => item.id}
-          scrollEnabled={false}
+      {/* Search Bar */}
+      <View style={styles.searchContainer}>
+        <Ionicons name="search-outline" size={20} color="#666" />
+        <TextInput
+          placeholder="Search here Your favourite Jewellery"
+          style={styles.searchInput}
+          placeholderTextColor="#999"
         />
+        {/* <TouchableOpacity>
+          <Ionicons name="scan-outline" size={20} color="#08765A" />
+        </TouchableOpacity> */}
+        {/* <TouchableOpacity style={styles.filterIconButton}>
+          <Ionicons name="home-outline" size={20} color="#08765A" />
+        </TouchableOpacity> */}
+      </View>
+
+      {/* Filter Chips */}
+      <View>    <ScrollView 
+        horizontal 
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.filterChipsContainer}
+      >
+        {filterChips.map((chip, index) => (
+          <TouchableOpacity 
+            key={index} 
+            style={[
+              styles.filterChip,
+              selectedChipIndex === index && styles.filterChipActive
+            ]}
+            onPress={() => setSelectedChipIndex(index)}
+          >
+            <Text style={[
+              styles.filterChipText,
+              selectedChipIndex === index && styles.filterChipTextActive
+            ]}>
+              {chip}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView></View>
+  
+
+      <ScrollView 
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingBottom: insets.bottom + 100 } // Increased padding to account for tab navigator height + insets
+        ]}
+      >
+        {/* Category Cards */}
+        {categories.map((category, index) => (
+          <View key={category.id} style={styles.categoryCard}>
+            {/* Category Header */}
+            <TouchableOpacity 
+              style={styles.categoryHeader}
+              onPress={() => toggleCategory(category.id)}
+            >
+              <View style={styles.categoryImageContainer}>
+                <Image 
+                  source={category.image} 
+                  style={styles.categoryImage}
+                  resizeMode="contain"
+                />
+              </View>
+              
+              <View style={styles.categoryInfo}>
+                <Text style={styles.categoryName}>{category.name}</Text>
+                <Ionicons 
+                  name={expandedCategory === category.id ? "chevron-up" : "chevron-down"} 
+                  size={20} 
+                  color="#000" 
+                />
+              </View>
+            </TouchableOpacity>
+
+            {/* Subcategories - Expandable */}
+            {expandedCategory === category.id && category.subcategories.length > 0 && (
+              <View style={styles.subcategoriesContainer}>
+                {category.subcategories.map((subcategory, subIndex) => (
+                  <TouchableOpacity 
+                    key={subcategory.id}
+                    style={styles.subcategoryItem}
+                    onPress={() => handleSubcategoryPress(subcategory)}
+                  >
+                    <View style={styles.subcategoryIcon}>
+                      <Image 
+                        source={subcategory.icon} 
+                        style={styles.subcategoryIconImage}
+                        resizeMode="contain"
+                      />
+                    </View>
+                    <Text style={styles.subcategoryName}>{subcategory.name}</Text>
+                    <Ionicons name="chevron-forward" size={18} color="#999" />
+                  </TouchableOpacity>
+                ))}
+                
+                {/* See All Button */}
+                <TouchableOpacity style={styles.seeAllButton}>
+                  <Text style={styles.seeAllText}>See all</Text>
+                  <Ionicons name="chevron-forward" size={18} color="#fff" />
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
+        ))}
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  headerContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    borderBottomColor: "#ddd",
-    borderBottomWidth: 1,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "rgba(8, 118, 90, 1)",
-    marginLeft: 10,
-  },
   container: {
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    backgroundColor: "#fff",
-  },
-  categoryContainer: {
-    marginBottom: 20,
-  },
-  headerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 8,
-  },
-  categoryTitle: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: "#006400",
-  },
-  line: {
     flex: 1,
-    height: 1,
-    backgroundColor: "#ccc",
-    marginHorizontal: 10,
+    backgroundColor: '#F8F8F8',
   },
-  row: {
-    justifyContent: "flex-start", // 👈 aligns items from left always
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
   },
-  itemCard: {
-    width: 80, // 👈 fixed width to control spacing
-    alignItems: "center",
-    marginRight: 10,
-    marginBottom: 10,
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 1 },
-    shadowRadius: 2,
-    elevation: 1,
+  menuButton: {
+    padding: 4,
+  },
+  logo: {
+    height: 40,
+    width: 120,
+  },
+  headerIcons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  iconButton: {
+    padding: 4,
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F5F5F5',
+    marginHorizontal: 16,
+    marginVertical: 12,
+    paddingHorizontal: 12,
+    borderRadius: 10,
+    height: 45,
+  },
+  searchInput: {
+    flex: 1,
+    marginLeft: 8,
+    fontSize: 14,
+    color: '#000',
+  },
+  filterIconButton: {
+    marginLeft: 8,
+  },
+  filterChipsContainer: {
+    paddingHorizontal: 16,
+    paddingBottom: 12,
+    gap: 8,
+  },
+  filterChip: {
+    paddingHorizontal: 16,
     paddingVertical: 8,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    backgroundColor: '#fff',
+    marginRight: 8,
   },
-  itemImage: {
+  filterChipActive: {
+    backgroundColor: '#004830',
+    borderColor: '#004830',
+  },
+  filterChipText: {
+    fontSize: 13,
+    color: '#666',
+    fontWeight: '500',
+  },
+  filterChipTextActive: {
+    color: '#fff',
+  },
+  scrollContent: {
+    paddingHorizontal: 16,
+    paddingTop: 8,
+  },
+  categoryCard: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    marginBottom: 16,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  categoryHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+  },
+  categoryImageContainer: {
     width: 60,
     height: 60,
-    borderRadius: 6,
+    borderRadius: 8,
+    overflow: 'hidden',
+    backgroundColor: '#FFF5E6',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 4,
   },
-  itemLabel: {
-    marginTop: 5,
-    fontSize: 12,
-    color: "#333",
-    textAlign: "center",
+  categoryImage: {
+    width: '100%',
+    height: '100%',
+  },
+  categoryInfo: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginLeft: 12,
+  },
+  categoryName: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#000',
+  },
+  subcategoriesContainer: {
+    paddingHorizontal: 12,
+    paddingBottom: 12,
+  },
+  subcategoryItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  subcategoryIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 8,
+    backgroundColor: '#FFF5E6',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+    padding: 4,
+  },
+  subcategoryIconImage: {
+    width: '100%',
+    height: '100%',
+  },
+  subcategoryName: {
+    flex: 1,
+    fontSize: 15,
+    color: '#333',
+    fontWeight: '500',
+  },
+  seeAllButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#004830',
+    paddingVertical: 12,
+    borderRadius: 8,
+    marginTop: 12,
+    gap: 6,
+  },
+  seeAllText: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: '600',
   },
 });
 
-export default CategoriesScreen;
+export default CategoryNavigationScreen;

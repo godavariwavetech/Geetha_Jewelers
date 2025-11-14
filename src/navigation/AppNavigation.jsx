@@ -6,9 +6,11 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import SplashScreen from '../screens/SplashScreen';
 import SignIn from '../screens/SignIn';
 import OTPVerification from '../screens/OTPVerification';
+import SchemeDetailsScreen from '../screens/SchemeDetailsScreen';
 import Home from '../screens/Home';
 import More from '../screens/More';
 import Rewards from '../screens/Rewards';
+import GoldScheme from '../screens/GoldScheme';
 import WishList from '../screens/WishList';
 import Location from '../screens/Location';
 import ProductDetailsScreen from '../screens/ProductDetailsScreen';
@@ -23,7 +25,7 @@ import MyAddresses from '../screens/MyAddresses';
 import MyOrders from '../screens/MyOrders';
 import SearchScreen from '../screens/SearchScreen';
 import IndividualCategory from '../screens/IndividualCategory';
-import ComingSoonScreen from '../screens/ComingSoonScreen';
+
 import ContactUs from '../screens/ContactUs';
 import RefundPolicyScreen from '../screens/RefundPolicyScreen';
 import ApplyCouponScreen from '../screens/ApplyCouponScreen';
@@ -32,9 +34,13 @@ import SelectOnMap from '../screens/SelectOnMap';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Entypo from "react-native-vector-icons/Entypo";
 import Feather from "react-native-vector-icons/Feather";
-import IndividualShop from '../screens/IndividualShop';
-import TierBenefitsScree from '../screens/TierBenefitsScree';
+
+
 import OrderSuccessScreen from '../screens/OrderSuccessScreen';
+import OnBoard1 from '../screens/OnBoard1';
+import OnBoard2 from '../screens/OnBoard2';
+import Splash2 from '../screens/Splash2';
+import PdfViewerScreen from '../screens/PdfViewerScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -88,6 +94,21 @@ const TabNavigator = ({ route }) => {
               </View>
             );
           }
+          if (route.name === "GoldScheme") {
+            return (
+              <View style={styles.tabIconContainer}>
+                {focused && <View style={styles.activeTabLine} />}
+                <Image
+                  source={
+                    focused
+                      ? require('../assets/shcemefill.png')
+                      : require('../assets/shcemeoutline.png')
+                  }
+                  style={styles.rewardIcon}
+                />
+              </View>
+            );
+          }
 
           if (route.name === "Categories") {
             return (
@@ -124,7 +145,7 @@ const TabNavigator = ({ route }) => {
           return null;
         },
         tabBarActiveTintColor: "#rgba(8, 118, 90, 1)",
-        tabBarInactiveTintColor: "rgba(8, 118, 90, 1)",
+        tabBarInactiveTintColor: "#949494",
         tabBarStyle: {
           height: (Platform.OS === 'ios' ? 85 : 65) + insets.bottom,
           paddingBottom: Platform.OS === 'ios' ? insets.bottom : 8,
@@ -155,9 +176,14 @@ const TabNavigator = ({ route }) => {
         initialParams={{ selectedCategory: route.params?.selectedCategory || 'Men' }}
       />
       <Tab.Screen
+  name="GoldScheme"
+  component={GoldScheme}
+  options={{ tabBarLabel: "Scheme" }}
+/>
+      <Tab.Screen
   name="Rewards"
   component={Rewards}
-  options={{ tabBarLabel: "Live Rate" }}
+  options={{ tabBarLabel: "Catalogue" }}
 />
       <Tab.Screen name="Categories" component={Location} />
       <Tab.Screen name="Profile" component={More} />
@@ -197,14 +223,19 @@ const AppNavigation = () => {
         <Stack.Screen name="ApplyCouponScreen" component={ApplyCouponScreen} />
         <Stack.Screen name="More" component={More} />
         <Stack.Screen name="ContactUs" component={ContactUs} />
-        <Stack.Screen name="ComingSoonScreen" component={ComingSoonScreen} />
+   
         <Stack.Screen name="VideoScreen" component={VideoScreen} />
         <Stack.Screen name="SearchScreen" component={SearchScreen} />
         <Stack.Screen name="SelectOnMap" component={SelectOnMap} />
-        <Stack.Screen name="IndividualShop" component={IndividualShop} />
-        <Stack.Screen name="TierBenefitsScree" component={TierBenefitsScree} />
+        
+       
         <Stack.Screen name="OrderSuccessScreen" component={OrderSuccessScreen} />
         <Stack.Screen name="Profile1" component={Profile1} />
+        <Stack.Screen name="OnBoard1" component={OnBoard1} />
+        <Stack.Screen name="OnBoard2" component={OnBoard2} />
+        <Stack.Screen name="SchemeDetailsScreen" component={SchemeDetailsScreen} />
+        <Stack.Screen name="Splash2" component={Splash2} />
+        <Stack.Screen name="PdfViewerScreen" component={PdfViewerScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -222,7 +253,7 @@ const styles = StyleSheet.create({
     top: -8,
     width: 24,
     height: 3,
-    backgroundColor: 'rgba(8, 118, 90, 1)',
+    backgroundColor: '#004830',
     borderRadius: 2,
   },
   homeIcon: {

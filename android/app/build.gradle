@@ -76,7 +76,7 @@ android {
     ndkVersion rootProject.ext.ndkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
-
+  
     namespace "com.geethajewellers"
     defaultConfig {
         applicationId "com.geethajewellers"
@@ -118,6 +118,7 @@ android {
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
+  
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")

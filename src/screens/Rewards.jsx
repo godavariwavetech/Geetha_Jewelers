@@ -1,175 +1,159 @@
-import React from "react";
+import React from 'react';
 import {
   View,
   Text,
-  StyleSheet,
-  SafeAreaView,
-  ScrollView,
-  Dimensions,
   Image,
+  TouchableOpacity,
+  StyleSheet,
   StatusBar,
-} from "react-native";
-import LinearGradient from "react-native-linear-gradient";
+  FlatList,
+} from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/Ionicons';
 
-const { width, height } = Dimensions.get("window");
+const GeetaGoldScreen = ({ navigation }) => {
+  const insets = useSafeAreaInsets();
 
-const Rewards = () => {
-  const data = [
+  const metalCategories = [
     {
-      title: "Gold",
-      icon: require("../assets/gold.png"),
-      items: [
-        { label: "Pure Gold", value: "₹11,400/g" },
-        { label: "Rose Gold", value: "₹10,190/g" },
-      ],
+      id: '1',
+      name: 'Gold',
+      image: require('../assets/haaram.png'),
     },
     {
-      title: "Silver",
-      icon: require("../assets/silver.png"),
-      items: [{ label: "Silver", value: "₹110/g" }],
+      id: '2',
+      name: 'Silver',
+      image: require('../assets/diamondearring.png'),
     },
     {
-      title: "Platinum",
-      icon: require("../assets/platinum.png"),
-      items: [{ label: "Platinum", value: "₹3,400 / gram" }],
-    },
-    {
-      title: "Diamond",
-      icon: require("../assets/diomand.png"),
-      items: [{ label: "Diamond", value: "₹1,00,000 / carat" }],
+      id: '3',
+      name: 'Platinum',
+      image: require('../assets/diamondring.png'),
     },
   ];
 
+  const renderItem = ({ item }) => (
+    <TouchableOpacity
+      style={styles.categoryCard}
+      activeOpacity={0.8}
+    onPress={() =>
+  navigation.navigate('PdfViewerScreen', {
+    pdfUrl: 'https://www.grtjewels.com/asia/wp-content/uploads/2016/06/singapore-catalogue.pdf?srsltid=AfmBOoriCd5awVMLcG7DrMxsJldvjN4H1w4FQhgXJZeyMse49yY4To1P',
+  })
+}
+    >
+      <Image source={item.image} style={styles.categoryImage} />
+      <View style={styles.categoryTextContainer}>
+        <Text style={styles.categoryName}>{item.name}</Text>
+        <Text style={styles.subText}>Explore exquisite {item.name} jewelry</Text>
+      </View>
+      <Icon name="chevron-forward" size={22} color="#9C9C9C" />
+    </TouchableOpacity>
+  );
+
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor="transparent"
-      />
-      <View style={styles.headerContainer}>
-        <LinearGradient
-          colors={["#00A982", "#00C18A"]}
-          style={styles.headerGradient}
-        >
-          <Text style={styles.headerTitle}>Today's Rate</Text>
-        </LinearGradient>
+    <SafeAreaView style={[styles.safeArea, {  }]}>
+      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Icon name="arrow-back" size={22} color="#000" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Geeta Gold</Text>
+        <View style={{ width: 22 }} /> {/* Spacer for layout balance */}
       </View>
 
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
+      {/* Category List */}
+      <FlatList
+        data={metalCategories}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.listContainer}
         showsVerticalScrollIndicator={false}
-      >
-        {data.map((category, index) => (
-          <LinearGradient
-            key={index}
-            colors={["#00A982", "#00C18A"]}
-            style={styles.cardContainer}
-          >
-            <View style={styles.cardHeader}>
-              <View style={styles.headerLeft}>
-                <Image source={category.icon} style={styles.icon} />
-                <Text style={styles.cardTitle}>{category.title}</Text>
-              </View>
-              <Text style={styles.star}>✨</Text>
-            </View>
+      />
 
-            {category.items.map((item, i) => (
-              <View key={i} style={styles.rateRow}>
-                <Text style={styles.itemLabel}>{item.label}</Text>
-                <Text style={styles.itemValue}>{item.value}</Text>
-              </View>
-            ))}
-          </LinearGradient>
-        ))}
-      </ScrollView>
+      {/* WhatsApp Floating Button */}
+      {/* <TouchableOpacity style={styles.whatsappButton} activeOpacity={0.8}>
+        <Icon name="logo-whatsapp" size={26} color="#fff" />
+      </TouchableOpacity> */}
     </SafeAreaView>
   );
 };
 
+export default GeetaGoldScreen;
+
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: '#F9F9F9',
   },
-  headerContainer: {
-    width: "100%",
-    height: height * 0.16,
-    overflow: "hidden",
-  },
-  headerGradient: {
-    flex: 1,
-    justifyContent: "flex-end",
-    paddingHorizontal: 20,
-    paddingBottom: 15,
-    borderBottomLeftRadius: 25,
-    borderBottomRightRadius: 25,
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    // backgroundColor: '#fff',
+    paddingHorizontal: 18,
+    paddingVertical: 14,
+    // borderBottomWidth: 0.6,
+    // borderBottomColor: '#E5E5E5',
+    // elevation: 1,
   },
   headerTitle: {
-    fontSize: width * 0.05,
-    fontWeight: "700",
-    color: "#fff",
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#000',
   },
-  scrollContent: {
-    paddingHorizontal: width * 0.05,
-    paddingTop: 15,
-    paddingBottom: 40,
-    marginTop: -height * 0.01, // slight overlap effect like in your image
-  },
-  cardContainer: {
-    borderRadius: 14,
-    paddingVertical: 12,
-    paddingHorizontal: 15,
-    marginBottom: 18,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  cardHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 8,
-  },
-  headerLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  icon: {
-    width: width * 0.05,
-    height: width * 0.05,
-    resizeMode: "contain",
-    marginRight: 8,
-  },
-  cardTitle: {
-    fontSize: width * 0.04,
-    fontWeight: "600",
-    color: "#fff",
-  },
-  star: {
-    fontSize: width * 0.05,
-    color: "#fff",
-  },
-  rateRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    backgroundColor: "#fff",
-    borderRadius: 10,
+  listContainer: {
     paddingVertical: 10,
-    paddingHorizontal: 15,
-    marginBottom: 8,
   },
-  itemLabel: {
-    fontSize: width * 0.038,
-    color: "#333",
-    fontWeight: "500",
+  categoryCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    marginHorizontal: 16,
+    marginBottom: 14,
+    padding: 14,
+    borderRadius: 14,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 3,
   },
-  itemValue: {
-    fontSize: width * 0.038,
-    color: "#000",
-    fontWeight: "600",
+  categoryImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 12,
+    marginRight: 14,
+  },
+  categoryTextContainer: {
+    flex: 1,
+  },
+  categoryName: {
+    fontSize: 17,
+    fontWeight: '600',
+    color: '#1A1A1A',
+  },
+  subText: {
+    fontSize: 13,
+    color: '#707070',
+    marginTop: 3,
+  },
+  whatsappButton: {
+    position: 'absolute',
+    bottom: 24,
+    right: 20,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#25D366',
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOpacity: 0.25,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 4,
   },
 });
-
-export default Rewards;

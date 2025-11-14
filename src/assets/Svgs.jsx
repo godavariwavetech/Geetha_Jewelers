@@ -30,7 +30,20 @@ export const Onboarding1 = (props) => (
       </Defs>
     </Svg>
   )
-
+export const Onb1 = (props) => (
+  <Svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={393}
+    height={304}
+    fill="none"
+    {...props}
+  >
+    <Path
+      fill="#fff"
+      d="M194.844 46.831c-131.2-84.816-200.444-35.34-218.666 0l16.956 260.314h405.009l18.681-276.879c-58.311 60.962-173.95 47.615-221.98 16.565Z"
+    />
+  </Svg>
+)
   export const Onboarding2 = (props) => (
     <Svg
       xmlns="http://www.w3.org/2000/svg"
