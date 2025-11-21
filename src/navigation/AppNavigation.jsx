@@ -41,6 +41,7 @@ import OnBoard1 from '../screens/OnBoard1';
 import OnBoard2 from '../screens/OnBoard2';
 import Splash2 from '../screens/Splash2';
 import PdfViewerScreen from '../screens/PdfViewerScreen';
+import Form from '../screens/Form';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -236,6 +237,7 @@ const AppNavigation = () => {
         <Stack.Screen name="SchemeDetailsScreen" component={SchemeDetailsScreen} />
         <Stack.Screen name="Splash2" component={Splash2} />
         <Stack.Screen name="PdfViewerScreen" component={PdfViewerScreen} />
+        <Stack.Screen name="Form" component={Form} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -141,7 +141,7 @@ const MyOrders = ({ navigation }) => {
             <ScrollView
               style={styles.scrollView}
               showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ paddingBottom: insets.bottom + 50 }}
+              contentContainerStyle={{ paddingBottom: insets.bottom + 100 }}
             >
               {/* Close Button */}
               <TouchableOpacity
@@ -165,9 +165,10 @@ const MyOrders = ({ navigation }) => {
               <Text style={styles.modalProductName}>
                 {selectedOrder?.name ?? ""}
               </Text>
-              <Text style={styles.modalLocation}>
-                📍 Rajahmundry, Andhra Pradesh
-              </Text>
+             <View style={styles.locationRow}>
+  <Ionicons name="location-sharp" size={18} color="#000" />
+  <Text style={styles.modalLocation}>Rajahmundry, Andhra Pradesh</Text>
+</View>
 
               {/* Delivery Date */}
               <View style={styles.deliveryContainer}>
@@ -219,6 +220,7 @@ const MyOrders = ({ navigation }) => {
                     multiline
                     numberOfLines={3}
                     placeholder="Write your review here..."
+                    placeholderTextColor="#004830"
                     value={reviewText}
                     onChangeText={setReviewText}
                     textAlignVertical="top"
@@ -250,7 +252,7 @@ const MyOrders = ({ navigation }) => {
                       {item.name}
                     </Text>
                     <Text style={styles.similarPrice}>₹37,899</Text>
-                    <TouchableOpacity style={styles.addToCartButton}>
+                    <TouchableOpacity style={styles.addToCartButton} onPress={()=>{navigation.navigate("Cart")}}>
                       <Text style={styles.addToCartText}>Add To Cart</Text>
                     </TouchableOpacity>
                   </View>
@@ -398,15 +400,22 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginTop: 8,
+    backgroundColor: "#004830",
+    // borderRadius: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    width:"50%",
+    alignSelf:"center"
   },
   deliveredText: {
-    color: "#000",
+    color: "#fff",
     fontSize: 13,
   },
   deliveryDate: {
-    color: "#0E614E",
+    color: "#fff",
     fontWeight: "600",
     fontSize: 13,
+    marginLeft: 4,
   },
   modalPrice: {
     textAlign: "center",
@@ -522,6 +531,17 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "500",
   },
+  locationRow: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  alignSelf:"center",
+},
+
+modalLocation: {
+  fontSize: 16,
+  color: '#000',
+  marginLeft: 5,
+},
 });
 
 export default MyOrders;
