@@ -15,7 +15,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'; // Add this 
 
 const { width, height } = Dimensions.get('window');
 
-const OnboardingScreen = ({ navigation }) => {
+const OnBoard1 = ({ navigation }) => {
   const insets = useSafeAreaInsets(); // Hook to get safe area insets
 
   return (
@@ -96,7 +96,7 @@ const OnboardingScreen = ({ navigation }) => {
   );
 };
 
-export default OnboardingScreen;
+export default OnBoard1;
 
 const styles = StyleSheet.create({
   container: {

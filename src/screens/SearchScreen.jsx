@@ -250,7 +250,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { fetchGlobalSearch, clearSearchSuggestions } from '../redux/slices/categorySlice';
 import commonstyles from '../commonstyles/commonstyles';
 import debounce from 'lodash.debounce';
-
 const SearchScreen = () => {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
@@ -260,7 +259,6 @@ const SearchScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [searchHistory, setSearchHistory] = useState([]);
-
   // Load search history from AsyncStorage when component mounts
   useEffect(() => {
     const loadSearchHistory = async () => {
@@ -275,7 +273,6 @@ const SearchScreen = () => {
     };
     loadSearchHistory();
   }, []);
-
   // Save search query to history
   const saveSearchHistory = useCallback(
     async (query) => {
@@ -297,7 +294,6 @@ const SearchScreen = () => {
     },
     []
   );
-
   // Clear search history
   const clearSearchHistory = useCallback(async () => {
     try {
@@ -345,7 +341,6 @@ const SearchScreen = () => {
     setSearchQuery(query);
     saveSearchHistory(query);
     dispatch(clearSearchSuggestions());
-
     if (item.search_text) {
       // Handle suggestion
       if (item.search_tagline === 'product') {
@@ -378,7 +373,6 @@ const SearchScreen = () => {
       fetchSuggestions(query);
     }
   };
-
   // Handle search submission
   const handleSearchSubmit = () => {
     console.log('Search submitted with query:', searchQuery);
@@ -394,7 +388,6 @@ const SearchScreen = () => {
       }
     }
   };
-
   const renderSuggestion = ({ item }) => (
     <TouchableOpacity
       style={styles.suggestionItem}
@@ -407,7 +400,6 @@ const SearchScreen = () => {
       </View>
     </TouchableOpacity>
   );
-
   const renderHistoryItem = ({ item }) => (
     <TouchableOpacity
       style={styles.suggestionItem}
@@ -420,7 +412,6 @@ const SearchScreen = () => {
       </View>
     </TouchableOpacity>
   );
-
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar translucent={true} backgroundColor="transparent" barStyle="light-content" />

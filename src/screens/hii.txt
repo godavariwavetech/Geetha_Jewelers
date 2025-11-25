@@ -1,397 +1,497 @@
-import React, { useState, useRef } from 'react';
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#000',
+  },
+  keyboardView: {
+    flex: 1,
+  },
+  scrollContainer: {
+    flexGrow: 1,
+  },
+  backgroundImage: {
+    flex: 1,
+    width: '100%',
+    // minHeight: height,
+    height:"50%"
+  },
+  bottomSection: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    height: responsiveHeight(60),
+    overflow: 'hidden',
+  },
+  curve: {
+    position: 'absolute',
+    top: -1,
+    left: 0,
+    zIndex: 2,
+  },
+  whiteBackground: {
+    position: 'absolute',
+    top: responsiveHeight(68),
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: '#FFFFFF',
+    zIndex: 1,
+  },
+  contentContainer: {
+    position: 'absolute',
+    top: responsiveHeight(18),
+    left: 0,
+    right: 0,
+    paddingHorizontal: responsiveWidth(8),
+    paddingBottom: responsiveHeight(3),
+    zIndex: 3,
+  },
+  title: {
+    fontSize: responsiveFontSize(2.8),
+    fontWeight: '700',
+    color: '#1A1A1A',
+    marginBottom: responsiveHeight(0.8),
+    lineHeight: responsiveFontSize(3.4),
+  },
+  subtitle: {
+    fontSize: responsiveFontSize(1.7),
+    color: '#666666',
+    marginBottom: responsiveHeight(4),
+    lineHeight: responsiveFontSize(2.3),
+  },
+  otpContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: responsiveHeight(3),
+    paddingHorizontal: responsiveWidth(5),
+  },
+  otpInput: {
+    width: responsiveWidth(15),
+    height: responsiveWidth(15),
+    borderWidth: 1.5,
+    borderColor: '#CCCCCC',
+    borderRadius: 8,
+    fontSize: responsiveFontSize(2.8),
+    fontWeight: '600',
+    color: '#000',
+    backgroundColor: '#FFFFFF',
+  },
+  resendContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: responsiveHeight(3.5),
+  },
+  resendText: {
+    fontSize: responsiveFontSize(1.6),
+    color: '#666666',
+    marginRight: 8,
+  },
+  resendLink: {
+    fontSize: responsiveFontSize(1.6),
+    color: '#0A5C4A',
+    fontWeight: '600',
+    textDecorationLine: 'underline',
+  },
+  resendLinkDisabled: {
+    color: '#CCCCCC',
+  },
+  verifyButton: {
+    backgroundColor: '#0A5C4A',
+    borderRadius: 8,
+    paddingVertical: responsiveHeight(1.8),
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  verifyButtonDisabled: {
+    backgroundColor: '#CCCCCC',
+    opacity: 0.6,
+  },
+  verifyButtonText: {
+    fontSize: responsiveFontSize(2),
+    fontWeight: '700',
+    color: '#FFFFFF',
+    lineHeight: responsiveFontSize(2.4),
+  },  // Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  modalContainer: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 24,
+    width: '90%',
+    maxWidth: 400,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  modalIconContainer: {
+    marginBottom: 16,
+  },
+  modalTitle: {
+    fontSize: responsiveFontSize(2.4),
+    fontWeight: '700',
+    color: '#1A1A1A',
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  modalMessage: {
+    fontSize: responsiveFontSize(1.8),
+    color: '#666666',
+    marginBottom: 24,
+    textAlign: 'center',
+    lineHeight: 24,
+  },
+  modalButton: {
+    backgroundColor: '#0A5C4A',
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 40,
+    minWidth: 120,
+  },
+  modalButtonText: {
+    fontSize: responsiveFontSize(1.9),
+    fontWeight: '600',
+    color: '#FFFFFF',
+    textAlign: 'center',
+  },
+});
+
+
+
+
+//////////////////////
+import React, { useState } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
+  TextInput,
   TouchableOpacity,
-  Image,
-  Dimensions,
-  FlatList,
+  StyleSheet,
+  ImageBackground,
+  StatusBar,
   SafeAreaView,
+  KeyboardAvoidingView,
+  Platform,
   Modal,
-  Linking,
   ScrollView,
+  Keyboard,
+  ActivityIndicator,
 } from 'react-native';
-import MapView, { Marker, Callout } from 'react-native-maps';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';const { width, height } = Dimensions.get('window');const locations = [
-  {
-    id: 1,
-    name: "SOWBHAGYA TOWER JN Road\nRAJAMUNDRY",
-    timing: "09:00 AM to 11:00 PM",
-    distance: "1.1 KM Away",
-    coords: { latitude: 28.629375, longitude: 77.276085 },
-    markerImg: require('../assets/uptoplogo.png'),
-    coverImg: require('../assets/uptoplogo.png'),
-    address:
-      'Grnd Flr, G-1 & 2 Sowbhagya Tower, Residential Survey No. 291, Building No.79/1/6, JN Rd, Rajamundry, 533103',
-    phone: '18001025042',
-    website: 'www.uptopcafe.com',
-  },
-  {
-    id: 2,
-    name: "Another Cafe\nCITY CENTER",
-    timing: "08:00 AM to 10:00 PM",
-    distance: "0.9 KM Away",
-    coords: { latitude: 28.629375, longitude: 77.276585 },
-    markerImg: require('../assets/uptoplogo.png'),
-    coverImg: require('../assets/uptoplogo.png'),
-    address: '12 Center Avenue, City Center, 560001',
-    phone: '180011223344',
-    website: 'www.yetanothercafe.com',
-  },
-];export default function LocationMapScreen() {
-  const [modalVisible, setModalVisible] = useState(false);
-  const [modalShop, setModalShop] = useState(null);
-  const insets = useSafeAreaInsets();  // Modal open handler (from Card/Callout button)
-  const openMenuModal = (shop) => {
-    setModalShop(shop);
-    setModalVisible(true);
-  };  // Modal close handler
-  const closeMenuModal = () => {
-    setModalVisible(false);
-    setModalShop(null);
-  };  // Height for 2 full cards at bottom (based on card height + margin)
-  const BOTTOM_CARD_HEIGHT = 110 + 18 + 18;  return (
-    <SafeAreaView style={styles.container}>
-      {/* MAP */}
-      <View style={StyleSheet.absoluteFill}>
-        <MapView
-          style={StyleSheet.absoluteFill}
-          initialRegion={{
-            latitude: 28.629375,
-            longitude: 77.276085,
-            latitudeDelta: 0.01,
-            longitudeDelta: 0.01,
-          }}
-          onMapLoaded={() => {
-            // Map loaded handler
-          }}
-        >
-          {locations.map((loc) => (
-            <Marker
-              key={loc.id}
-              coordinate={loc.coords}
-              anchor={{ x: 0.5, y: 0.5 }}
-              tracksViewChanges={true}
-            >
-              <View style={styles.markerOuter}>
-                <Image 
-                  onError={() => {
-                    console.log(">>>>>>>>>>>>>>>Error")
-                  }}
-                  onLoad={() => {
-                    console.log(">>>>>>>>>>>>>>>CALLING")
-                  }} 
-                  source={loc.markerImg} 
-                  style={styles.markerImg} 
-                />
-              </View>
-              <Callout tooltip>
-                <View style={styles.mapCard}>
-                  {loc.coverImg && (
-                    <Image style={styles.cardImg} source={loc.coverImg} />
-                  )}
-                  <Text numberOfLines={2} style={styles.cardTitle}>{loc.name}</Text>
-                  <Text style={styles.cardTime}>Timing: {loc.timing}</Text>
-                  <View style={styles.cardBtns}>
-                    <TouchableOpacity style={styles.cardBtn}>
-                      <MaterialIcons name="directions" size={16} color="#874e40" />
-                      <Text style={styles.cardBtnText}>Directions</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={[styles.cardBtn, { backgroundColor: "#371c1b" }]}
-                      onPress={() => openMenuModal(loc)}
-                    >
-                      <MaterialIcons name="menu-book" size={16} color="#fff" />
-                      <Text style={[styles.cardBtnText, { color: "#fff" }]}>Menu</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </Callout>
-            </Marker>
-          ))}
-        </MapView>
-      </View>  {/* BOTTOM SHEET with safe area insets */}
-  <View style={[
-    styles.bottomSheet, 
-    { 
-      height: BOTTOM_CARD_HEIGHT,
-      bottom: insets.bottom + 65 // Add tab bar height + safe area bottom
+import { useSafeAreaInsets } from 'react-native-safe-area-context'; // ← ADD THIS
+import Svg, { Path, Defs, Filter, FeFlood, FeColorMatrix, FeOffset, FeGaussianBlur, FeComposite, FeBlend, G } from 'react-native-svg';
+import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-native-responsive-dimensions';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useDispatch, useSelector } from 'react-redux';
+import { requestOtp } from '../redux/slices/authSlice';
+
+const LoginScreen = ({ navigation }) => {
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [errorModalVisible, setErrorModalVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const dispatch = useDispatch();
+  const { loading } = useSelector((state) => state.Auth);
+
+  // Get safe area insets (especially bottom for Android gesture nav)
+  const insets = useSafeAreaInsets();
+
+  const validatePhoneNumber = (number) => {
+    const phoneRegex = /^[6-9]\d{9}$/;
+    return phoneRegex.test(number);
+  };
+
+  const handlePhoneNumberChange = (text) => {
+    const numericText = text.replace(/[^0-9]/g, '');
+    setPhoneNumber(numericText);
+  };
+
+  const handleSendOTP = async () => {
+    Keyboard.dismiss();
+
+    if (!phoneNumber || phoneNumber.trim() === '') {
+      setErrorMessage('Please enter your mobile number');
+      setErrorModalVisible(true);
+      return;
     }
-  ]}>
-    <View style={styles.sheetHandle} />
-    <FlatList
-      data={locations}
-      keyExtractor={(item) => `${item.id}`}
-      renderItem={({ item }) => (
-        <View style={styles.locationCard}>
-          <Text style={styles.locationTitle}>{item.name}</Text>
-          <Text style={styles.locationTime}>
-            Timing: {item.timing} | {item.distance}
-          </Text>
-          <View style={styles.cardBtns}>
-            <TouchableOpacity style={styles.cardBtn}>
-              <MaterialIcons name="directions" size={16} color="#874e40" />
-              <Text style={styles.cardBtnText}>Directions</Text>
-            </TouchableOpacity>
+
+    if (phoneNumber.length !== 10) {
+      setErrorMessage('Mobile number must be 10 digits');
+      setErrorModalVisible(true);
+      return;
+    }
+
+    if (!validatePhoneNumber(phoneNumber)) {
+      setErrorMessage('Please enter a valid Indian mobile number');
+      setErrorModalVisible(true);
+      return;
+    }
+
+    try {
+      const result = await dispatch(requestOtp({ phoneNumber })).unwrap();
+
+      navigation.navigate('OTPVerification', {
+        phoneNumber,
+        serverOtp: result.loginotp?.toString(),
+        userInd: result.user_ind,
+        message: result.message,
+      });
+    } catch (err) {
+      let errorMsg = 'Failed to send OTP. Please try again.';
+      if (err?.response?.data?.message) errorMsg = err.response.data.message;
+      else if (err?.message) errorMsg = err.message;
+      else if (typeof err === 'string') errorMsg = err;
+
+      setErrorMessage(errorMsg);
+      setErrorModalVisible(true);
+    }
+  };
+
+  return (
+    <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
+      <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
+
+      {/* KEY FIX: Proper KeyboardAvoidingView + padding for bottom inset */}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+      >
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          keyboardShouldPersistTaps="handled"
+          bounces={false}
+          showsVerticalScrollIndicator={false}
+        >
+          <ImageBackground
+            source={require('../assets/lg.png')}
+            style={styles.backgroundImage}
+            resizeMode="cover"
+          >
+            {/* Bottom curved white section */}
+            <View style={styles.bottomSection}>
+              <Svg
+                height={responsiveHeight(68)}
+                width="100%"
+                viewBox="0 0 393 576"
+                preserveAspectRatio="none"
+                style={styles.curve}
+              >
+                {/* Your SVG remains unchanged */}
+                <Defs>
+                  <Filter id="filter0_d_35_4416" x="-42.0811" y="0" width="477.163" height="735.962" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+                    <FeFlood floodOpacity="0" result="BackgroundImageFix" />
+                    <FeColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
+                    <FeOffset dy="-7" />
+                    <FeGaussianBlur stdDeviation="10" />
+                    <FeComposite in2="hardAlpha" operator="out" />
+                    <FeColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.3 0" />
+                    <FeBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_35_4416" />
+                    <FeBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_35_4416" result="shape" />
+                  </Filter>
+                </Defs>
+                <G filter="url(#filter0_d_35_4416)">
+                  <Path
+                    d="M79.6416 72.9354C28.1047 44.4338 -9.64722 61.0598 -22.0811 72.9354V722.962H405.536L415.082 92.1732C401.743 95.2047 379.263 79.7585 374.463 72.9354C350.816 50.4968 326.21 38.3269 316.863 35.0468C247.136 9.5815 205.573 50.7333 178.926 72.9354C167.305 84.8111 131.179 101.437 79.6416 72.9354Z"
+                    fill="white"
+                  />
+                </G>
+              </Svg>
+
+              <View style={styles.whiteBackground} />
+
+              {/* Main Content with dynamic bottom padding */}
+              <View style={[styles.contentContainer, { paddingBottom: insets.bottom + responsiveHeight(5) }]}>
+                <Text style={styles.title}>login / Sign up</Text>
+                <Text style={styles.subtitle}>Enter Mobile number for OTP</Text>
+
+                <View style={styles.inputContainer}>
+                  <Text style={styles.inputLabel}>Enter Mobile Number</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Enter 10-digit mobile number"
+                    placeholderTextColor="#999"
+                    keyboardType="phone-pad"
+                    value={phoneNumber}
+                    onChangeText={handlePhoneNumberChange}
+                    maxLength={10}
+                    returnKeyType="done"
+                    onSubmitEditing={handleSendOTP}
+                    autoFocus={false}
+                  />
+                </View>
+
+                <Text style={styles.termsText}>
+                  By Continuing, I agree to{' '}
+                  <Text style={styles.termsLink}>Terms of use</Text>
+                  {' & '}
+                  <Text style={styles.termsLink}>Privacy Policy</Text>
+                </Text>
+
+                <TouchableOpacity
+                  style={[
+                    styles.sendOTPButton,
+                    (phoneNumber.length !== 10 || loading) && styles.sendOTPButtonDisabled,
+                  ]}
+                  onPress={handleSendOTP}
+                  disabled={phoneNumber.length !== 10 || loading}
+                >
+                  {loading ? (
+                    <ActivityIndicator color="#FFFFFF" size="small" />
+                  ) : (
+                    <Text style={styles.sendOTPButtonText}>Send OTP</Text>
+                  )}
+                </TouchableOpacity>
+              </View>
+            </View>
+          </ImageBackground>
+        </ScrollView>
+      </KeyboardAvoidingView>
+
+      {/* Error Modal */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={errorModalVisible}
+        onRequestClose={() => setErrorModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalIconContainer}>
+              <Ionicons name="close-circle" size={50} color="#D32F2F" />
+            </View>
+            <Text style={styles.modalTitle}>Oops!</Text>
+            <Text style={styles.modalMessage}>{errorMessage}</Text>
             <TouchableOpacity
-              style={[styles.cardBtn, { backgroundColor: "#371c1b" }]}
-              onPress={() => openMenuModal(item)}
+              style={styles.modalButton}
+              onPress={() => setErrorModalVisible(false)}
             >
-              <MaterialIcons name="menu-book" size={16} color="#fff" />
-              <Text style={[styles.cardBtnText, { color: "#fff" }]}>Menu</Text>
+              <Text style={styles.modalButtonText}>OK</Text>
             </TouchableOpacity>
           </View>
         </View>
-      )}
-      horizontal={false}
-      showsVerticalScrollIndicator={false}
-      contentContainerStyle={{ paddingBottom: 16 }}
-      style={{ flex: 1 }}
-    />
-  </View>
+      </Modal>
+    </SafeAreaView>
+  );
+};
 
-  {/* MODAL FOR MENU/DETAILS */}
-  <Modal
-    visible={modalVisible}
-    animationType="slide"
-    transparent={true}
-    onRequestClose={closeMenuModal}
-  >
-    <View style={styles.modalBackdrop}>
-      <View style={[styles.modalCard, { paddingBottom: insets.bottom + 20 }]}>
-        <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
-          {/* Close button */}
-          <TouchableOpacity
-            style={styles.modalCloseBtn}
-            onPress={closeMenuModal}
-          >
-            <MaterialIcons name="close" size={28} color="#874e40" />
-          </TouchableOpacity>
-          {/* Shop headings */}
-          <Text style={styles.modalShopName}>{modalShop?.name}</Text>
-          <Text style={styles.modalShopTime}>{modalShop?.timing} | {modalShop?.distance}</Text>
-          {modalShop?.coverImg && (
-            <Image source={modalShop.coverImg} style={styles.modalImg} />
-          )}
-          {/* Details */}
-          <Text style={styles.detailsHeading}>Details</Text>
-          <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginBottom: 5 }}>
-            <MaterialIcons name="location-on" size={20} color="#874e40" />
-            <Text style={styles.detailText}>{modalShop?.address}</Text>
-          </View>
-          {modalShop?.phone && (
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
-              <MaterialIcons name="phone" size={18} color="#874e40" />
-              <Text style={styles.detailText}>{modalShop.phone}</Text>
-            </View>
-          )}
-          {modalShop?.website && (
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
-              <MaterialCommunityIcons name="web" size={18} color="#874e40" />
-              <Text
-                style={[styles.detailText, { color: "#0861d2", textDecorationLine: 'underline' }]}
-                onPress={() => Linking.openURL(`https://${modalShop.website.replace(/^(https?:\/\/)?/, '')}`)}
-              >
-                {modalShop.website}
-              </Text>
-            </View>
-          )}
-          {/* 2 Buttons */}
-          <View style={styles.modalBtnsRow}>
-            <TouchableOpacity style={styles.modalActionBtn}>
-              <MaterialIcons name="directions" size={18} color="#874e40" />
-              <Text style={styles.modalBtnText}>Directions</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.modalMenuBtn}>
-              <MaterialIcons name="menu-book" size={18} color="#fff" />
-              <Text style={styles.modalMenuBtnText}>Menu</Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-      </View>
-    </View>
-  </Modal>
-</SafeAreaView>  );
-}const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
-  markerOuter: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: '#fcfcfc',
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    marginBottom: 6
-  },
-  markerImg: { width: 38, height: 38, borderRadius: 19 },
-  mapCard: {
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 12,
-    minWidth: 210,
-    maxWidth: 250,
-    alignItems: 'center',
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOpacity: 0.11,
-    shadowRadius: 8,
-  },
-  cardImg: { width: 98, height: 60, borderRadius: 10, marginBottom: 6, backgroundColor:'#eaeaea' },
-  cardTitle: {
-    fontWeight: '700',
-    fontSize: 13,
-    color: '#222',
-    marginTop: 4,
-    marginBottom: 2,
-    textAlign: 'center'
-  },
-  cardTime: { fontSize: 11, color: '#555', marginBottom: 7 },
-  cardBtns: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    marginTop: 2,
-  },
-  cardBtn: {
-    backgroundColor: '#f7eae5', padding: 6, borderRadius: 7,
-    flexDirection: 'row', alignItems: 'center', marginHorizontal: 2, flex: 1, justifyContent: 'center'
-  },
-  cardBtnText: { marginLeft: 4, color: '#874e40', fontWeight: '700', fontSize: 13 },  bottomSheet: {
-    position: 'absolute',
-    left: 0, 
-    right: 0, 
-    backgroundColor: '#fff', 
-    borderTopLeftRadius: 18, 
-    borderTopRightRadius: 18,
-    shadowColor: '#000', 
-    shadowOpacity: 0.08, 
-    shadowRadius: 12, 
-    elevation: 8,
-    paddingTop: 10, 
-    paddingHorizontal: 0,
-  },
-  sheetHandle: {
-    width: 46, height: 5, borderRadius: 3, backgroundColor: '#d7beb9',
-    alignSelf: 'center', marginBottom: 8,
-  },
-  locationCard: {
-    backgroundColor: '#fff', borderRadius: 12, marginHorizontal: 16, marginVertical: 9, padding: 12,
-    elevation: 2, shadowRadius: 5, shadowOpacity: 0.07, shadowColor: "#000"
-  },
-  locationTitle: { fontSize: 15, fontWeight: '700', color: '#351c13', marginBottom: 2 },
-  locationTime: { fontSize: 12, color: '#60504b', marginBottom: 8 },  // Modal styles
-  modalBackdrop: {
+export default LoginScreen;
+
+// Updated Styles
+const styles = StyleSheet.create({
+  container: {
     flex: 1,
-    backgroundColor: 'rgba(32,16,5,0.38)',
+    backgroundColor: '#000',
+  },
+  backgroundImage: {
+    flex: 1,
+    width: '100%',
     justifyContent: 'flex-end',
   },
-  modalCard: {
-    backgroundColor: '#fff',
-    borderTopLeftRadius: 18,
-    borderTopRightRadius: 18,
-    paddingTop: 16,
-    paddingHorizontal: 18,
-    minHeight: 390,
-    maxHeight: height * 0.75,
-    elevation: 10,
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowRadius: 24,
-    borderWidth: 1,
-    borderColor: '#eee'
+  bottomSection: {
+    width: '100%',
+    height: responsiveHeight(68),
+    overflow: 'hidden',
   },
-  modalCloseBtn: {
+  curve: {
     position: 'absolute',
-    right: 5,
-    top: 9,
+    top: -1,
+    left: 0,
     zIndex: 2,
-    padding: 2,
   },
-  modalShopName: {
-    fontWeight: 'bold',
-    fontSize: 16,
-    color: "#31110f",
-    marginBottom: 0,
-    marginTop: 10,
+  whiteBackground: {
+    ...StyleSheet.absoluteFillObject,
+    top: responsiveHeight(68),
+    backgroundColor: '#FFFFFF',
+    zIndex: 1,
   },
-  modalShopTime: {
-    fontSize: 12,
-    color: "#a98777",
-    marginBottom: 11,
-    fontWeight: "600"
+  contentContainer: {
+    position: 'absolute',
+    top: responsiveHeight(20),
+    left: 0,
+    right: 0,
+    paddingHorizontal: responsiveWidth(8),
+    zIndex: 3,
+    // paddingBottom will be applied dynamically via insets
   },
-  modalImg: {
-    width: "100%",
-    height: 250,
-    borderRadius: 13,
-    marginBottom: 8, 
-    marginTop: 3,
-    backgroundColor:'#eaeaea'
+  title: {
+    fontSize: responsiveFontSize(2.8),
+    fontWeight: '700',
+    color: '#1A1A1A',
+    marginBottom: responsiveHeight(0.9),
   },
-  detailsHeading: {
-    fontWeight: 'bold',
-    fontSize: 14,
-    color: "#31110f",
-    marginBottom: 4,
-    marginTop: 6,
+  subtitle: {
+    fontSize: responsiveFontSize(1.8),
+    color: '#666666',
+    marginBottom: responsiveHeight(3.5),
   },
-  detailText: {
-    color: "#43281f",
-    fontSize: 12.7,
-    fontWeight: "600",
-    marginLeft: 7,
-    marginRight: 5,
-    flex: 1,
-    flexWrap: 'wrap'
+  inputContainer: {
+    marginBottom: responsiveHeight(2.5),
   },
-  modalBtnsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 17,
-    paddingBottom: 17,
-    gap: 13
+  inputLabel: {
+    fontSize: responsiveFontSize(1.7),
+    color: '#333333',
+    marginBottom: 8,
+    fontWeight: '500',
   },
-  modalActionBtn: {
-    flex: 1,
-    backgroundColor: "#fff",
-    borderWidth: 1.8,
-    borderColor: "#371c1b",
+  input: {
+    borderBottomWidth: 1.5,
+    borderBottomColor: '#CCCCCC',
     paddingVertical: 12,
+    fontSize: responsiveFontSize(1.9),
+    color: '#000',
+  },
+  termsText: {
+    fontSize: responsiveFontSize(1.5),
+    color: '#666666',
+    lineHeight: 20,
+    marginBottom: responsiveHeight(4),
+  },
+  termsLink: {
+    color: '#0A5C4A',
+    fontWeight: '600',
+  },
+  sendOTPButton: {
+    backgroundColor: '#0A5C4A',
     borderRadius: 8,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center"
+    paddingVertical: responsiveHeight(1.8),
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
-  modalBtnText: {
-    color: "#874e40",
-    fontWeight: "700",
-    fontSize: 14.3,
-    marginLeft: 6
+  sendOTPButtonDisabled: {
+    backgroundColor: '#CCCCCC',
+    opacity: 0.6,
   },
-  modalMenuBtn: {
-    flex: 1,
-    backgroundColor: "#371c1b",
-    paddingVertical: 12,
-    borderRadius: 8,
-    flexDirection: 'row',
-    alignItems: "center",
-    justifyContent: "center",
+  sendOTPButtonText: {
+    fontSize: responsiveFontSize(2),
+    fontWeight: '700',
+    color: '#FFFFFF',
   },
-  modalMenuBtnText: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 15,
-    marginLeft: 6
-  }
-});
 
-location screen code back up 
+  // Modal Styles (unchanged)
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' },
+  modalContainer: { backgroundColor: '#FFF', borderRadius: 16, padding: 24, width: '90%', alignItems: 'center' },
+  modalIconContainer: { marginBottom: 16 },
+  modalTitle: { fontSize: responsiveFontSize(2.4), fontWeight: '700', color: '#1A1A1A', marginBottom: 12 },
+  modalMessage: { fontSize: responsiveFontSize(1.8), color: '#666', textAlign: 'center', marginBottom: 24 },
+  modalButton: { backgroundColor: '#0A5C4A', paddingVertical: 12, paddingHorizontal: 40, borderRadius: 8 },
+  modalButtonText: { color: '#FFF', fontWeight: '600', fontSize: responsiveFontSize(1.9) },
+});
