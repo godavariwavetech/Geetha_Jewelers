@@ -341,6 +341,7 @@ const SearchScreen = () => {
     setSearchQuery(query);
     saveSearchHistory(query);
     dispatch(clearSearchSuggestions());
+   
     if (item.search_text) {
       // Handle suggestion
       if (item.search_tagline === 'product') {

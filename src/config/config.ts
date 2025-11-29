@@ -1,4 +1,4 @@
-export const baseURL = 'https://gcjr3bsj-2420.inc1.devtunnels.ms/public_app'; 
+export const baseURL = 'https://geethajewapi.godavariwave.com/public_app'; 
 
 export const endpoints = {
   REQUEST_LOGIN_OPT:'getuserloginotp',
