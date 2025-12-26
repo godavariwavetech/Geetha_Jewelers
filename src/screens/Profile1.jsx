@@ -140,7 +140,7 @@ function Profile({ navigation }) {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="chevron-back" size={26} color="#004830" />
+          <Ionicons name="chevron-back" size={26} color="#832729" />
         </TouchableOpacity>
         <Text style={styles.headerText}>Profile</Text>
       </View>
@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
   saveBtn: {
     marginTop: 40,
     marginHorizontal: 18,
-    backgroundColor: '#004830',
+    backgroundColor: '#832729',
     borderRadius: 10,
     paddingVertical: 14,
     justifyContent: 'center',

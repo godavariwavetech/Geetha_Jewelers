@@ -322,11 +322,11 @@
 //     marginBottom: responsiveHeight(3),
 //   },
 //   termsLink: {
-//     color: '#0A5C4A',
+//     color: '#832729',
 //     fontWeight: '600',
 //   },
 //   sendOTPButton: {
-//     backgroundColor: '#0A5C4A',
+//     backgroundColor: '#832729',
 //     borderRadius: 8,
 //     paddingVertical: responsiveHeight(1.8),
 //     alignItems: 'center',
@@ -385,7 +385,7 @@
 //     lineHeight: 24,
 //   },
 //   modalButton: {
-//     backgroundColor: '#0A5C4A',
+//     backgroundColor: '#832729',
 //     borderRadius: 8,
 //     paddingVertical: 12,
 //     paddingHorizontal: 40,
@@ -704,11 +704,11 @@ const styles = StyleSheet.create({
     marginBottom: responsiveHeight(3),
   },
   termsLink: {
-    color: '#0A5C4A',
+    color: '#832729',
     fontWeight: '600',
   },
   sendOTPButton: {
-    backgroundColor: '#0A5C4A',
+    backgroundColor: '#832729',
     borderRadius: 8,
     paddingVertical: responsiveHeight(1.8),
     alignItems: 'center',
@@ -767,7 +767,7 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
   modalButton: {
-    backgroundColor: '#0A5C4A',
+    backgroundColor: '#832729',
     borderRadius: 8,
     paddingVertical: 12,
     paddingHorizontal: 40,

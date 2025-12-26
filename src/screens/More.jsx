@@ -62,18 +62,18 @@
 //           {/* Profile and Support */}
 //           <TouchableOpacity style={styles.optionCard} onPress={()=>{navigation.navigate("Profile1")}}>
 //             <View style={styles.optionLeft}>
-//               <Icon name="user" size={20} color="#004830" />
+//               <Icon name="user" size={20} color="#832729" />
 //               <Text style={styles.optionText}>Profile</Text>
 //             </View>
-//             <Icon name="chevron-right" size={20} color="#004830" />
+//             <Icon name="chevron-right" size={20} color="#832729" />
 //           </TouchableOpacity>
 
 //           <TouchableOpacity style={styles.optionCard}>
 //             <View style={styles.optionLeft}>
-//               <MaterialIcon name="support-agent" size={20} color="#0F5132" />
+//               <MaterialIcon name="support-agent" size={20} color="#832729" />
 //               <Text style={styles.optionText}>Support</Text>
 //             </View>
-//             <Icon name="chevron-right" size={20} color="#0F5132" />
+//             <Icon name="chevron-right" size={20} color="#832729" />
 //           </TouchableOpacity>
 
 //           {/* Smart Savings Scheme Banner */}
@@ -186,7 +186,7 @@
 //   },
 //   optionText: {
 //     fontSize: 15,
-//     color: "#004830",
+//     color: "#832729",
 //     fontWeight: "500",
 //   },
 //   bannerCard: {
@@ -296,27 +296,34 @@ const ProfileScreen = ({ navigation }) => {
           {/* My Bookings Option */}
           <TouchableOpacity style={styles.optionCard} onPress={() => navigation.navigate("MyOrders")}>
             <View style={styles.optionLeft}>
-              <Icon name="shopping-bag" size={20} color="#004830" />
+              <Icon name="shopping-bag" size={20} color="#832729" />
               <Text style={styles.optionText}>My Bookings</Text>
             </View>
-            <Icon name="chevron-right" size={20} color="#004830" />
+            <Icon name="chevron-right" size={20} color="#832729" />
           </TouchableOpacity>
 
           {/* Profile and Support */}
           <TouchableOpacity style={styles.optionCard} onPress={()=>{navigation.navigate("Profile1")}}>
             <View style={styles.optionLeft}>
-              <Icon name="user" size={20} color="#004830" />
+              <Icon name="user" size={20} color="#832729" />
               <Text style={styles.optionText}>Profile</Text>
             </View>
-            <Icon name="chevron-right" size={20} color="#004830" />
+            <Icon name="chevron-right" size={20} color="#832729" />
           </TouchableOpacity>
 
+          <TouchableOpacity style={styles.optionCard} onPress={() => navigation.navigate("MyAddresses")}>
+            <View style={styles.optionLeft}>
+              <MaterialIcon name="support-agent" size={20} color="#832729" />
+              <Text style={styles.optionText}>My Addresses</Text>
+            </View>
+            <Icon name="chevron-right" size={20} color="#832729" />
+          </TouchableOpacity>
           <TouchableOpacity style={styles.optionCard}>
             <View style={styles.optionLeft}>
-              <MaterialIcon name="support-agent" size={20} color="#0F5132" />
+              <MaterialIcon name="support-agent" size={20} color="#832729" />
               <Text style={styles.optionText}>Support</Text>
             </View>
-            <Icon name="chevron-right" size={20} color="#0F5132" />
+            <Icon name="chevron-right" size={20} color="#832729" />
           </TouchableOpacity>
 
           {/* Smart Savings Scheme Banner */}
@@ -429,7 +436,7 @@ const styles = StyleSheet.create({
   },
   optionText: {
     fontSize: 15,
-    color: "#004830",
+    color: "#832729",
     fontWeight: "500",
   },
   bannerCard: {

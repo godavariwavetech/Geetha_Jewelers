@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,50 +9,121 @@ import {
   TouchableOpacity,
   StatusBar,
   Dimensions,
-} from "react-native";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+  ActivityIndicator,
+  Alert,
+} from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  fetchWishlist,
+  removeFromWishlist,
+} from '../redux/slices/wishlistSlice';
 
-const { width } = Dimensions.get("window");
+const { width } = Dimensions.get('window');
+const CARD_WIDTH = (width - 36) / 2; // 2 columns with spacing
 
-const WishList = ({ navigation }) => {
+const WishList = () => {
   const insets = useSafeAreaInsets();
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
 
-  const haaram = require("../assets/haaram.png");
-  const mangalsutra = require("../assets/mangalsutra.png");
-  const wishlistData = [
-    { id: "1", name: "Arch of Royalty Gold Finger Ring", image: haaram },
-    { id: "2", name: "Arch of Royalty Gold Finger Ring", image: mangalsutra },
-    { id: "3", name: "Arch of Royalty Gold Finger Ring", image: haaram },
-    { id: "4", name: "Arch of Royalty Gold Finger Ring", image: mangalsutra },
-    { id: "5", name: "Arch of Royalty Gold Finger Ring", image: haaram },
-    { id: "6", name: "Arch of Royalty Gold Finger Ring", image: mangalsutra },
-  ];
+  const { wishlist, loading, error } = useSelector((state) => state.wishlist);
+  const { customerId } = useSelector((state) => state.Auth || {});
+  const userId = customerId || 1;
+
+  useEffect(() => {
+    if (customerId) {
+      dispatch(fetchWishlist(customerId));
+    }
+  }, [customerId, dispatch]);
+
+  const handleRemoveFromWishlist = async (wishlistId, productId) => {
+    if (!customerId) {
+      Alert.alert('Sign In Required', 'Please sign in to manage your wishlist.');
+      return;
+    }
+
+    try {
+      await dispatch(removeFromWishlist({ wishlist_id: wishlistId })).unwrap();
+    } catch (err) {
+      Alert.alert('Error', 'Failed to remove from wishlist. Please try again.');
+    }
+  };
+
+  const handleProductPress = (item) => {
+    navigation.navigate('ProductDetailsScreen', {
+      user_id: userId,
+      product_id: item.product_id,
+    });
+  };
 
   const renderItem = ({ item }) => (
-    <View style={styles.card}>
-      {/* Heart Icon */}
-      <TouchableOpacity style={styles.heartIcon}>
-        <Ionicons name="heart" size={20} color="#E53935" />
-      </TouchableOpacity>
-
-      {/* Product Image */}
-      <Image source={item.image} style={styles.image} resizeMode="contain" />
-
-      {/* Product Info */}
-      <View style={styles.infoContainer}>
-        <Text style={styles.name} numberOfLines={2}>
-          {item.name}
-        </Text>
-        <View style={styles.priceRow}>
-          <Text style={styles.salePrice}>₹37,869</Text>
-          <Text style={styles.mrp}>₹40,000</Text>
-        </View>
-        <Text style={styles.discount}>10% off making charges</Text>
-        <TouchableOpacity style={styles.cartBtn} onPress={()=>{navigation.navigate("Cart")}}>
-          <Text style={styles.cartBtnText}>ADD TO CART</Text>
+    <TouchableOpacity
+      activeOpacity={0.85}
+      onPress={() => handleProductPress(item)}
+      style={styles.cardWrapper}
+    >
+      <View style={styles.card}>
+        {/* Remove Heart Icon */}
+        <TouchableOpacity
+          style={styles.heartIcon}
+          onPress={(e) => {
+            e.stopPropagation(); // Prevent triggering card navigation
+            handleRemoveFromWishlist(item.wishlist_id, item.product_id);
+          }}
+        >
+          <Ionicons name="heart" size={20} color="#E53935" />
         </TouchableOpacity>
+
+        {/* Product Image */}
+        <Image
+          source={{ uri: item.product_main_image }}
+          style={styles.image}
+          resizeMode="contain"
+          defaultSource={require('../assets/haaram.png')}
+        />
+
+        {/* Product Info */}
+        <View style={styles.infoContainer}>
+          <Text style={styles.name} numberOfLines={2}>
+            {item.product_name}
+          </Text>
+
+          <View style={styles.priceRow}>
+            <Text style={styles.salePrice}>
+              ₹ {item.total_value || 4000}
+            </Text>
+          </View>
+
+          <TouchableOpacity
+            style={styles.cartBtn}
+            onPress={(e) => {
+              e.stopPropagation(); // Prevent navigation when adding to cart
+              navigation.navigate('Cart');
+            }}
+          >
+            <Text style={styles.cartBtnText}>ADD TO CART</Text>
+          </TouchableOpacity>
+        </View>
       </View>
+    </TouchableOpacity>
+  );
+
+  const renderEmpty = () => (
+    <View style={styles.emptyContainer}>
+      <Ionicons name="heart-outline" size={60} color="#ccc" />
+      <Text style={styles.emptyText}>Your wishlist is empty</Text>
+      <Text style={styles.emptySubText}>
+        Add items you love to save them for later
+      </Text>
+      <TouchableOpacity
+        style={styles.browseBtn}
+        onPress={() => navigation.navigate('DrawerNavigation')}
+      >
+        <Text style={styles.browseBtnText}>Add Products</Text>
+      </TouchableOpacity>
     </View>
   );
 
@@ -68,76 +139,119 @@ const WishList = ({ navigation }) => {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="chevron-back" size={22} color="#0E614E" />
+          <Ionicons name="chevron-back" size={22} color="#832729" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Wishlist</Text>
+        <Text style={styles.headerTitle}>Wishlist ({wishlist.length})</Text>
         <View style={{ width: 22 }} />
       </View>
 
-      {/* Wishlist Grid */}
-      <FlatList
-        data={wishlistData}
-        keyExtractor={(item) => item.id}
-        renderItem={renderItem}
-        numColumns={2}
-        columnWrapperStyle={styles.row}
-        contentContainerStyle={{
-          paddingBottom: insets.bottom + 20,
-          paddingHorizontal: 10,
-        }}
-        showsVerticalScrollIndicator={false}
-      />
+      {/* Content */}
+      {loading ? (
+        <View style={styles.center}>
+          <ActivityIndicator size="large" color="#832729" />
+          <Text style={styles.loadingText}>Loading wishlist...</Text>
+        </View>
+      ) : error ? (
+        <View style={styles.center}>
+          <Text style={styles.errorText}>Failed to load wishlist</Text>
+          <TouchableOpacity
+            onPress={() => customerId && dispatch(fetchWishlist(customerId))}
+          >
+            <Text style={styles.retryText}>Retry</Text>
+          </TouchableOpacity>
+        </View>
+      ) : wishlist.length === 0 ? (
+        renderEmpty()
+      ) : (
+        <FlatList
+          data={wishlist}
+          keyExtractor={(item) => item.wishlist_id.toString()}
+          renderItem={renderItem}
+          numColumns={2}
+          columnWrapperStyle={styles.row}
+          contentContainerStyle={{
+            paddingTop: 16,
+            paddingBottom: insets.bottom + 20,
+            paddingHorizontal: 10,
+          }}
+          showsVerticalScrollIndicator={false}
+        />
+      )}
     </SafeAreaView>
   );
 };
 
-const CARD_WIDTH = (width - 36) / 2; // spacing-adjusted 2-column layout
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
+  },
+  center: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#832729',
+  },
+  errorText: {
+    fontSize: 16,
+    color: 'red',
+    marginBottom: 10,
+  },
+  retryText: {
+    color: '#832729',
+    fontWeight: '600',
   },
   header: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 16,
-    justifyContent: "flex-start",
+    justifyContent: 'flex-start',
     paddingVertical: 10,
     borderBottomWidth: 0.5,
-    borderBottomColor: "#ddd",
-    gap:10
+    borderBottomColor: '#ddd',
+    gap: 10,
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: "600",
-    color: "rgba(8, 118, 90, 1)",
+    fontWeight: '600',
+    color: '#832729',
   },
   row: {
-    justifyContent: "space-between",
+    justifyContent: 'space-between',
     marginBottom: 15,
   },
-  card: {
-    backgroundColor: "#fff",
-    borderRadius: 10,
+  cardWrapper: {
     width: CARD_WIDTH,
-    shadowColor: "#000",
+  },
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    width: '100%',
+    shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 3,
     elevation: 2,
     paddingBottom: 10,
     borderWidth: 1,
-    borderColor: "#EAEAEA",
-    position: "relative",
+    borderColor: '#EAEAEA',
+    position: 'relative',
   },
   heartIcon: {
-    position: "absolute",
+    position: 'absolute',
     right: 10,
     top: 10,
     zIndex: 1,
+    backgroundColor: '#fff',
+    borderRadius: 15,
+    padding: 5,
+    elevation: 2,
   },
   image: {
-    width: "100%",
+    width: '100%',
     height: 120,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
@@ -148,43 +262,61 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 13,
-    fontWeight: "500",
-    color: "#000",
+    fontWeight: '500',
+    color: '#000',
     height: 34,
   },
   priceRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 3,
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 5,
   },
   salePrice: {
     fontSize: 13,
-    fontWeight: "600",
-    color: "#000",
-  },
-  mrp: {
-    fontSize: 12,
-    color: "#8E8E8E",
-    textDecorationLine: "line-through",
-  },
-  discount: {
-    fontSize: 11,
-    color: "#0E614E",
-    marginTop: 2,
+    fontWeight: '600',
+    color: '#000',
   },
   cartBtn: {
     borderWidth: 1,
-    borderColor: "#0E614E",
+    borderColor: '#832729',
     borderRadius: 6,
     paddingVertical: 6,
-    alignItems: "center",
+    alignItems: 'center',
     marginTop: 6,
   },
   cartBtnText: {
-    color: "#0E614E",
+    color: '#832729',
     fontSize: 12,
-    fontWeight: "600",
+    fontWeight: '600',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 40,
+  },
+  emptyText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333',
+    marginTop: 16,
+  },
+  emptySubText: {
+    fontSize: 14,
+    color: '#666',
+    textAlign: 'center',
+    marginTop: 8,
+  },
+  browseBtn: {
+    marginTop: 20,
+    backgroundColor: '#832729',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
+  },
+  browseBtnText: {
+    color: '#fff',
+    fontWeight: '600',
   },
 });
 

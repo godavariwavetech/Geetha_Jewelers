@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#0A5C4A',
+    borderColor: '#832729',
     borderRadius: 6,
     paddingVertical: responsiveHeight(1.6),
     alignItems: 'center',
@@ -177,12 +177,12 @@ const styles = StyleSheet.create({
   skipButtonText: {
     fontSize: responsiveFontSize(1.8),
     fontWeight: '600',
-    color: '#0A5C4A',
+    color: '#832729',
     lineHeight: responsiveFontSize(2),
   },
   nextButton: {
     flex: 1,
-    backgroundColor: '#0A5C4A',
+    backgroundColor: '#832729',
     borderRadius: 6,
     paddingVertical: responsiveHeight(1.6),
     alignItems: 'center',

@@ -42,11 +42,12 @@ import OnBoard2 from '../screens/OnBoard2';
 import Splash2 from '../screens/Splash2';
 import PdfViewerScreen from '../screens/PdfViewerScreen';
 import Form from '../screens/Form';
+import DrawerNavigation from './DrawerNavigation';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-const TabNavigator = ({ route }) => {
+export const TabNavigator = ({ route }) => {
   const insets = useSafeAreaInsets();
   return (
     <Tab.Navigator
@@ -102,15 +103,15 @@ const TabNavigator = ({ route }) => {
                 <Image
                   source={
                     focused
-                      ? require('../assets/shcemefill.png')
-                      : require('../assets/shcemeoutline.png')
+                      ? require('../assets/shcemeoutline.png')
+                      : require('../assets/shcemefill.png')
                   }
                   style={styles.rewardIcon}
                 />
               </View>
             );
           }
-
+ 
           if (route.name === "Categories") {
             return (
               <View style={styles.tabIconContainer}>
@@ -145,7 +146,7 @@ const TabNavigator = ({ route }) => {
 
           return null;
         },
-        tabBarActiveTintColor: "#rgba(8, 118, 90, 1)",
+        tabBarActiveTintColor: "#832729",
         tabBarInactiveTintColor: "#949494",
         tabBarStyle: {
           height: (Platform.OS === 'ios' ? 85 : 65) + insets.bottom,
@@ -207,11 +208,12 @@ const AppNavigation = () => {
         <Stack.Screen name="SignIn" component={SignIn} />
         <Stack.Screen name="OTPVerification" component={OTPVerification} />
         <Stack.Screen name="IndividualCategory" component={IndividualCategory} />
-        <Stack.Screen name="TabNavigator" component={TabNavigator} />
+        {/* <Stack.Screen name="TabNavigator" component={TabNavigator} /> */}
+        <Stack.Screen name="DrawerNavigation" component={DrawerNavigation} />
         <Stack.Screen name="ProductDetailsScreen" component={ProductDetailsScreen} />
         <Stack.Screen name="Payment" component={Payment} />
         <Stack.Screen name="Cart" component={Cart} />
-        <Stack.Screen name="WishList" component={WishList} />
+        <Stack.Screen name="WishList" component={WishList} /> 
         <Stack.Screen name="Rewards" component={Rewards} />
         <Stack.Screen name="OrderDetails" component={OrderDetails} />
         <Stack.Screen name="RefundPolicyScreen" component={RefundPolicyScreen} />
@@ -255,11 +257,11 @@ const styles = StyleSheet.create({
     top: -8,
     width: 24,
     height: 3,
-    backgroundColor: '#004830',
+    backgroundColor: '#832729',
     borderRadius: 2,
   },
   homeIcon: {
-    width: 22,
+    width: 30,
     height: 22,
   },
   rewardIcon: {

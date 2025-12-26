@@ -356,7 +356,7 @@
 //   },
 //   resendLink: {
 //     fontSize: responsiveFontSize(1.6),
-//     color: '#0A5C4A',
+//     color: '#832729',
 //     fontWeight: '600',
 //     textDecorationLine: 'underline',
 //   },
@@ -364,7 +364,7 @@
 //     color: '#CCCCCC',
 //   },
 //   verifyButton: {
-//     backgroundColor: '#0A5C4A',
+//     backgroundColor: '#832729',
 //     borderRadius: 8,
 //     paddingVertical: responsiveHeight(1.8),
 //     alignItems: 'center',
@@ -423,7 +423,7 @@
 //     lineHeight: 24,
 //   },
 //   modalButton: {
-//     backgroundColor: '#0A5C4A',
+//     backgroundColor: '#832729',
 //     borderRadius: 8,
 //     paddingVertical: 12,
 //     paddingHorizontal: 40,
@@ -578,7 +578,7 @@ console.log(serverOtp)
         ...(isNewUser && email && { customerEmail: email.trim() }),
       };
       await dispatch(customerLogin(payload)).unwrap();
-      navigation.replace('TabNavigator');
+      navigation.replace('DrawerNavigation');
     } catch (err) {
       setErrorMessage(err?.message || 'Login failed. Please try again.');
       setErrorModalVisible(true);
@@ -927,7 +927,7 @@ const styles = StyleSheet.create({
   },
   resendLink: {
     fontSize: responsiveFontSize(1.6),
-    color: '#0A5C4A',
+    color: '#832729',
     fontWeight: '600',
     textDecorationLine: 'underline',
   },
@@ -935,7 +935,7 @@ const styles = StyleSheet.create({
     color: '#CCCCCC',
   },
   verifyButton: {
-    backgroundColor: '#0A5C4A',
+    backgroundColor: '#832729',
     borderRadius: 8,
     paddingVertical: responsiveHeight(1.8),
     alignItems: 'center',
@@ -1013,7 +1013,7 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
   modalButton: {
-    backgroundColor: '#0A5C4A',
+    backgroundColor: '#832729',
     borderRadius: 8,
     paddingVertical: 12,
     paddingHorizontal: 40,
@@ -1498,7 +1498,7 @@ const styles = StyleSheet.create({
 //   },
 //   resendLink: {
 //     fontSize: responsiveFontSize(1.7),
-//     color: '#0A5C4A',
+//     color: '#832729',
 //     fontWeight: '600',
 //     textDecorationLine: 'underline',
 //   },
@@ -1506,7 +1506,7 @@ const styles = StyleSheet.create({
 //     color: '#999',
 //   },
 //   verifyButton: {
-//     backgroundColor: '#0A5C4A',
+//     backgroundColor: '#832729',
 //     borderRadius: 8,
 //     paddingVertical: responsiveHeight(1.8),
 //     alignItems: 'center',
@@ -1571,7 +1571,7 @@ const styles = StyleSheet.create({
 //     marginBottom: 20,
 //   },
 //   modalButton: {
-//     backgroundColor: '#0A5C4A',
+//     backgroundColor: '#832729',
 //     paddingHorizontal: 40,
 //     paddingVertical: 12,
 //     borderRadius: 8,

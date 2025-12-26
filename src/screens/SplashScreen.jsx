@@ -22,7 +22,7 @@ const SplashScreen = ({ navigation }) => {
     <View style={styles.container}>
       <StatusBar
         barStyle="light-content"
-        backgroundColor="#0d4d3d"
+        backgroundColor="#832729"
         translucent={false}
       />
       <ImageBackground
@@ -33,7 +33,7 @@ const SplashScreen = ({ navigation }) => {
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.content}>
             <Text style={styles.welcomeText}>Welcome to</Text>
-            <Text style={styles.brandName}>Geetha jewelers</Text>
+            <Text style={styles.brandName}>Geeta jewelers</Text>
             <Text style={styles.tagline}>
               Your trusted platform for investing in{'\n'}precious metals
             </Text>

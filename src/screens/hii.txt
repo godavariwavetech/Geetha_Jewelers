@@ -495,3 +495,53 @@ const styles = StyleSheet.create({
   modalButton: { backgroundColor: '#0A5C4A', paddingVertical: 12, paddingHorizontal: 40, borderRadius: 8 },
   modalButtonText: { color: '#FFF', fontWeight: '600', fontSize: responsiveFontSize(1.9) },
 });
+
+
+
+export const fetchProducts = createAsyncThunk(
+  'category/fetchProducts',
+  async ({ userId, categoryId, gender }, { rejectWithValue }) => {
+    try {
+      if (!userId) {
+        return rejectWithValue('userId is required');
+      }
+
+      // At least one filter must be provided
+      if (!categoryId && !gender) {
+        return rejectWithValue('At least one filter (categoryId or gender) must be provided');
+      }
+
+      // Build payload
+      const payload = {
+        user_id: userId,
+      };
+
+      if (categoryId) {
+        payload.category_id = categoryId;
+      }
+      if (gender) {
+        payload.gender = gender;
+      }
+
+      console.log('Request payload to GET_PRODUCTS:', payload);
+
+      const res = await api.post(endpoints.GET_PRODUCTS, payload);
+      console.log('Response from GET_PRODUCTS:', res.data);
+
+      if (res.data?.status === 200 && res.data?.data) {
+        return res.data.data; // This will be stored in state.category.products
+      } else {
+        return rejectWithValue(res.data?.message || 'No product data found');
+      }
+    } catch (err) {
+      console.error('fetchProducts error:', err);
+
+      const errorMessage =
+        err.response?.data?.message ||
+        err.message ||
+        'Failed to fetch products. Please try again.';
+
+      return rejectWithValue({ message: errorMessage });
+    }
+  }
+);

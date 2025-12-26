@@ -19,7 +19,7 @@ const OnBoard2 = ({ navigation }) => {
   // Auto-skip onboarding if user is already logged in (on screen mount)
   useEffect(() => {
     if (customerId) {
-      navigation.replace('TabNavigator');
+      navigation.replace('DrawerNavigation');
     }
   }, [customerId, navigation]);
 
@@ -27,7 +27,7 @@ const OnBoard2 = ({ navigation }) => {
   const handleNext = () => {
     if (customerId) {
       // User already exists → go straight to main app
-      navigation.replace('TabNavigator');
+      navigation.replace('DrawerNavigation');
     } else {
       // User does NOT exist → go to SignIn
       navigation.navigate('SignIn');
@@ -137,16 +137,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#0A5C4A',
+    borderColor: '#832729',
     borderRadius: 6,
     paddingVertical: responsiveHeight(1.6),
     alignItems: 'center',
     justifyContent: 'center',
   },
-  skipButtonText: { fontSize: responsiveFontSize(1.8), fontWeight: '600', color: '#0A5C4A' },
+  skipButtonText: { fontSize: responsiveFontSize(1.8), fontWeight: '600', color: '#832729' },
   nextButton: {
     flex: 1,
-    backgroundColor: '#0A5C4A',
+    backgroundColor: '#832729',
     borderRadius: 6,
     paddingVertical: responsiveHeight(1.6),
     alignItems: 'center',

@@ -24,7 +24,7 @@ const Splash2 = ({ navigation }) => {
         translucent={true}
       />
       <ImageBackground
-        source={require('../assets/splashbg.png')}
+        source={require('../assets/splash.png')}
         style={styles.backgroundImage}
         resizeMode="cover"
       >
@@ -42,7 +42,7 @@ const Splash2 = ({ navigation }) => {
             {/* Bottom Text Content */}
             <View style={styles.textContainer}>
               <Text style={styles.welcomeText}>Welcome to</Text>
-              <Text style={styles.brandName}>Geetha jewelers</Text>
+              <Text style={styles.brandName}>Geeta jewelers</Text>
               <Text style={styles.tagline}>
                 Your trusted platform for investing in{'\n'}precious metals
               </Text>
@@ -137,9 +137,8 @@ const styles = StyleSheet.create({
   },
   arrowIcon: {
     // fontSize: 24,
-    color: '#0d4d3d',
+    color: '#832729',
     // fontWeight: 'bold',
   },
 });
-
 export default Splash2;

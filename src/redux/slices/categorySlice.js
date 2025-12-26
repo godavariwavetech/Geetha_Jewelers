@@ -3,31 +3,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { endpoints } from '../../config/config';
 import api from '../../utils/api';
 
-// export const fetchCategories = createAsyncThunk(
-//   'category/fetchCategories',
-//   async (_, { fulfillWithValue, rejectWithValue }) => {
-//     try {
-//       const res = await api.get(endpoints.GET_CATEGORIES);
-   
-//       if (res.data?.data) {
-//         const limitedCategories = res.data.data.slice(0, 4);
-//         return fulfillWithValue(limitedCategories);
-//       } else {
-//         return rejectWithValue('No category data found');
-//       }
-//     } catch (err) {
-//       console.error('fetchCategories error:', {
-//         message: err.message,
-//         status: err.response?.status,
-//         response: err.response?.data,
-//       });
-//       return rejectWithValue({
-//         message: err.response?.data?.message || err.message || 'Failed to fetch categories',
-//         status: err.response?.status,
-//       });
-//     }
-//   }
-// );
+
 export const fetchCategories = createAsyncThunk(
   'category/fetchCategories',
   async (_, { fulfillWithValue, rejectWithValue }) => {
@@ -83,11 +59,10 @@ export const fetchSubcategories = createAsyncThunk(
 
 export const fetchBanners = createAsyncThunk(
   'category/fetchBanners',
-  async (categoryId, { fulfillWithValue, rejectWithValue }) => {
+  async (_, { fulfillWithValue, rejectWithValue }) => {  // No parameters needed
     try {
-      const res = await api.post(endpoints.GET_BANNERS, {
-        category_id: categoryId,
-      });
+      // Change from POST to GET, and remove any payload
+      const res = await api.get(endpoints.GET_BANNERS);
       
       if (res.data?.data) {
         return fulfillWithValue(res.data.data);
@@ -107,7 +82,93 @@ export const fetchBanners = createAsyncThunk(
     }
   }
 );
+export const fetchProducts = createAsyncThunk(
+  'category/fetchProducts',
+  async (payload, { fulfillWithValue, rejectWithValue }) => {
+    try {
+      console.log(payload,"to get products++++++++++++")
+      // Construct the correct payload based on what's provided
+      let requestPayload = { user_id: payload.userId };
 
+      // Case 1: Direct category navigation (category_id)
+      if (payload.categoryId !== undefined) {
+        requestPayload.category_id = payload.categoryId;
+      }
+
+      // Case 2: Home section click (section_type + reference_id)
+      else if (payload.section_type && payload.reference_id !== undefined) {
+        requestPayload.section_type = payload.section_type; // e.g. "Diamond", "Gender", "Category"
+        requestPayload.reference_id = payload.reference_id;
+      }
+
+      // Case 3: Banner click (target_type + target_value)
+      else if (payload.target_type && payload.target_value !== undefined) {
+        requestPayload.target_type = payload.target_type;     // e.g. "subcategory"
+        requestPayload.target_value = payload.target_value;   // string or number
+      }
+
+      // Optional: gender case (if needed separately)
+      else if (payload.gender !== undefined) {
+        // If your backend supports a gender filter, add it here
+        // requestPayload.gender = payload.gender;
+        return rejectWithValue('Gender filtering not implemented on backend');
+      }
+
+      const res = await api.post(endpoints.GET_PRODUCTS, requestPayload);
+console.log(res.data,"from get products api_________________________")
+      if (res.data?.status === 200 && res.data?.data) {
+        return fulfillWithValue(res.data.data);
+      } else {
+        return rejectWithValue('No products found');
+      }
+    } catch (err) {
+      console.error('fetchProducts error:', err);
+      return rejectWithValue({
+        message: err.response?.data?.message || err.message || 'Failed to fetch products',
+        status: err.response?.status,
+      });
+    }
+  }
+);
+
+export const fetchCategoriesWithSubcategories = createAsyncThunk(
+  'category/fetchCategoriesWithSubcategories',
+  async (_, { fulfillWithValue, rejectWithValue }) => {
+    try {
+      const res = await api.get(endpoints.GET_CATEGORIES_WITH_SUBCATEGORIES);
+
+      if (res.data?.data) {
+        return fulfillWithValue(res.data.data);
+      } else {
+        return rejectWithValue('No categories with subcategories found');
+      }
+    } catch (err) {
+      console.error('fetchCategoriesWithSubcategories error:', err);
+      return rejectWithValue({
+        message: err.response?.data?.message || err.message || 'Failed to fetch categories',
+      });
+    }
+  }
+);
+export const fetchHomeSections = createAsyncThunk(
+  'category/fetchHomeSections',
+  async (_, { fulfillWithValue, rejectWithValue }) => {
+    try {
+      const res = await api.get(endpoints.GET_HOME_SECTIONS);
+
+      if (res.data?.data) {
+        return fulfillWithValue(res.data.data);
+      } else {
+        return rejectWithValue('No home sections data found');
+      }
+    } catch (err) {
+      console.error('fetchHomeSections error:', err);
+      return rejectWithValue({
+        message: err.response?.data?.message || err.message || 'Failed to fetch home sections',
+      });
+    }
+  }
+);
 export const fetchBrands = createAsyncThunk(
   'category/fetchBrands',
   async (_, { fulfillWithValue, rejectWithValue }) => {
@@ -159,131 +220,9 @@ export const fetchDiscountBanners = createAsyncThunk(
     }
   }
 );
-export const fetchProducts = createAsyncThunk(
-  'category/fetchProducts',
-  async (
-    { subcategoryId, brandId, price_deal, userId, categoryId, offer, newcollection, occasionId },
-    { fulfillWithValue, rejectWithValue }
-  ) => {
-    try {
-      const payload = { user_id: userId };
 
-      if (subcategoryId) {
-        payload.subcategory_id = subcategoryId;
-      } else if (brandId) {
-        payload.brand_id = brandId;
-      } else if (price_deal) {
-        payload.price_deal = price_deal;
-      } else if (categoryId && offer) {
-        payload.category_id = categoryId;
-        payload.offer = offer;
-      } else if (categoryId && newcollection) {
-        payload.category_id = categoryId;
-        payload.newcollection = newcollection;
-      } else if (categoryId && occasionId) {
-        payload.category_id = categoryId;
-        payload.occasion_id = occasionId; // Add support for occasion_id
-      } else {
-        return rejectWithValue('No valid parameters provided for fetching products');
-      }
 
-      const res = await api.post(endpoints.GET_PRODUCTS, payload);
 
-      if (res.data?.status === 200 && res.data?.data) {
-        return fulfillWithValue(res.data.data);
-      } else {
-        return rejectWithValue('No product data found');
-      }
-    } catch (err) {
-      console.error('fetchProducts error:', {
-        message: err.message,
-        status: err.response?.status,
-        response: err.response?.data,
-      });
-      return rejectWithValue({
-        message: err.response?.data?.message || err.message || 'Failed to fetch products',
-        status: err.response?.status,
-      });
-    }
-  }
-);
-// export const fetchProducts = createAsyncThunk(
-//   'category/fetchProducts',
-//   async ({ subcategoryId, brandId, price_deal, userId, categoryId, offer, newcollection }, { fulfillWithValue, rejectWithValue }) => {
-//     try {
-//       const payload = { user_id: userId };
-
-//       if (subcategoryId) {
-//         payload.subcategory_id = subcategoryId;
-//       } else if (brandId) {
-//         payload.brand_id = brandId;
-//       } else if (price_deal) {
-//         payload.price_deal = price_deal;
-//       } else if (categoryId && offer) {
-//         payload.category_id = categoryId;
-//         payload.offer = offer;
-//       } else if (categoryId && newcollection) {
-//         payload.category_id = categoryId;
-//         payload.newcollection = newcollection;
-//       } else {
-//         return rejectWithValue('No valid parameters provided for fetching products');
-//       }
-
-//       const res = await api.post(endpoints.GET_PRODUCTS, payload);
-
-//       if (res.data?.status === 200 && res.data?.data) {
-//         return fulfillWithValue(res.data.data);
-//       } else {
-//         return rejectWithValue('No product data found');
-//       }
-//     } catch (err) {
-//       console.error('fetchProducts error:', {
-//         message: err.message,
-//         status: err.response?.status,
-//         response: err.response?.data,
-//       });
-//       return rejectWithValue({
-//         message: err.response?.data?.message || err.message || 'Failed to fetch products',
-//         status: err.response?.status,
-//       });
-//     }
-//   }
-// );
-// export const fetchProducts = createAsyncThunk(
-//   'category/fetchProducts',
-//   async ({ subcategoryId, brandId, price_deal, userId }, { fulfillWithValue, rejectWithValue }) => {
-//     try {
-//       const payload = { user_id: userId };
-//       if (subcategoryId) {
-//         payload.subcategory_id = subcategoryId;
-//       } else if (brandId) {
-//         payload.brand_id = brandId;
-//       } else if (price_deal) {
-//         payload.price_deal = price_deal;
-//       } else {
-//         return rejectWithValue('No subcategoryId, brandId, or price_deal provided');
-//       }
-
-//       const res = await api.post(endpoints.GET_PRODUCTS, payload);
-
-//       if (res.data?.status === 200 && res.data?.data) {
-//         return fulfillWithValue(res.data.data);
-//       } else {
-//         return rejectWithValue('No product data found');
-//       }
-//     } catch (err) {
-//       console.error('fetchProducts error:', {
-//         message: err.message,
-//         status: err.response?.status,
-//         response: err.response?.data,
-//       });
-//       return rejectWithValue({
-//         message: err.response?.data?.message || err.message || 'Failed to fetch products',
-//         status: err.response?.status,
-//       });
-//     }
-//   }
-// );
 export const fetchProductDetails = createAsyncThunk(
   'product/fetchProductDetails',
   async ({ user_id, product_id }, { fulfillWithValue, rejectWithValue }) => {
@@ -292,37 +231,32 @@ export const fetchProductDetails = createAsyncThunk(
         user_id,
         product_id,
       });
-      
+      console.log(res.data,"product details dataaaaaaaa")
 
-      if (res.data?.status === 200 && res.data?.data) {
-        return fulfillWithValue(res.data.data);
+      if (res.data?.status === 200 && res.data?.data && res.data.data.length > 0) {
+     
+        return fulfillWithValue(res.data.data[0]);
       } else {
         return rejectWithValue('No product detail data found');
       }
     } catch (err) {
-      console.error('fetchProductDetails error:', {
-        message: err.message,
-        status: err.response?.status,
-        response: err.response?.data,
-      });
       return rejectWithValue({
         message: err.response?.data?.message || err.message || 'Failed to fetch product details',
-        status: err.response?.status,
       });
     }
   }
 );
-
 export const fetchRecommendedProducts = createAsyncThunk(
   'category/fetchRecommendedProducts',
   async ({ user_id, subcategory_id, product_id }, { fulfillWithValue, rejectWithValue }) => {
     try {
+      console.log(user_id,subcategory_id,product_id,"to get recommonded products")
       const res = await api.post(endpoints.GET_RECOMMONDED_PRODUCTS, {
         user_id,
         subcategory_id,
         product_id,
       });
-     
+     console.log(res,"recommonded products dtaaaaaaaaa from api ")
       if (res.data?.status === 200 && res.data?.data) {
         return fulfillWithValue(res.data.data);
       } else {
@@ -481,6 +415,7 @@ const categorySlice = createSlice({
     productsError: null,
     productDetails: null,
     productDetailsLoading: false,
+    requestedProductId: null,
     productDetailsError: null,
     recommendedProducts: [],
     recommendedProductsLoading: false,
@@ -500,6 +435,10 @@ const categorySlice = createSlice({
     occasions: [], // New state for occasions
     occasionsLoading: false, // New state for occasions loading
     occasionsError: null,
+    categoriesWithSubs: [],
+    homeSections: [],
+homeSectionsLoading: false,
+homeSectionsError: null,
   },
   reducers: {
     clearSearchSuggestions: (state) => {
@@ -507,6 +446,11 @@ const categorySlice = createSlice({
       state.searchError = null;
       state.promoVideosError = null; 
       state.occasionsError = null;
+    },
+    clearProductDetails: (state) => {
+      state.productDetails = null;
+      state.productDetailsLoading = false;
+      state.productDetailsError = null;
     },
   },
   extraReducers: (builder) => {
@@ -583,18 +527,28 @@ const categorySlice = createSlice({
         state.productsLoading = false;
         state.productsError = action.payload.message;
       })
-      .addCase(fetchProductDetails.pending, (state) => {
-        state.productDetailsLoading = true;
-        state.productDetailsError = null;
-      })
-      .addCase(fetchProductDetails.fulfilled, (state, action) => {
-        state.productDetailsLoading = false;
-        state.productDetails = action.payload;
-      })
-      .addCase(fetchProductDetails.rejected, (state, action) => {
-        state.productDetailsLoading = false;
-        state.productDetailsError = action.payload?.message || 'Error fetching product details';
-      })
+     .addCase(fetchProductDetails.pending, (state, action) => {
+  state.productDetailsLoading = true;
+  state.productDetailsError = null;
+  // Track which product_id we're currently fetching
+  state.requestedProductId = action.meta.arg.product_id;
+})
+.addCase(fetchProductDetails.fulfilled, (state, action) => {
+  // Only update if this response matches the current request
+  if (state.requestedProductId === action.meta.arg.product_id) {
+    state.productDetailsLoading = false;
+    state.productDetails = action.payload;
+  }
+})
+.addCase(fetchProductDetails.rejected, (state, action) => {
+  state.productDetailsLoading = false;
+  state.productDetailsError = action.payload?.message || 'Error fetching product details';
+  // Clear stale data on error too
+  if (state.requestedProductId === action.meta.arg.product_id) {
+    state.productDetails = null;
+  }
+})
+
       .addCase(fetchRecommendedProducts.pending, (state) => {
         state.recommendedProductsLoading = true;
         state.recommendedProductsError = null;
@@ -668,8 +622,33 @@ const categorySlice = createSlice({
       .addCase(fetchOccasions.rejected, (state, action) => {
         state.occasionsLoading = false;
         state.occasionsError = action.payload.message;
-      });
+      })
+      .addCase(fetchCategoriesWithSubcategories.pending, (state) => {
+  state.loading = true;
+  state.error = null;
+})
+.addCase(fetchCategoriesWithSubcategories.fulfilled, (state, action) => {
+  state.loading = false;
+  state.categoriesWithSubs = action.payload; // Make sure to add this field in initialState
+})
+.addCase(fetchCategoriesWithSubcategories.rejected, (state, action) => {
+  state.loading = false;
+  state.error = action.payload.message;
+})
+.addCase(fetchHomeSections.pending, (state) => {
+  state.homeSectionsLoading = true;
+  state.homeSectionsError = null;
+})
+.addCase(fetchHomeSections.fulfilled, (state, action) => {
+  state.homeSectionsLoading = false;
+  state.homeSections = action.payload;
+})
+.addCase(fetchHomeSections.rejected, (state, action) => {
+  state.homeSectionsLoading = false;
+  state.homeSectionsError = action.payload.message;
+})
+
   },
 });
-export const { clearSearchSuggestions } = categorySlice.actions;
+export const { clearSearchSuggestions ,clearProductDetails } = categorySlice.actions;
 export default categorySlice.reducer;

@@ -13,12 +13,13 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { responsiveWidth, responsiveFontSize } from 'react-native-responsive-dimensions';
 import { useNavigation } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');
-const CARD_WIDTH = (width - 25) / 3; // Equal width for 3 cards with padding
-const BANNER_HEIGHT = CARD_WIDTH; // Make banner height equal to card width for square proportions
+const CARD_WIDTH = (width - 25) / 3;
+const BANNER_HEIGHT = CARD_WIDTH;
+
+const ACCENT_COLOR = '#832729'; // New primary color
 
 const GoldScheme = () => {
   const insets = useSafeAreaInsets();
@@ -30,20 +31,20 @@ const GoldScheme = () => {
   const goldRates = [
     {
       type: '24K Gold /g',
-      price: '₹12,322',
-      change: '+ ₹120',
-      isPositive: true
-    },
-    {
-      type: '22K Gold /g',
-      price: '₹11,295',
+      price: '₹13,528',
       change: '+ ₹110',
       isPositive: true
     },
     {
+      type: '22K Gold /g',
+      price: '₹12,400',
+      change: '+ ₹100',
+      isPositive: true
+    },
+    {
       type: '18K Gold /g',
-      price: '₹9,242',
-      change: '+ ₹90',
+      price: '₹10,146',
+      change: '+ ₹82',
       isPositive: true
     }
   ];
@@ -87,7 +88,7 @@ const GoldScheme = () => {
         {/* Title and Date */}
         <View style={styles.titleSection}>
           <Text style={styles.mainTitle}>Gold Rate in Rajahmundry</Text>
-          <Text style={styles.dateText}>10 November 2025</Text>
+          <Text style={styles.dateText}>22 December 2025</Text>
         </View>
 
         {/* Tabs */}
@@ -98,7 +99,7 @@ const GoldScheme = () => {
                 key={index}
                 style={[
                   styles.tabButton,
-                  selectedTab === tab && styles.selectedTabButton
+                  selectedTab === tab && [styles.selectedTabButton, { backgroundColor: ACCENT_COLOR, borderColor: ACCENT_COLOR }]
                 ]}
                 onPress={() => setSelectedTab(tab)}
               >
@@ -131,13 +132,16 @@ const GoldScheme = () => {
               <Text style={styles.rateType}>{rate.type}</Text>
               <Text style={styles.ratePrice}>{rate.price}</Text>
               <View style={styles.changeContainer}>
-                <Text style={[styles.changeText, rate.isPositive && styles.positiveChange]}>
+                <Text style={[
+                  styles.changeText,
+                  rate.isPositive && { color: ACCENT_COLOR }
+                ]}>
                   {rate.change}
                 </Text>
                 <Ionicons 
                   name={rate.isPositive ? "arrow-up" : "arrow-down"} 
                   size={12} 
-                  color={rate.isPositive ? "#00A86B" : "#FF0000"} 
+                  color={rate.isPositive ? ACCENT_COLOR : "#FF0000"} 
                 />
               </View>
             </View>
@@ -166,7 +170,7 @@ const GoldScheme = () => {
                   resizeMode="cover"
                   imageStyle={styles.bannerImageStyle}
                 >
-                  {/* Banner Content - Empty as per your commented code */}
+                  {/* Banner Content - Empty as per original */}
                 </ImageBackground>
               </TouchableOpacity>
             </View>
@@ -230,7 +234,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 16,
-    // paddingVertical: 16,
     backgroundColor: '#fff',
   },
   tabsWrapper: {
@@ -247,8 +250,7 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
   },
   selectedTabButton: {
-    backgroundColor: '#0D5C4A',
-    borderColor: '#0D5C4A',
+    borderColor: '#832729',
   },
   tabText: {
     fontSize: 14,
@@ -303,18 +305,15 @@ const styles = StyleSheet.create({
   changeText: {
     fontSize: 11,
     fontWeight: '500',
-    color: '#00A86B',
+    color: '#832729',
     marginRight: 4,
-  },
-  positiveChange: {
-    color: '#00A86B',
   },
   bannersContainer: {
     paddingTop: 20,
+    // paddingHorizontal: 10,
     gap: 12,
   },
   promoBannerWrapper: {
-    marginBottom: 12,
     width: "100%",
     overflow: 'hidden',
     borderRadius: 25,
@@ -332,7 +331,6 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    position: 'relative',
   },
   bannerImageStyle: {
     borderRadius: 25,

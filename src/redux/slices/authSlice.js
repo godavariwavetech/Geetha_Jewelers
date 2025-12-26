@@ -146,31 +146,35 @@ export const updateUserProfile = createAsyncThunk(
     }
   }
 );
+
 export const addCustomerDeliveryAddress = createAsyncThunk(
   'auth/addCustomerDeliveryAddress',
   async (
-    { userId, addressType, fullAddress, customerName, customerPhone, customerEmail, pincode, customerLatitude, customerLongitude },
+    { userId, addressType, addressLine, city, state, pincode, customerName, customerPhone, customerEmail },
     { fulfillWithValue, rejectWithValue }
   ) => {
     try {
       const payload = {
         user_id: userId,
         address_type: addressType,
-        full_address: fullAddress,
-        customer_name: customerName,
-        customer_mobile_number: customerPhone,
-        customer_email: customerEmail,
+        address: addressLine,                    // ← "address" field
+        city: city,                               // ← separate "city"
+        district: "East Godavari",                // ← you can make this dynamic later if needed
+        state: state,                             // ← separate "state"
         pincode: parseInt(pincode),
-        customer_latitude: customerLatitude,
-        customer_longitude: customerLongitude,
+        customer_name: customerName,
+        customer_mobile_number: parseInt(customerPhone), // backend seems to expect number
+        ...(customerEmail && { customer_email: customerEmail }), // optional
       };
-console.log(payload,"coustomerlat,long")
+
+      console.log('addCustomerDeliveryAddress payload:', payload);
+
       const res = await api.post(endpoints.ADD_CUSTOMER_DELIVERY_ADDRESS, payload);
 
       if (res.data?.status === 200) {
         return fulfillWithValue(res.data.data);
       } else {
-        return rejectWithValue('Failed to add address');
+        return rejectWithValue(res.data?.message || 'Failed to add address');
       }
     } catch (err) {
       console.error('addCustomerDeliveryAddress error:', {
@@ -181,13 +185,10 @@ console.log(payload,"coustomerlat,long")
       return rejectWithValue({
         message: err.response?.data?.message || err.message || 'Failed to add address',
         status: err.response?.status,
-        response: err.response?.data,
       });
     }
   }
 );
-
-
 export const getCustomerAddresses = createAsyncThunk(
   'auth/getCustomerAddresses',
   async ({ customerId }, { fulfillWithValue, rejectWithValue }) => {
