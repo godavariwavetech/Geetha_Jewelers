@@ -545,7 +545,331 @@
 // });
 
 // export default MyOrders;
-import React, { useState } from "react";
+// import React, { useEffect } from "react";
+// import {
+//   View,
+//   Text,
+//   StyleSheet,
+//   SafeAreaView,
+//   StatusBar,
+//   FlatList,
+//   Image,
+//   TouchableOpacity,
+//   ActivityIndicator,
+//   Alert,
+// } from "react-native";
+// import Ionicons from "react-native-vector-icons/Ionicons";
+// import { useSafeAreaInsets } from "react-native-safe-area-context";
+// import { useSelector, useDispatch } from "react-redux";
+// import { fetchUserOrders } from "../redux/slices/orderSlice";
+
+// const PRIMARY_COLOR = "#832729";
+
+// const MyOrders = ({ navigation }) => {
+//   const insets = useSafeAreaInsets();
+//   const dispatch = useDispatch();
+
+//   const { customerId } = useSelector((state) => state.Auth || {});
+//   const { orders, loading, error } = useSelector((state) => state.order);
+
+//   // Fetch orders on mount
+//   useEffect(() => {
+//     if (customerId) {
+//       dispatch(fetchUserOrders(customerId));
+//     }
+//   }, [dispatch, customerId]);
+
+//   // Handle error
+//   useEffect(() => {
+//     if (error) {
+//       Alert.alert("Error", error || "Failed to load orders");
+//     }
+//   }, [error]);
+
+//   // Group orders by order_id (since API returns one row per item)
+//   const groupedOrders = React.useMemo(() => {
+//     if (!Array.isArray(orders) || orders.length === 0) return [];
+
+//     const map = {};
+
+//     orders.forEach((item) => {
+//       const orderKey = item.id; // This is the actual order_id for getorderdetails
+
+//       if (!map[orderKey]) {
+//         map[orderKey] = {
+//           order_id: orderKey,
+//           display_order_id: item.order_id, // Long number like 20251227131756715
+//           order_on: item.order_on,
+//           order_status: item.order_status,
+//           order_status_text: item.order_status_date_text,
+//           items: [],
+//           firstImage: item.product_image,
+//         };
+//       }
+
+//       map[orderKey].items.push(item);
+//     });
+
+//     return Object.values(map).sort(
+//       (a, b) => new Date(b.order_on) - new Date(a.order_on)
+//     );
+//   }, [orders]);
+
+//   const handleViewDetails = (orderId) => {
+//     navigation.navigate("OrderDetails", { order_id: orderId });
+//   };
+
+//   const renderItem = ({ item }) => (
+//     <TouchableOpacity
+//       style={styles.card}
+//       onPress={() => handleViewDetails(item.order_id)}
+//       activeOpacity={0.8}
+//     >
+//       <View style={styles.imageContainer}>
+//         <Image
+//           source={{ uri: item.firstImage }}
+//           style={styles.image}
+//           resizeMode="cover"
+//         />
+//         {item.items.length > 1 && (
+//           <View style={styles.itemCountBadge}>
+//             <Text style={styles.itemCountText}>+{item.items.length - 1}</Text>
+//           </View>
+//         )}
+//       </View>
+
+//       <View style={styles.detailsContainer}>
+//         <Text style={styles.orderIdText}>
+//           Order ID: {item.display_order_id}
+//         </Text>
+//         <Text style={styles.orderDate}>{item.order_on}</Text>
+
+//         <Text style={styles.itemCount}>
+//           {item.items.length} {item.items.length === 1 ? "Item" : "Items"}
+//         </Text>
+
+//         <Text style={[styles.status, { color: PRIMARY_COLOR }]}>
+//           {item.order_status_text}
+//         </Text>
+
+//         <View style={styles.button}>
+//           <Text style={styles.buttonText}>View Details</Text>
+//           <Ionicons name="chevron-forward" size={16} color={PRIMARY_COLOR} />
+//         </View>
+//       </View>
+//     </TouchableOpacity>
+//   );
+
+//   if (loading) {
+//     return (
+//       <SafeAreaView style={styles.loadingContainer}>
+//         <ActivityIndicator size="large" color={PRIMARY_COLOR} />
+//         <Text style={styles.loadingText}>Loading your orders...</Text>
+//       </SafeAreaView>
+//     );
+//   }
+
+//   if (groupedOrders.length === 0) {
+//     return (
+//       <SafeAreaView style={styles.container}>
+//         <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+//         <View style={styles.header}>
+//           <TouchableOpacity onPress={() => navigation.goBack()}>
+//             <Ionicons name="chevron-back" size={22} color={PRIMARY_COLOR} />
+//           </TouchableOpacity>
+//           <Text style={styles.headerTitle}>My Orders</Text>
+//           <View style={{ width: 22 }} />
+//         </View>
+
+//         <View style={styles.emptyContainer}>
+//           <Ionicons name="receipt-outline" size={80} color="#ccc" />
+//           <Text style={styles.emptyText}>No orders yet</Text>
+//           <Text style={styles.emptySubText}>
+//             Your placed orders will appear here
+//           </Text>
+//         </View>
+//       </SafeAreaView>
+//     );
+//   }
+
+//   return (
+//     <SafeAreaView style={styles.container}>
+//       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+
+//       {/* Header */}
+//       <View style={styles.header}>
+//         <TouchableOpacity onPress={() => navigation.goBack()}>
+//           <Ionicons name="chevron-back" size={22} color={PRIMARY_COLOR} />
+//         </TouchableOpacity>
+//         <Text style={styles.headerTitle}>My Orders</Text>
+//         <View style={{ width: 22 }} />
+//       </View>
+
+//       {/* Orders List */}
+//       <FlatList
+//         data={groupedOrders}
+//         keyExtractor={(item) => item.order_id.toString()}
+//         renderItem={renderItem}
+//         contentContainerStyle={styles.listContent}
+//         showsVerticalScrollIndicator={false}
+//       />
+//     </SafeAreaView>
+//   );
+// };
+
+// const CARD_HEIGHT = 140;
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: "#fff",
+//   },
+//   header: {
+//     flexDirection: "row",
+//     alignItems: "center",
+//     justifyContent: "space-between",
+//     paddingHorizontal: 16,
+//     paddingVertical: 12,
+//     borderBottomWidth: 0.5,
+//     borderBottomColor: "#eee",
+//   },
+//   headerTitle: {
+//     fontSize: 19,
+//     fontWeight: "600",
+//     color: PRIMARY_COLOR,
+//   },
+
+//   listContent: {
+//     paddingHorizontal: 16,
+//     paddingTop: 12,
+//     paddingBottom: 20,
+//   },
+
+//   card: {
+//     flexDirection: "row",
+//     backgroundColor: "#fff",
+//     borderRadius: 12,
+//     marginBottom: 14,
+//     elevation: 3,
+//     shadowColor: "#000",
+//     shadowOpacity: 0.08,
+//     shadowOffset: { width: 0, height: 2 },
+//     shadowRadius: 6,
+//     borderWidth: 1,
+//     borderColor: "#f0f0f0",
+//     overflow: "hidden",
+//     height: CARD_HEIGHT,
+//   },
+//   imageContainer: {
+//     width: CARD_HEIGHT - 20,
+//     height: CARD_HEIGHT - 20,
+//     margin: 10,
+//     justifyContent: "center",
+//     alignItems: "center",
+//     backgroundColor: "#f9f9f9",
+//     borderRadius: 10,
+//     position: "relative",
+//   },
+//   image: {
+//     width: "100%",
+//     height: "100%",
+//     borderRadius: 10,
+//   },
+//   itemCountBadge: {
+//     position: "absolute",
+//     top: 8,
+//     right: 8,
+//     backgroundColor: "rgba(131, 39, 41, 0.9)",
+//     borderRadius: 12,
+//     paddingHorizontal: 8,
+//     paddingVertical: 4,
+//   },
+//   itemCountText: {
+//     color: "#fff",
+//     fontSize: 12,
+//     fontWeight: "600",
+//   },
+
+//   detailsContainer: {
+//     flex: 1,
+//     paddingVertical: 12,
+//     paddingRight: 12,
+//     justifyContent: "space-between",
+//   },
+//   orderIdText: {
+//     fontSize: 13,
+//     color: "#555",
+//     fontWeight: "500",
+//   },
+//   orderDate: {
+//     fontSize: 13,
+//     color: "#777",
+//     marginTop: 2,
+//   },
+//   itemCount: {
+//     fontSize: 14,
+//     color: "#000",
+//     marginTop: 6,
+//     fontWeight: "500",
+//   },
+//   status: {
+//     fontSize: 14,
+//     fontWeight: "600",
+//     marginTop: 4,
+//   },
+//   button: {
+//     flexDirection: "row",
+//     alignItems: "center",
+//     alignSelf: "flex-start",
+//     backgroundColor: "#fff",
+//     borderWidth: 1.5,
+//     borderColor: PRIMARY_COLOR,
+//     borderRadius: 8,
+//     paddingVertical: 8,
+//     paddingHorizontal: 14,
+//     marginTop: 10,
+//   },
+//   buttonText: {
+//     color: PRIMARY_COLOR,
+//     fontSize: 14,
+//     fontWeight: "600",
+//     marginRight: 4,
+//   },
+
+//   loadingContainer: {
+//     flex: 1,
+//     justifyContent: "center",
+//     alignItems: "center",
+//     backgroundColor: "#fff",
+//   },
+//   loadingText: {
+//     marginTop: 16,
+//     fontSize: 16,
+//     color: "#666",
+//   },
+
+//   emptyContainer: {
+//     flex: 1,
+//     justifyContent: "center",
+//     alignItems: "center",
+//     paddingHorizontal: 40,
+//   },
+//   emptyText: {
+//     fontSize: 18,
+//     fontWeight: "600",
+//     color: "#888",
+//     marginTop: 20,
+//   },
+//   emptySubText: {
+//     fontSize: 14,
+//     color: "#aaa",
+//     marginTop: 8,
+//     textAlign: "center",
+//   },
+// });
+
+// export default MyOrders;
+import React, { useEffect } from "react";
 import {
   View,
   Text,
@@ -555,127 +879,167 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
-  Modal,
-  Dimensions,
-  TextInput,
-  ScrollView,
+  ActivityIndicator,
+  Alert,
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchUserOrders } from "../redux/slices/orderSlice";
 
-const { width, height } = Dimensions.get("window");
+const PRIMARY_COLOR = "#832729";
 
 const MyOrders = ({ navigation }) => {
   const insets = useSafeAreaInsets();
-  const [isModalVisible, setModalVisible] = useState(false);
-  const [selectedOrder, setSelectedOrder] = useState(null);
-  const [rating, setRating] = useState(0);
-  const [showInput, setShowInput] = useState(false);
-  const [reviewText, setReviewText] = useState("");
+  const dispatch = useDispatch();
 
-  // Dummy Data
-  const haaram = require("../assets/haaram.png");
-  const mangalsutra = require("../assets/mangalsutra.png");
+  const { customerId } = useSelector((state) => state.Auth || {});
+  const { orders, loading, error } = useSelector((state) => state.order);
 
-  const bookings = [
-    {
-      id: "1",
-      name: "Arch of Royalty Gold Finger Ring",
-      price: "₹37,899",
-      status: "Order Confirmed",
-      statusColor: "#0E614E",
-      image: haaram,
-      buttonText: "View Details",
-    },
-    {
-      id: "2",
-      name: "Arch of Royalty Gold Finger Ring",
-      price: "₹37,899",
-      status: "Order Delivered",
-      statusColor: "#0E614E",
-      image: mangalsutra,
-      buttonText: "Rate Order",
-    },
-  ];
-
-  const handleButtonPress = (item) => {
-    if (item.buttonText === "View Details") {
-      navigation.navigate("OrderDetails", { orderId: item.id });
-    } else {
-      setSelectedOrder(item);
-      setModalVisible(true);
-      setShowInput(false);
-      setReviewText("");
-      setRating(0);
+  useEffect(() => {
+    if (customerId) {
+      dispatch(fetchUserOrders(customerId));
     }
+  }, [dispatch, customerId]);
+
+  useEffect(() => {
+    if (error) {
+      Alert.alert("Error", error || "Failed to load orders");
+    }
+  }, [error]);
+
+  const groupedOrders = React.useMemo(() => {
+    if (!Array.isArray(orders) || orders.length === 0) return [];
+
+    const map = {};
+
+    orders.forEach((item) => {
+      const orderKey = item.id;
+
+      if (!map[orderKey]) {
+        map[orderKey] = {
+          order_id: orderKey,
+          display_order_id: item.order_id,
+          order_on: item.order_on,
+          order_status: item.order_status,
+          order_status_text: item.order_status_date_text,
+          items: [],
+          firstImage: item.product_image,
+        };
+      }
+
+      map[orderKey].items.push(item);
+    });
+
+    return Object.values(map).sort(
+      (a, b) => new Date(b.order_on) - new Date(a.order_on)
+    );
+  }, [orders]);
+
+  const handleViewDetails = (orderId) => {
+    navigation.navigate("OrderDetails", { order_id: orderId });
   };
 
   const renderItem = ({ item }) => (
-    <View style={styles.card}>
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() => handleViewDetails(item.order_id)}
+      activeOpacity={0.8}
+    >
       <View style={styles.imageContainer}>
-        <Image source={item.image} style={styles.image} resizeMode="cover" />
+        <Image
+          source={{ uri: item.firstImage }}
+          style={styles.image}
+          resizeMode="cover"
+        />
+        {item.items.length > 1 && (
+          <View style={styles.itemCountBadge}>
+            <Text style={styles.itemCountText}>+{item.items.length - 1}</Text>
+          </View>
+        )}
       </View>
+
       <View style={styles.detailsContainer}>
-        <Text style={styles.productName}>{item.name}</Text>
-        <Text style={styles.price}>{item.price}</Text>
-        <Text style={[styles.status, { color: "#832729"}]}>
-          {item.status}
-        </Text>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => handleButtonPress(item)}
-        >
-          <Text style={styles.buttonText}>{item.buttonText}</Text>
-        </TouchableOpacity>
+        <View>
+          <Text style={styles.orderIdText}>
+            Order ID: {item.display_order_id}
+          </Text>
+          <Text style={styles.orderDate}>{item.order_on}</Text>
+
+          <Text style={styles.itemCount}>
+            {item.items.length} {item.items.length === 1 ? "Item" : "Items"}
+          </Text>
+
+          <Text style={[styles.status, { color: PRIMARY_COLOR }]}>
+            {item.order_status_text}
+          </Text>
+        </View>
+
+        <View style={styles.button}>
+          <Text style={styles.buttonText}>View Details</Text>
+          <Ionicons name="chevron-forward" size={16} color={PRIMARY_COLOR} />
+        </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 
-  const handleSubmitReview = () => {
-    // Submit logic here
-    setModalVisible(false);
-    setShowInput(false);
-    setReviewText("");
-  };
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={PRIMARY_COLOR} />
+        <Text style={styles.loadingText}>Loading your orders...</Text>
+      </SafeAreaView>
+    );
+  }
+
+  if (groupedOrders.length === 0) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+        <View style={[styles.header, { paddingTop: insets.top }]}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Ionicons name="chevron-back" size={22} color={PRIMARY_COLOR} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>My Orders</Text>
+          <View style={{ width: 22 }} />
+        </View>
+
+        <View style={styles.emptyContainer}>
+          <Ionicons name="receipt-outline" size={80} color="#ccc" />
+          <Text style={styles.emptyText}>No orders yet</Text>
+          <Text style={styles.emptySubText}>
+            Your placed orders will appear here
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
-    <SafeAreaView
-      style={[
-        styles.container,
-        { paddingTop: insets.top, paddingBottom: insets.bottom },
-      ]}
-    >
+    <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
 
-      {/* Header */}
-      <View style={styles.header}>
+      {/* Header with safe area top padding */}
+      <View style={[styles.header, { paddingTop: insets.top }]}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="chevron-back" size={22} color="#832729" />
+          <Ionicons name="chevron-back" size={22} color={PRIMARY_COLOR} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>My Orders</Text>
         <View style={{ width: 22 }} />
       </View>
 
-      {/* Orders List */}
       <FlatList
-        data={bookings}
-        keyExtractor={(item) => item.id}
+        data={groupedOrders}
+        keyExtractor={(item) => item.order_id.toString()}
         renderItem={renderItem}
-        contentContainerStyle={{
-          paddingHorizontal: 16,
-          paddingBottom: insets.bottom + 20,
-        }}
+        contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
       />
-
-      {/* Rating Modal */}
-    
     </SafeAreaView>
   );
 };
 
-const CARD_HEIGHT = 120;
-
+// Removed fixed CARD_HEIGHT - let content determine height
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -684,272 +1048,146 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: 16,
-    justifyContent: "flex-start",
-    paddingVertical: 10,
+    paddingVertical: 12,
     borderBottomWidth: 0.5,
-    borderBottomColor: "#ddd",
-    gap: 10,
+    borderBottomColor: "#eee",
+    backgroundColor: "#fff", // Ensure background covers status bar area
   },
   headerTitle: {
-    fontSize: 18,
+    fontSize: 19,
     fontWeight: "600",
-    color: "#832729",
+    color: PRIMARY_COLOR,
   },
+
+  listContent: {
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 20,
+  },
+
   card: {
     flexDirection: "row",
-    alignItems: "center",
     backgroundColor: "#fff",
-    borderRadius: 10,
-    elevation: 2,
+    borderRadius: 12,
+    marginBottom: 14,
+    elevation: 3,
     shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    marginTop: 12,
+    shadowOpacity: 0.08,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 6,
     borderWidth: 1,
-    borderColor: "#EAEAEA",
+    borderColor: "#f0f0f0",
     overflow: "hidden",
-    height: CARD_HEIGHT + 20, // Fixed height to ensure consistent centering
+    // Removed fixed height - now flexible
   },
   imageContainer: {
-    width: CARD_HEIGHT,
-    height: CARD_HEIGHT,
+    width: 120,
+    height: 120,
+    margin: 10,
     justifyContent: "center",
     alignItems: "center",
-    padding: 10, // Adds margin-like spacing inside the card
+    backgroundColor: "#f9f9f9",
+    borderRadius: 10,
+    position: "relative",
   },
   image: {
     width: "100%",
     height: "100%",
+    borderRadius: 10,
   },
+  itemCountBadge: {
+    position: "absolute",
+    top: 8,
+    right: 8,
+    backgroundColor: "rgba(131, 39, 41, 0.9)",
+    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  itemCountText: {
+    color: "#fff",
+    fontSize: 12,
+    fontWeight: "600",
+  },
+
   detailsContainer: {
     flex: 1,
-    padding: 10,
-    justifyContent: "center",
+    paddingVertical: 12,
+    paddingRight: 12,
+    justifyContent: "space-between", // This pushes button to bottom
   },
-  productName: {
-    fontSize: 14,
+  orderIdText: {
+    fontSize: 13,
+    color: "#555",
     fontWeight: "500",
-    color: "#000",
   },
-  price: {
+  orderDate: {
+    fontSize: 13,
+    color: "#777",
+    marginTop: 2,
+  },
+  itemCount: {
     fontSize: 14,
     color: "#000",
-    marginTop: 4,
+    marginTop: 6,
+    fontWeight: "500",
   },
   status: {
-    fontSize: 13,
+    fontSize: 14,
+    fontWeight: "600",
     marginTop: 4,
   },
   button: {
+    flexDirection: "row",
+    alignItems: "center",
     alignSelf: "flex-start",
     backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: "#832729",
-    borderRadius: 6,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    marginTop: 8,
-  },
-  buttonText: {
-    color: "#832729",
-    fontSize: 13,
-    fontWeight: "600",
-  },
-
-  // Modal Styles
-  modalOverlay: {
-    flex: 1,
-    justifyContent: "flex-end",
-    backgroundColor: "rgba(0,0,0,0.4)",
-  },
-  fullModal: {
-    backgroundColor: "#fff",
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    paddingHorizontal: 20,
-    paddingTop: 10,
-    maxHeight: height * 0.85,
-    flex: 1,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  closeButton: {
-    alignSelf: "flex-end",
-  },
-  modalImage: {
-    width: "100%",
-    height: 180,
-    borderRadius: 10,
-    marginTop: 10,
-  },
-  modalOrderId: {
-    fontSize: 12,
-    color: "#777",
-    textAlign: "center",
-    marginTop: 6,
-  },
-  modalProductName: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#000",
-    textAlign: "center",
-    marginTop: 4,
-  },
-  modalLocation: {
-    fontSize: 13,
-    color: "#555",
-    textAlign: "center",
-    marginTop: 2,
-  },
-  deliveryContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 8,
-    backgroundColor: "#832729",
-    // borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 6,
-    width:"50%",
-    alignSelf:"center"
-  },
-  deliveredText: {
-    color: "#fff",
-    fontSize: 13,
-  },
-  deliveryDate: {
-    color: "#fff",
-    fontWeight: "600",
-    fontSize: 13,
-    marginLeft: 4,
-  },
-  modalPrice: {
-    textAlign: "center",
-    fontSize: 15,
-    color: "#000",
-    marginTop: 6,
-    fontWeight: "600",
-  },
-  ratingRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginTop: 10,
-  },
-  ratingSection: {
-    flex: 1,
-  },
-  rateOrderText: {
-    textAlign: "left",
-    marginTop: 10,
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#000",
-  },
-  starContainer: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    marginTop: 5,
-  },
-  writeReviewButton: {
-    borderWidth: 1,
-    borderColor: "#832729",
+    borderWidth: 1.5,
+    borderColor: PRIMARY_COLOR,
     borderRadius: 8,
     paddingVertical: 8,
-    paddingHorizontal: 12,
-    marginLeft: 10,
-    alignSelf: "center",
-  },
-  writeReviewText: {
-    color: "#832729",
-    fontWeight: "600",
-    fontSize: 13,
-  },
-  inputSection: {
-    marginTop: 10,
-    paddingHorizontal: 5,
-  },
-  textInput: {
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 14,
-    minHeight: 80,
-    backgroundColor: "#f9f9f9",
-    textAlignVertical: "top",
-  },
-  submitButton: {
-    backgroundColor: "#832729",
-    borderRadius: 8,
-    paddingVertical: 12,
-    alignItems: "center",
+    paddingHorizontal: 14,
     marginTop: 10,
   },
-  submitButtonText: {
-    color: "#fff",
+  buttonText: {
+    color: PRIMARY_COLOR,
     fontSize: 14,
     fontWeight: "600",
+    marginRight: 4,
   },
-  similarTitle: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: "#000",
-    marginTop: 20,
-    marginBottom: 10,
-  },
-  similarCard: {
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 10,
-    marginRight: 10,
-    padding: 8,
-    width: 120,
-    alignItems: "center",
-  },
-  similarImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 6,
-  },
-  similarName: {
-    fontSize: 12,
-    fontWeight: "500",
-    color: "#000",
-    textAlign: "center",
-    marginTop: 4,
-  },
-  similarPrice: {
-    fontSize: 12,
-    color: "#000",
-    marginTop: 2,
-  },
-  addToCartButton: {
-    backgroundColor: "#832729",
-    borderRadius: 5,
-    marginTop: 5,
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-  },
-  addToCartText: {
-    fontSize: 11,
-    color: "#fff",
-    fontWeight: "500",
-  },
-  locationRow: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  alignSelf:"center",
-},
 
-modalLocation: {
-  fontSize: 16,
-  color: '#000',
-  marginLeft: 5,
-},
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fff",
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: "#666",
+  },
+
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 40,
+  },
+  emptyText: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#888",
+    marginTop: 20,
+  },
+  emptySubText: {
+    fontSize: 14,
+    color: "#aaa",
+    marginTop: 8,
+    textAlign: "center",
+  },
 });
 
 export default MyOrders;

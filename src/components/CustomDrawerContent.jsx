@@ -72,13 +72,13 @@ const CustomDrawerContent = (props) => {
       route: 'WishList',
       active: currentRoute === 'WishList',
     },
-    {
-      name: 'Delete Account',
-      icon: 'delete-outline',
-      route: 'DeleteAccount', // You'll need to create this screen
-      active: currentRoute === 'DeleteAccount',
-      danger: true,
-    },
+    // {
+    //   name: 'Delete Account',
+    //   icon: 'delete-outline',
+    //   route: 'DeleteAccount', // You'll need to create this screen
+    //   active: currentRoute === 'DeleteAccount',
+    //   danger: true,
+    // },
   ];
 
   return (
@@ -162,14 +162,14 @@ const CustomDrawerContent = (props) => {
         ))}
 
         {/* Logout */}
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={styles.logoutButton}
           onPress={handleLogout}
           activeOpacity={0.7}
         >
           <MaterialCommunityIcons name="logout" size={22} color="#ccc" />
           <Text style={styles.logoutText}>Logout</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         <Text style={styles.versionText}>Version {version}</Text>
       </ScrollView>

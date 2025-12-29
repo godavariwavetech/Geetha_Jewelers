@@ -1,69 +1,4 @@
-// import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-// import { endpoints } from '../../config/config';
-// import api from '../../utils/api'; // Adjust the path to your endpoints
 
-// // Async thunk for placing an order
-// export const placeOrder = createAsyncThunk(
-//   'order/placeOrder',
-//   async (orderData, { fulfillWithValue, rejectWithValue }) => {
-//     try {
-//       const res = await api.post(endpoints.ORDER_PLACED, orderData);
-//       console.log('placeOrder responseeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee:', res.data);
-
-//       if (res.data?.status === 200) {
-//         return fulfillWithValue(res.data);
-//       } else {
-//         return rejectWithValue('Invalid order response');
-//       }
-//     } catch (err) {
-//       console.error('placeOrder error:', {
-//         message: err.message,
-//         status: err.response?.status,
-//         response: err.response?.data,
-//       });
-//       return rejectWithValue({
-//         message: err.response?.data?.message || err.message || 'Failed to place order',
-//         status: err.response?.status,
-//         response: err.response?.data,
-//       });
-//     }
-//   }
-// );
-
-// const orderSlice = createSlice({
-//   name: 'order',
-//   initialState: {
-//     order: null,
-//     loading: false,
-//     error: null,
-//   },
-//   reducers: {
-//     resetOrderState: (state) => {
-//       state.order = null;
-//       state.loading = false;
-//       state.error = null;
-//     },
-//   },
-//   extraReducers: (builder) => {
-//     builder
-//       .addCase(placeOrder.pending, (state) => {
-//         state.loading = true;
-//         state.error = null;
-//       })
-//       .addCase(placeOrder.fulfilled, (state, action) => {
-//         state.loading = false;
-//         state.order = action.payload;
-//         state.error = null;
-//       })
-//       .addCase(placeOrder.rejected, (state, action) => {
-//         state.loading = false;
-//         state.error = action.payload;
-//       });
-//   },
-// });
-
-// export const { resetOrderState } = orderSlice.actions;
-// export default orderSlice.reducer;
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { endpoints } from '../../config/config';
 import api from '../../utils/api';
@@ -72,8 +7,9 @@ export const placeOrder = createAsyncThunk(
   'order/placeOrder',
   async (orderData, { fulfillWithValue, rejectWithValue }) => {
     try {
+      console.log(orderData,"order payload ")
       const res = await api.post(endpoints.ORDER_PLACED, orderData);
-      console.log('placeOrder response:', res.data);
+      console.log('placeOrder response++++++++++++++++++:', res.data);
 
       if (res.data?.status === 200) {
         return fulfillWithValue(res.data);
@@ -123,9 +59,9 @@ export const fetchUserOrders = createAsyncThunk(
 );
 export const updatePaymentDetails = createAsyncThunk(
   'order/updatePaymentDetails',
-  async (paymentData, { fulfillWithValue, rejectWithValue }) => {
+  async (paymentPayload, { fulfillWithValue, rejectWithValue }) => {
     try {
-      const res = await api.post(endpoints.UPDATE_PAYMENT_DETAILS, paymentData);
+      const res = await api.post(endpoints.UPDATE_PAYMENT_DETAILS, paymentPayload);
       console.log('updatePaymentDetails response:', res.data);
 
       if (res.data?.status === 200) {
@@ -176,73 +112,7 @@ export const getOrderDetails = createAsyncThunk(
   }
 );
 
-// const orderSlice = createSlice({
-//   name: 'order',
-//   initialState: {
-//     order: null,
-//     orders: [],
-//     orderDetails: null, // Store fetched order details
-//     loading: false,
-//     error: null,
-//   },
-//   reducers: {
-//     resetOrderState: (state) => {
-//       state.order = null;
-//       state.orders = [];
-//       state.orderDetails = null;
-//       state.loading = false;
-//       state.error = null;
-//     },
-//   },
-//   extraReducers: (builder) => {
-//     builder
-//       // placeOrder cases
-//       .addCase(placeOrder.pending, (state) => {
-//         state.loading = true;
-//         state.error = null;
-//       })
-//       .addCase(placeOrder.fulfilled, (state, action) => {
-//         state.loading = false;
-//         state.order = action.payload;
-//         state.error = null;
-//       })
-//       .addCase(placeOrder.rejected, (state, action) => {
-//         state.loading = false;
-//         state.error = action.payload;
-//       })
-//       // fetchUserOrders cases
-//       .addCase(fetchUserOrders.pending, (state) => {
-//         state.loading = true;
-//         state.error = null;
-//       })
-//       .addCase(fetchUserOrders.fulfilled, (state, action) => {
-//         state.loading = false;
-//         state.orders = action.payload;
-//         state.error = null;
-//       })
-//       .addCase(fetchUserOrders.rejected, (state, action) => {
-//         state.loading = false;
-//         state.error = action.payload;
-//       })
-//       // getOrderDetails cases
-//       .addCase(getOrderDetails.pending, (state) => {
-//         state.loading = true;
-//         state.error = null;
-//       })
-//       .addCase(getOrderDetails.fulfilled, (state, action) => {
-//         state.loading = false;
-//         state.orderDetails = action.payload;
-//         state.error = null;
-//       })
-//       .addCase(getOrderDetails.rejected, (state, action) => {
-//         state.loading = false;
-//         state.error = action.payload;
-//       });
-//   },
-// });
 
-// export const { resetOrderState } = orderSlice.actions;
-// export default orderSlice.reducer;
 const orderSlice = createSlice({
   name: 'order',
   initialState: {

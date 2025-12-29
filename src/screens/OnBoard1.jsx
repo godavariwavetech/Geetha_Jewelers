@@ -65,7 +65,7 @@ const OnBoard1 = ({ navigation }) => {
             <View style={styles.buttonContainer}>
               <TouchableOpacity
                 style={styles.skipButton}
-                onPress={() => navigation.navigate('TabNavigator')}
+                onPress={() => navigation.navigate('DrawerNavigation')}
                 activeOpacity={0.7}
               >
                 <Text 
