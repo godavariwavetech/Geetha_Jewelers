@@ -11,13 +11,14 @@ export const addToCart = createAsyncThunk(
       const res = await api.post(endpoints.ADD_USER_CART_ITEMS, cartItem);
       console.log('addToCart response:', res.data);
       if (res.data?.status === 200 && res.data?.data) {
-        return fulfillWithValue(res.data.data);
+        // return fulfillWithValue(res.data.data);
+        return fulfillWithValue(res.data.data)
       } else {
         return rejectWithValue(res.data?.message || 'Failed to add to cart');
       }
     } catch (err) {
       console.error('addToCart error:', {
-        message: err.message,
+        message: err.message ,
         status: err.response?.status,
         response: err.response?.data,
       });
@@ -56,11 +57,12 @@ export const removeFromCart = createAsyncThunk(
   'cart/removeFromCart',
   async (cartId, { fulfillWithValue, rejectWithValue }) => {
     try {
+      console.log(cartId,"pay load to remove cart item ")
       if (!cartId) {
         throw new Error('Cart ID is missing');
       }
       const res = await api.post(endpoints.DELETE_USER_CART_ITEMS, { cart_id: cartId });
-      console.log('removeFromCart response:', res.data);
+      console.log('removeFromCart response+++++++++++++++)))))))):', res.data);
       if (res.data?.status === 200) {
         return fulfillWithValue(cartId);
       } else {
@@ -197,14 +199,22 @@ const cartSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(removeFromCart.fulfilled, (state, action) => {
-        state.loading = false;
-        state.cartItems = state.cartItems.filter((item) => item.cart_id !== action.payload);
-      })
-      .addCase(removeFromCart.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload.message;
-      })
+      // .addCase(removeFromCart.fulfilled, (state, action) => {
+      //   state.loading = false;
+      //   state.cartItems = state.cartItems.filter((item) => item.cart_id !== action.payload);
+      // })
+    .addCase(removeFromCart.fulfilled, (state, action) => {
+  state.loading = false;
+  const removedId = String(action.payload);
+  state.cartItems = state.cartItems.filter(
+    (item) => String(item.cart_id) !== removedId
+  );
+})
+.addCase(removeFromCart.rejected, (state, action) => {
+  state.loading = false;
+  state.error = action.payload?.message || action.payload || 'Failed to remove item';
+  Alert.alert('Remove Failed', state.error); // Optional: show error
+})
       // New cases for update quantity
       .addCase(updateCartQuantity.pending, (state) => {
         state.loading = true;

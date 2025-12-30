@@ -1559,6 +1559,13 @@ const ProductDetailsScreen = () => {
   const RecommendedProductCard = ({ item }) => {
     const isLoading = wishlistLoading[item.id];
     return (
+      <TouchableOpacity   onPress={() =>
+    navigation.navigate('ProductDetailsScreen', {
+      product_id: item.id,
+      user_id: currentUserId, // already defined above
+    })
+  }
+ >
       <View style={styles.similarProductCard}>
         <TouchableOpacity style={styles.similarFavorite} onPress={() => handleWishlistToggle(true, item)} disabled={isLoading}>
           {isLoading ? (
@@ -1580,7 +1587,7 @@ const ProductDetailsScreen = () => {
         <View style={styles.similarButtons}>
           <TouchableOpacity
             style={styles.viewSimilarBtn}
-            onPress={() => navigation.navigate('ProductDetails', { product_id: item.id, user_id: currentUserId })}
+            onPress={() => navigation.navigate('ProductDetailsScreen', { product_id: item.id, user_id: currentUserId })}
           >
             <Text style={styles.viewSimilarBtnText}>View Details</Text>
           </TouchableOpacity>
@@ -1589,6 +1596,7 @@ const ProductDetailsScreen = () => {
           </TouchableOpacity>
         </View>
       </View>
+         </TouchableOpacity>
     );
   };
 
@@ -1601,9 +1609,9 @@ const ProductDetailsScreen = () => {
           <Ionicons name="arrow-back" size={24} color="#000" />
         </TouchableOpacity>
         <View style={styles.headerIcons}>
-          <TouchableOpacity><Ionicons name="search-outline" size={24} color="#000" /></TouchableOpacity>
-          <TouchableOpacity><Ionicons name="home-outline" size={24} color="#000" /></TouchableOpacity>
-          <TouchableOpacity><Ionicons name="notifications-outline" size={24} color="#000" /></TouchableOpacity>
+          {/* <TouchableOpacity><Ionicons name="search-outline" size={24} color="#000" /></TouchableOpacity> */}
+          <TouchableOpacity><Ionicons name="home-outline" size={24} color="#000" onPress={()=>{navigation.navigate("DrawerNavigation")}} /></TouchableOpacity>
+          {/* <TouchableOpacity><Ionicons name="notifications-outline" size={24} color="#000" /></TouchableOpacity> */}
         </View>
       </View>
 
@@ -1616,9 +1624,9 @@ const ProductDetailsScreen = () => {
               <Ionicons name={isFavorite ? 'heart' : 'heart-outline'} size={24} color={isFavorite ? '#FF0000' : '#000'} />
             )}
           </TouchableOpacity>
-          <TouchableOpacity style={styles.shareButton}>
+          {/* <TouchableOpacity style={styles.shareButton}>
             <Ionicons name="arrow-redo-outline" size={24} color="#000" />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <Image source={{ uri: images[selectedImageIndex]?.uri }} style={styles.mainImage} resizeMode="contain" />
         </View>
 
@@ -1988,7 +1996,7 @@ const ProductDetailsScreen = () => {
         </View>
       </ScrollView>
 
-      <View style={[styles.addToCartContainer, { bottom: insets.bottom + 15 }]}>
+      <View style={[styles.addToCartContainer, { bottom: insets.bottom  }]}>
         <TouchableOpacity
           style={[styles.addToCartButton, cartLoading && styles.addToCartButtonDisabled]}
           onPress={handleAddToCart}

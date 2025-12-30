@@ -1187,7 +1187,7 @@ const handleCardNavigation = (card, sectionType) => {
             placeholderTextColor="#999"
             style={styles.searchInput}
           />
-          <Ionicons name="filter-outline" size={20} color="#832729" style={{ marginLeft: 8 }} />
+          {/* <Ionicons name="filter-outline" size={20} color="#832729" style={{ marginLeft: 8 }} /> */}
         </View>
 
         {/* Top Categories Scroll */}
@@ -1436,14 +1436,14 @@ const styles = StyleSheet.create({
   },
   section: { marginVertical: 20 },
   sectionTitle: {
-    fontSize: responsiveFontSize(2.4),
+    fontSize: 16,
     fontWeight: "700",
     textAlign: "center",
     color: "#832729",
     fontFamily:"SF-Pro-Display-LightItalic"
   },
   sectionSubtitle: {
-    fontSize: responsiveFontSize(1.7),
+    fontSize: 12,
     textAlign: "center",
     color: "#666",
     marginVertical: 8,
@@ -1468,8 +1468,8 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
   },
   savingsRightSection: { flex: 1, paddingHorizontal: 12 },
-  savingsTitle: { color: "#fff", fontSize: 16, fontWeight: "700" },
-  savingsSubtitle: { color: "#fff", fontSize: 13, opacity: 0.9, marginTop: 4 },
+  savingsTitle: { color: "#fff", fontSize: 14, fontWeight: "700" },
+  savingsSubtitle: { color: "#fff", fontSize: 12, opacity: 0.9, marginTop: 4 },
   savingsArrowButton: {
     backgroundColor: "#fff",
     width: 30,

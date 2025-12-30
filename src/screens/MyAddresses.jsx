@@ -203,7 +203,7 @@ const MyAddresses = () => {
         <View style={[styles.container, { paddingTop: insets.top }]}>
           {/* Header */}
           <View style={styles.header}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
+            <TouchableOpacity onPress={() =>{navigation.goBack()}}>
               <Feather name="arrow-left" size={22} color="#000" />
             </TouchableOpacity>
             <Text style={styles.headerTitle}>My Addresses</Text>
@@ -288,16 +288,16 @@ const MyAddresses = () => {
                 {/* Address Type */}
                 <View style={{ marginBottom: 12 }}>
                   <Text style={commonstyles.text4}>Address Type</Text>
-                  <View style={{ flexDirection: 'row', marginTop: 8, gap: 12 }}>
+                  <View style={{ flexDirection: 'row', marginTop: 8, gap: 12, marginBottom:12}}>
                     {['home', 'work', 'other'].map((type) => (
                       <TouchableOpacity
                         key={type}
                         onPress={() => setAddressType(type)}
                         style={{
                           padding: 8,
-                          borderWidth: 1,
-                          borderColor: addressType === type ? '#000' : '#ccc',
-                          backgroundColor: addressType === type ? '#000' : '#fff',
+                          borderWidth: 0.5,
+                          // borderColor: addressType === type ? '#000' : '#ccc',
+                          backgroundColor: addressType === type ? '#832729' : '#fff',
                           borderRadius: 4,
                         }}
                       >
@@ -428,13 +428,16 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  paddingHorizontal: 16,
+  paddingVertical: 12,
+  backgroundColor: '#fff',
+  borderBottomWidth: 1,
+  borderBottomColor: '#E0E0E0',
+
+  zIndex: 10,
+  elevation: 10,
   },
   headerTitle: {
     fontSize: 20,
@@ -498,7 +501,7 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: '#832729',
+    backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'flex-end',
   },
   modalContainer: {

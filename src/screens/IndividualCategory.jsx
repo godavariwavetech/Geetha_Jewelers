@@ -2489,6 +2489,644 @@
 // });
 
 // export default IndividualCategory;
+// import React, { useEffect, useState, useRef } from 'react';
+// import {
+//   View,
+//   Text,
+//   FlatList,
+//   Image,
+//   TouchableOpacity,
+//   StyleSheet,
+//   SafeAreaView,
+//   Dimensions,
+//   Modal,
+//   StatusBar,
+//   Alert,
+//   Animated,
+//   Easing,
+// } from 'react-native';
+// import { useSafeAreaInsets } from 'react-native-safe-area-context';
+// import Ionicons from 'react-native-vector-icons/Ionicons';
+// import { responsiveWidth } from 'react-native-responsive-dimensions';
+// import { useNavigation, useRoute } from '@react-navigation/native';
+// import { useDispatch, useSelector } from 'react-redux';
+// import {
+//   addToWishlist,
+//   removeFromWishlist,
+// } from '../redux/slices/wishlistSlice';
+// import { fetchProducts } from '../redux/slices/categorySlice';
+
+// const { width } = Dimensions.get('window');
+// const ITEM_WIDTH = (width - 48) / 2; // 16px padding + 16px gap
+// const CARD_HEIGHT = 280;
+
+// // Shimmer Placeholder Component
+// const ShimmerPlaceholder = ({ width = '100%', height = 20, style }) => {
+//   const animatedValue = useRef(new Animated.Value(0)).current;
+
+//   useEffect(() => {
+//     Animated.loop(
+//       Animated.timing(animatedValue, {
+//         toValue: 1,
+//         duration: 1200,
+//         easing: Easing.linear,
+//         useNativeDriver: true,
+//       })
+//     ).start();
+//   }, [animatedValue]);
+
+//   const translateX = animatedValue.interpolate({
+//     inputRange: [0, 1],
+//     outputRange: [-parseFloat(width), parseFloat(width)],
+//   });
+
+//   return (
+//     <View
+//       style={[
+//         { backgroundColor: '#e8e8e8', borderRadius: 6, overflow: 'hidden' },
+//         typeof width === 'string' ? { width } : { width },
+//         { height },
+//         style,
+//       ]}
+//     >
+//       <Animated.View
+//         style={{
+//           width: '100%',
+//           height: '100%',
+//           backgroundColor: 'rgba(255, 255, 255, 0.8)',
+//           transform: [{ translateX }],
+//         }}
+//       />
+//     </View>
+//   );
+// };
+
+// // Skeleton Card Component
+// const SkeletonCard = () => (
+//   <View style={styles.skeletonCard}>
+//     {/* Heart Icon Placeholder */}
+//     <View style={styles.favoriteIcon}>
+//       <View style={{ width: 22, height: 22, backgroundColor: '#e0e0e0', borderRadius: 11 }} />
+//     </View>
+
+//     {/* Image Placeholder */}
+//     <ShimmerPlaceholder height={140} style={{ marginBottom: 10 }} />
+
+//     {/* Title & Content Placeholders */}
+//     <View style={{ paddingHorizontal: 4 }}>
+//       <ShimmerPlaceholder height={12} style={{ marginBottom: 8 }} />
+//       <ShimmerPlaceholder height={12} width="75%" style={{ marginBottom: 16 }} />
+
+//       {/* Button Row */}
+//       <View style={styles.buttonRow}>
+//         <ShimmerPlaceholder style={styles.skeletonButton} />
+//         <View style={{ width: 8 }} />
+//         <ShimmerPlaceholder style={styles.skeletonIcon} />
+//       </View>
+//     </View>
+//   </View>
+// );
+
+// const IndividualCategory = () => {
+//   const insets = useSafeAreaInsets();
+//   const navigation = useNavigation();
+//   const route = useRoute();
+//   const dispatch = useDispatch();
+
+//   const {
+//     userId: paramUserId,
+//     categoryId,
+//     categoryName,
+//     analyticsPayload,
+//   } = route.params || {};
+
+//   const { customerId } = useSelector((state) => state.Auth || {});
+//   const { addRemoveLoader } = useSelector((state) => state.wishlist || {});
+
+//   const {
+//     products: rawProducts = [],
+//     productsLoading,
+//     productsError,
+//   } = useSelector((state) => state.category);
+
+//   const userId = paramUserId || customerId || 1;
+
+//   const [products, setProducts] = useState([]);
+//   const [pageTitle, setPageTitle] = useState('Products');
+//   const [sortModalVisible, setSortModalVisible] = useState(false);
+//   const [filterModalVisible, setFilterModalVisible] = useState(false);
+
+//   useEffect(() => {
+//     let title = 'Products';
+//     let fetchPayload = { userId };
+
+//     if (categoryId !== undefined) {
+//       fetchPayload.categoryId = categoryId;
+//       title = categoryName || 'Category Products';
+//     } else if (analyticsPayload) {
+//       const {
+//         target_type,
+//         target_value,
+//         section_type,
+//         reference_id,
+//         reference_name,
+//       } = analyticsPayload;
+
+//       if (target_type && target_value !== undefined) {
+//         fetchPayload.target_type = target_type;
+//         fetchPayload.target_value = target_value;
+//         title = reference_name || 'Featured Products';
+//       } else if (section_type && reference_id !== undefined) {
+//         fetchPayload.section_type = section_type;
+//         fetchPayload.reference_id = reference_id;
+//         title = reference_name || section_type || 'Products';
+//       }
+//     }
+
+//     setPageTitle(title);
+
+//     if (
+//       categoryId !== undefined ||
+//       (analyticsPayload &&
+//         ((analyticsPayload.target_type && analyticsPayload.target_value) ||
+//           (analyticsPayload.section_type && analyticsPayload.reference_id)))
+//     ) {
+//       dispatch(fetchProducts(fetchPayload));
+//     }
+//   }, [userId, categoryId, analyticsPayload, dispatch]);
+
+//   useEffect(() => {
+//     setProducts(rawProducts);
+//   }, [rawProducts]);
+
+//   const handleWishlistToggle = async (item) => {
+//     if (!userId || userId === 1) {
+//       Alert.alert(
+//         'Sign In Required',
+//         'Please sign in to manage your wishlist.',
+//         [
+//           { text: 'Cancel', style: 'cancel' },
+//           { text: 'Sign In', onPress: () => navigation.navigate('SignIn') },
+//         ]
+//       );
+//       return;
+//     }
+
+//     const isWishlisted = item.wishlist_flag === 1;
+//     const productId = item.id;
+
+//     if (isWishlisted && item.wishlist_id) {
+//       try {
+//         await dispatch(removeFromWishlist({ wishlist_id: item.wishlist_id })).unwrap();
+//         setProducts((prev) =>
+//           prev.map((p) =>
+//             p.id === productId ? { ...p, wishlist_flag: 0, wishlist_id: null } : p
+//           )
+//         );
+//       } catch (err) {
+//         Alert.alert('Error', 'Failed to remove from wishlist');
+//       }
+//     } else {
+//       try {
+//         const result = await dispatch(
+//           addToWishlist({ user_id: userId, product_id: productId })
+//         ).unwrap();
+
+//         const newWishlistId = result?.wishlist_id;
+
+//         setProducts((prev) =>
+//           prev.map((p) =>
+//             p.id === productId
+//               ? { ...p, wishlist_flag: 1, wishlist_id: newWishlistId }
+//               : p
+//           )
+//         );
+//       } catch (err) {
+//         if (err?.already_exists) {
+//           setProducts((prev) =>
+//             prev.map((p) => (p.id === productId ? { ...p, wishlist_flag: 1 } : p))
+//           );
+//         } else {
+//           Alert.alert('Error', 'Failed to add to wishlist');
+//         }
+//       }
+//     }
+//   };
+
+//   const handleProductPress = (product) => {
+//     navigation.navigate('ProductDetailsScreen', {
+//       product_id: product.id,
+//       user_id: userId,
+//     });
+//   };
+
+//   const restructureData = () => {
+//     const rows = [];
+//     let tempRow = [];
+
+//     products.forEach((item) => {
+//       tempRow.push(item);
+//       if (tempRow.length === 2) {
+//         rows.push({ id: `row-${rows.length}`, type: 'row', items: [...tempRow] });
+//         tempRow = [];
+//       }
+//     });
+
+//     if (tempRow.length > 0) {
+//       rows.push({ id: `row-${rows.length}`, type: 'row', items: [...tempRow] });
+//     }
+
+//     return rows;
+//   };
+
+//   const renderProductCard = (item) => {
+//     const isWishlisted = item.wishlist_flag === 1;
+//     const isLoading = addRemoveLoader === item.id;
+
+//     return (
+//       <TouchableOpacity
+//         style={[styles.card, { height: CARD_HEIGHT }]}
+//         onPress={() => handleProductPress(item)}
+//         activeOpacity={0.85}
+//       >
+//         <TouchableOpacity
+//           style={styles.favoriteIcon}
+//           onPress={(e) => {
+//             e.stopPropagation();
+//             handleWishlistToggle(item);
+//           }}
+//           disabled={isLoading}
+//         >
+//           {isLoading ? (
+//             <ActivityIndicator size={18} color="#832729" />
+//           ) : (
+//             <Ionicons
+//               name={isWishlisted ? 'heart' : 'heart-outline'}
+//               size={22}
+//               color={isWishlisted ? '#FF0000' : '#666'}
+//             />
+//           )}
+//         </TouchableOpacity>
+
+//         <Image
+//           source={{ uri: item.product_main_image }}
+//           style={styles.image}
+//           resizeMode="contain"
+//         />
+
+//         <View style={styles.content}>
+//           <Text style={styles.title} numberOfLines={2}>
+//             {item.product_name}
+//           </Text>
+//           <Text style={styles.title} numberOfLines={2}>
+//             ₹ {item.total_price}
+//           </Text>
+
+//           <View style={styles.buttonRow}>
+//             <TouchableOpacity style={styles.viewSimilarButton}>
+//               <Text style={styles.viewSimilarText}>View Similar</Text>
+//             </TouchableOpacity>
+//             <TouchableOpacity
+//               style={styles.cartIconButton}
+//               onPress={(e) => {
+//                 e.stopPropagation();
+//                 navigation.navigate('Cart');
+//               }}
+//             >
+//               <Ionicons name="cart-outline" size={18} color="#832729" />
+//             </TouchableOpacity>
+//           </View>
+//         </View>
+//       </TouchableOpacity>
+//     );
+//   };
+
+//   const renderRow = ({ item }) => {
+//     if (item.type === 'row') {
+//       return (
+//         <View style={styles.row}>
+//           {item.items.map((product) => (
+//             <View key={product.id} style={styles.cardWrapper}>
+//               {renderProductCard(product)}
+//             </View>
+//           ))}
+//           {item.items.length === 1 && <View style={[styles.cardWrapper, { opacity: 0 }]} />}
+//         </View>
+//       );
+//     }
+//     return null;
+//   };
+
+//   const structuredData = restructureData();
+
+//   // Skeleton Loading Grid
+//   const renderSkeletonGrid = () => {
+//     const skeletonIndices = [0, 1, 2, 3, 4, 5, 6, 7]; // 8 cards → 4 rows
+
+//     return (
+//       <FlatList
+//         data={skeletonIndices}
+//         keyExtractor={(item) => `skeleton-${item}`}
+//         renderItem={({ index }) => {
+//           const isEven = index % 2 === 0;
+//           return (
+//             <View style={styles.row}>
+//               <View style={styles.cardWrapper}>
+//                 <SkeletonCard />
+//               </View>
+//               {isEven && index < 7 && (
+//                 <View style={styles.cardWrapper}>
+//                   <SkeletonCard />
+//                 </View>
+//               )}
+//               {isEven && index >= 6 && <View style={[styles.cardWrapper, { opacity: 0 }]} />}
+//             </View>
+//           );
+//         }}
+//         showsVerticalScrollIndicator={false}
+//         contentContainerStyle={{ paddingBottom: insets.bottom + 100 }}
+//       />
+//     );
+//   };
+
+//   return (
+//     <SafeAreaView style={styles.container}>
+//       <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
+
+//       {/* Header */}
+//       <View style={[styles.topHeader, { paddingTop: insets.top + 10 }]}>
+//         <TouchableOpacity onPress={() => navigation.goBack()}>
+//           <Ionicons name="arrow-back" size={24} color="#000" />
+//         </TouchableOpacity>
+
+//         <Image
+//           source={require('../assets/geethalogo.png')}
+//           style={styles.headerLogo}
+//           resizeMode="contain"
+//         />
+
+//         <View style={styles.headerIcons}>
+//           <TouchableOpacity onPress={() => navigation.navigate('WishList')}>
+//             <Ionicons name="heart-outline" size={22} color="#832729" />
+//           </TouchableOpacity>
+//           <TouchableOpacity onPress={() => navigation.navigate('Cart')}>
+//             <Ionicons name="cart-outline" size={22} color="#832729" />
+//           </TouchableOpacity>
+//           <TouchableOpacity>
+//             <Ionicons name="notifications-outline" size={22} color="#832729" />
+//           </TouchableOpacity>
+//         </View>
+//       </View>
+
+//       {/* Title & Result Count */}
+//       {/* <View style={styles.filterRow}>
+//         <Text style={styles.filterTitle}>{pageTitle}</Text>
+//         <Text style={styles.resultCount}>
+//           {productsLoading ? '' : `(${products.length} results)`}
+//         </Text>
+//       </View> */}
+
+//       {/* Content States */}
+//       {productsLoading ? (
+//         renderSkeletonGrid()
+//       ) : productsError ? (
+//         <View style={styles.centerContent}>
+//           <Text style={styles.errorText}>Error: {productsError}</Text>
+//           <TouchableOpacity
+//             onPress={() => {
+//               const payload = categoryId
+//                 ? { userId, categoryId }
+//                 : analyticsPayload
+//                 ? { userId, ...analyticsPayload }
+//                 : { userId };
+//               dispatch(fetchProducts(payload));
+//             }}
+//             style={styles.retryButton}
+//           >
+//             <Text style={styles.retryText}>Retry</Text>
+//           </TouchableOpacity>
+//         </View>
+//       ) : products.length === 0 ? (
+//         <View style={styles.centerContent}>
+//           <Text style={styles.emptyText}>No products found.</Text>
+//         </View>
+//       ) : (
+//         <FlatList
+//           data={structuredData}
+//           keyExtractor={(item) => item.id}
+//           renderItem={renderRow}
+//           showsVerticalScrollIndicator={false}
+//           contentContainerStyle={{ paddingBottom: insets.bottom + 100 }}
+//         />
+//       )}
+
+//       {/* Bottom Filter Bar */}
+//       <View style={[styles.bottomFilterBar, { paddingBottom: insets.bottom + 10 }]}>
+//         <TouchableOpacity
+//           style={styles.bottomFilterButton}
+//           onPress={() => setFilterModalVisible(true)}
+//         >
+//           <Ionicons name="filter-outline" size={18} color="#832729" />
+//           <Text style={styles.bottomFilterText}>Filter</Text>
+//         </TouchableOpacity>
+
+//         <View style={styles.dividerLine} />
+
+//         <TouchableOpacity
+//           style={styles.bottomFilterButton}
+//           onPress={() => setSortModalVisible(true)}
+//         >
+//           <Ionicons name="swap-vertical" size={18} color="#832729" />
+//           <Text style={styles.bottomFilterText}>Sort by</Text>
+//         </TouchableOpacity>
+//       </View>
+
+//       {/* Sort Modal */}
+//       <Modal
+//         visible={sortModalVisible}
+//         transparent
+//         animationType="slide"
+//         onRequestClose={() => setSortModalVisible(false)}
+//       >
+//         <TouchableOpacity
+//           style={styles.modalOverlay}
+//           activeOpacity={1}
+//           onPressOut={() => setSortModalVisible(false)}
+//         >
+//           <View style={styles.modalContainer}>
+//             <Text style={styles.modalTitle}>Sort by</Text>
+//             <TouchableOpacity style={styles.modalOption}>
+//               <Text style={styles.modalOptionText}>Popular</Text>
+//             </TouchableOpacity>
+//             <TouchableOpacity style={styles.modalOption}>
+//               <Text style={styles.modalOptionText}>Price: Low to High</Text>
+//             </TouchableOpacity>
+//             <TouchableOpacity style={styles.modalOption}>
+//               <Text style={styles.modalOptionText}>Price: High to Low</Text>
+//             </TouchableOpacity>
+//             <TouchableOpacity style={styles.modalOption}>
+//               <Text style={styles.modalOptionText}>Newest First</Text>
+//             </TouchableOpacity>
+//           </View>
+//         </TouchableOpacity>
+//       </Modal>
+
+//       {/* Filter Modal */}
+//       <Modal
+//         visible={filterModalVisible}
+//         transparent
+//         animationType="slide"
+//         onRequestClose={() => setFilterModalVisible(false)}
+//       >
+//         <TouchableOpacity
+//           style={styles.modalOverlay}
+//           activeOpacity={1}
+//           onPressOut={() => setFilterModalVisible(false)}
+//         >
+//           <View style={styles.modalContainer}>
+//             <Text style={styles.modalTitle}>Filter Options</Text>
+//             <TouchableOpacity style={styles.modalOption}>
+//               <Text style={styles.modalOptionText}>Gold</Text>
+//             </TouchableOpacity>
+//             <TouchableOpacity style={styles.modalOption}>
+//               <Text style={styles.modalOptionText}>Diamond</Text>
+//             </TouchableOpacity>
+//             <TouchableOpacity style={styles.modalOption}>
+//               <Text style={styles.modalOptionText}>Platinum</Text>
+//             </TouchableOpacity>
+//           </View>
+//         </TouchableOpacity>
+//       </Modal>
+//     </SafeAreaView>
+//   );
+// };
+
+// const styles = StyleSheet.create({
+//   container: { flex: 1, backgroundColor: '#fff' },
+//   topHeader: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     justifyContent: 'space-between',
+//     paddingHorizontal: 16,
+//     paddingVertical: 10,
+//     borderBottomWidth: 1,
+//     borderBottomColor: '#eee',
+//   },
+//   headerLogo: { width: responsiveWidth(30), height: 40 },
+//   headerIcons: { flexDirection: 'row', gap: 12 },
+//   filterRow: { paddingHorizontal: 16, marginVertical: 12 },
+//   filterTitle: { fontSize: 20, fontWeight: '700', color: '#000' },
+//   resultCount: { fontSize: 13, color: '#666', marginTop: 4 },
+//   row: { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 16, marginBottom: 16 ,marginTop:10},
+//   cardWrapper: { width: ITEM_WIDTH },
+//   card: {
+//     backgroundColor: '#fff',
+//     borderRadius: 12,
+//     borderWidth: 1,
+//     borderColor: '#eee',
+//     padding: 10,
+//     position: 'relative',
+//     shadowColor: '#000',
+//     shadowOffset: { width: 0, height: 2 },
+//     shadowOpacity: 0.1,
+//     shadowRadius: 6,
+//     elevation: 4,
+//   },
+//   skeletonCard: {
+//     backgroundColor: '#fff',
+//     borderRadius: 12,
+//     borderWidth: 1,
+//     borderColor: '#eee',
+//     padding: 10,
+//     height: CARD_HEIGHT,
+//     position: 'relative',
+//     shadowColor: '#000',
+//     shadowOffset: { width: 0, height: 2 },
+//     shadowOpacity: 0.1,
+//     shadowRadius: 6,
+//     elevation: 4,
+//   },
+//   favoriteIcon: {
+//     position: 'absolute',
+//     top: 8,
+//     right: 8,
+//     zIndex: 10,
+//     backgroundColor: '#fff',
+//     borderRadius: 20,
+//     padding: 6,
+//     shadowColor: '#000',
+//     shadowOpacity: 0.2,
+//     shadowRadius: 2,
+//     elevation: 3,
+//   },
+//   image: { width: '100%', height: 140, marginBottom: 10 },
+//   content: { flex: 1, justifyContent: 'space-between' },
+//   title: { fontSize: 13, fontWeight: '600', color: '#222', marginBottom: 8 },
+//   buttonRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+//   viewSimilarButton: {
+//     flex: 1,
+//     borderWidth: 1,
+//     borderColor: '#832729',
+//     borderRadius: 6,
+//     paddingVertical: 8,
+//     alignItems: 'center',
+//   },
+//   viewSimilarText: { color: '#832729', fontSize: 12, fontWeight: '600' },
+//   cartIconButton: {
+//     backgroundColor: '#fff',
+//     borderRadius: 6,
+//     padding: 6,
+//     borderWidth: 1,
+//     borderColor: '#832729',
+//   },
+//   skeletonButton: {
+//     flex: 1,
+//     height: 32,
+//   },
+//   skeletonIcon: {
+//     width: 32,
+//     height: 32,
+//   },
+//   centerContent: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20 },
+//   errorText: { fontSize: 16, color: 'red', textAlign: 'center', marginBottom: 10 },
+//   emptyText: { fontSize: 16, color: '#666' },
+//   retryButton: { backgroundColor: '#832729', paddingHorizontal: 20, paddingVertical: 10, borderRadius: 8 },
+//   retryText: { color: '#fff', fontWeight: '600' },
+//   bottomFilterBar: {
+//     position: 'absolute',
+//     bottom: 0,
+//     left: 0,
+//     right: 0,
+//     height: 60,
+//     backgroundColor: '#fff',
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     justifyContent: 'space-around',
+//     borderTopWidth: 1,
+//     borderTopColor: '#eee',
+//     shadowColor: '#000',
+//     shadowOffset: { width: 0, height: -2 },
+//     shadowOpacity: 0.1,
+//     shadowRadius: 4,
+//     elevation: 10,
+//   },
+//   bottomFilterButton: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+//   bottomFilterText: { color: '#832729', fontSize: 15, fontWeight: '600' },
+//   dividerLine: { width: 1, height: 30, backgroundColor: '#ddd' },
+//   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
+//   modalContainer: {
+//     backgroundColor: '#fff',
+//     padding: 20,
+//     borderTopLeftRadius: 20,
+//     borderTopRightRadius: 20,
+//     maxHeight: '60%',
+//   },
+//   modalTitle: { fontSize: 18, fontWeight: '700', marginBottom: 16, color: '#000' },
+//   modalOption: { paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#eee' },
+//   modalOptionText: { fontSize: 16, color: '#333' },
+// });
+
+// export default IndividualCategory;
 import React, { useEffect, useState, useRef } from 'react';
 import {
   View,
@@ -2504,6 +3142,7 @@ import {
   Alert,
   Animated,
   Easing,
+  ActivityIndicator,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -2517,7 +3156,7 @@ import {
 import { fetchProducts } from '../redux/slices/categorySlice';
 
 const { width } = Dimensions.get('window');
-const ITEM_WIDTH = (width - 48) / 2; // 16px padding + 16px gap
+const ITEM_WIDTH = (width - 48) / 2;
 const CARD_HEIGHT = 280;
 
 // Shimmer Placeholder Component
@@ -2564,20 +3203,16 @@ const ShimmerPlaceholder = ({ width = '100%', height = 20, style }) => {
 // Skeleton Card Component
 const SkeletonCard = () => (
   <View style={styles.skeletonCard}>
-    {/* Heart Icon Placeholder */}
     <View style={styles.favoriteIcon}>
       <View style={{ width: 22, height: 22, backgroundColor: '#e0e0e0', borderRadius: 11 }} />
     </View>
 
-    {/* Image Placeholder */}
     <ShimmerPlaceholder height={140} style={{ marginBottom: 10 }} />
 
-    {/* Title & Content Placeholders */}
     <View style={{ paddingHorizontal: 4 }}>
       <ShimmerPlaceholder height={12} style={{ marginBottom: 8 }} />
       <ShimmerPlaceholder height={12} width="75%" style={{ marginBottom: 16 }} />
 
-      {/* Button Row */}
       <View style={styles.buttonRow}>
         <ShimmerPlaceholder style={styles.skeletonButton} />
         <View style={{ width: 8 }} />
@@ -2615,6 +3250,14 @@ const IndividualCategory = () => {
   const [pageTitle, setPageTitle] = useState('Products');
   const [sortModalVisible, setSortModalVisible] = useState(false);
   const [filterModalVisible, setFilterModalVisible] = useState(false);
+
+  // Sort & Filter States
+  const [sortBy, setSortBy] = useState('popular'); // 'popular', 'lowToHigh', 'highToLow', 'newest'
+  const [filters, setFilters] = useState({
+    gold: false,
+    diamond: false,
+    gemstone: false,
+  });
 
   useEffect(() => {
     let title = 'Products';
@@ -2658,6 +3301,49 @@ const IndividualCategory = () => {
   useEffect(() => {
     setProducts(rawProducts);
   }, [rawProducts]);
+
+  // Filtered & Sorted Products
+  const getFilteredAndSortedProducts = () => {
+    let filtered = [...products];
+
+    // Apply Filters
+    const hasActiveFilter = filters.gold || filters.diamond || filters.gemstone;
+    if (hasActiveFilter) {
+      filtered = filtered.filter((product) => {
+        const isGold = product.has_diamond === 0 && product.has_stone === 0;
+        const isDiamond = product.has_diamond === 1;
+        const isGemstone = product.has_stone === 1;
+
+        return (
+          (filters.gold && isGold) ||
+          (filters.diamond && isDiamond) ||
+          (filters.gemstone && isGemstone)
+        );
+      });
+    }
+
+    // Apply Sorting
+    const sorted = [...filtered];
+    switch (sortBy) {
+      case 'lowToHigh':
+        sorted.sort((a, b) => a.total_price - b.total_price);
+        break;
+      case 'highToLow':
+        sorted.sort((a, b) => b.total_price - a.total_price);
+        break;
+      case 'newest':
+        sorted.sort((a, b) => b.id - a.id);
+        break;
+      case 'popular':
+      default:
+        // Keep original order
+        break;
+    }
+
+    return sorted;
+  };
+
+  const displayedProducts = getFilteredAndSortedProducts();
 
   const handleWishlistToggle = async (item) => {
     if (!userId || userId === 1) {
@@ -2724,7 +3410,7 @@ const IndividualCategory = () => {
     const rows = [];
     let tempRow = [];
 
-    products.forEach((item) => {
+    displayedProducts.forEach((item) => {
       tempRow.push(item);
       if (tempRow.length === 2) {
         rows.push({ id: `row-${rows.length}`, type: 'row', items: [...tempRow] });
@@ -2778,13 +3464,19 @@ const IndividualCategory = () => {
           <Text style={styles.title} numberOfLines={2}>
             {item.product_name}
           </Text>
-          <Text style={styles.title} numberOfLines={2}>
-            ₹ {item.total_price}
+          <View style={{flexDirection:"row" ,gap:5}}>
+            <Text style={styles.price} numberOfLines={1}>
+            ₹ {item.total_price?.toLocaleString()}
           </Text>
+          <Text style={styles.price} numberOfLines={1}>
+        ({item.gross_weight?.toLocaleString()} g / kg )
+          </Text>
+          </View>
+          
 
           <View style={styles.buttonRow}>
             <TouchableOpacity style={styles.viewSimilarButton}>
-              <Text style={styles.viewSimilarText}>View Similar</Text>
+              <Text style={styles.viewSimilarText}>View Details</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.cartIconButton}
@@ -2819,9 +3511,8 @@ const IndividualCategory = () => {
 
   const structuredData = restructureData();
 
-  // Skeleton Loading Grid
   const renderSkeletonGrid = () => {
-    const skeletonIndices = [0, 1, 2, 3, 4, 5, 6, 7]; // 8 cards → 4 rows
+    const skeletonIndices = [0, 1, 2, 3, 4, 5, 6, 7];
 
     return (
       <FlatList
@@ -2882,7 +3573,7 @@ const IndividualCategory = () => {
       {/* <View style={styles.filterRow}>
         <Text style={styles.filterTitle}>{pageTitle}</Text>
         <Text style={styles.resultCount}>
-          {productsLoading ? '' : `(${products.length} results)`}
+          ({displayedProducts.length} results)
         </Text>
       </View> */}
 
@@ -2906,9 +3597,13 @@ const IndividualCategory = () => {
             <Text style={styles.retryText}>Retry</Text>
           </TouchableOpacity>
         </View>
-      ) : products.length === 0 ? (
+      ) : displayedProducts.length === 0 ? (
         <View style={styles.centerContent}>
-          <Text style={styles.emptyText}>No products found.</Text>
+          <Text style={styles.emptyText}>
+            {filters.gold || filters.diamond || filters.gemstone
+              ? 'No products match your filters.'
+              : 'No products found.'}
+          </Text>
         </View>
       ) : (
         <FlatList
@@ -2955,18 +3650,34 @@ const IndividualCategory = () => {
         >
           <View style={styles.modalContainer}>
             <Text style={styles.modalTitle}>Sort by</Text>
-            <TouchableOpacity style={styles.modalOption}>
-              <Text style={styles.modalOptionText}>Popular</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.modalOption}>
-              <Text style={styles.modalOptionText}>Price: Low to High</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.modalOption}>
-              <Text style={styles.modalOptionText}>Price: High to Low</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.modalOption}>
-              <Text style={styles.modalOptionText}>Newest First</Text>
-            </TouchableOpacity>
+
+            {[
+              { key: 'popular', label: 'Popular' },
+              { key: 'lowToHigh', label: 'Price: Low to High' },
+              { key: 'highToLow', label: 'Price: High to Low' },
+              { key: 'newest', label: 'Newest First' },
+            ].map((option) => (
+              <TouchableOpacity
+                key={option.key}
+                style={styles.modalOption}
+                onPress={() => {
+                  setSortBy(option.key);
+                  setSortModalVisible(false);
+                }}
+              >
+                <Text
+                  style={[
+                    styles.modalOptionText,
+                    sortBy === option.key && styles.activeSortText,
+                  ]}
+                >
+                  {option.label}
+                </Text>
+                {sortBy === option.key && (
+                  <Ionicons name="checkmark" size={20} color="#832729" />
+                )}
+              </TouchableOpacity>
+            ))}
           </View>
         </TouchableOpacity>
       </Modal>
@@ -2983,17 +3694,55 @@ const IndividualCategory = () => {
           activeOpacity={1}
           onPressOut={() => setFilterModalVisible(false)}
         >
-          <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Filter Options</Text>
-            <TouchableOpacity style={styles.modalOption}>
-              <Text style={styles.modalOptionText}>Gold</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.modalOption}>
-              <Text style={styles.modalOptionText}>Diamond</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.modalOption}>
-              <Text style={styles.modalOptionText}>Platinum</Text>
-            </TouchableOpacity>
+          <View style={[styles.modalContainer, { maxHeight: '70%' }]}>
+            <Text style={styles.modalTitle}>Filter by Material</Text>
+
+            {[
+              { key: 'gold', label: 'Gold Only', icon: 'ellipse' },
+              { key: 'diamond', label: 'Diamond', icon: 'diamond' },
+              { key: 'gemstone', label: 'Gemstone', icon: 'sparkles' },
+            ].map((filter) => (
+              <TouchableOpacity
+                key={filter.key}
+                style={styles.filterOption}
+                onPress={() => {
+                  setFilters((prev) => ({
+                    ...prev,
+                    [filter.key]: !prev[filter.key],
+                  }));
+                }}
+              >
+                <View style={styles.filterOptionLeft}>
+                  <Ionicons name={filter.icon} size={18} color="#832729" />
+                  <Text style={styles.modalOptionText}>{filter.label}</Text>
+                </View>
+                <View
+                  style={[
+                    styles.checkbox,
+                    filters[filter.key] && styles.checkboxActive,
+                  ]}
+                >
+                  {filters[filter.key] && <Ionicons name="checkmark" size={16} color="#fff" />}
+                </View>
+              </TouchableOpacity>
+            ))}
+
+            <View style={styles.filterActions}>
+              <TouchableOpacity
+                style={styles.clearBtn}
+                onPress={() =>
+                  setFilters({ gold: false, diamond: false, gemstone: false })
+                }
+              >
+                <Text style={styles.clearText}>Clear All</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.applyBtn}
+                onPress={() => setFilterModalVisible(false)}
+              >
+                <Text style={styles.applyText}>Apply</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </TouchableOpacity>
       </Modal>
@@ -3014,10 +3763,10 @@ const styles = StyleSheet.create({
   },
   headerLogo: { width: responsiveWidth(30), height: 40 },
   headerIcons: { flexDirection: 'row', gap: 12 },
-  filterRow: { paddingHorizontal: 16, marginVertical: 12 },
+  filterRow: { paddingHorizontal: 16, marginVertical: 12, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   filterTitle: { fontSize: 20, fontWeight: '700', color: '#000' },
-  resultCount: { fontSize: 13, color: '#666', marginTop: 4 },
-  row: { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 16, marginBottom: 16 ,marginTop:10},
+  resultCount: { fontSize: 14, color: '#666' },
+  row: { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 16, marginBottom: 16, marginTop: 10 },
   cardWrapper: { width: ITEM_WIDTH },
   card: {
     backgroundColor: '#fff',
@@ -3062,6 +3811,7 @@ const styles = StyleSheet.create({
   image: { width: '100%', height: 140, marginBottom: 10 },
   content: { flex: 1, justifyContent: 'space-between' },
   title: { fontSize: 13, fontWeight: '600', color: '#222', marginBottom: 8 },
+  price: { fontSize: 14, fontWeight: '700', color: '#832729', marginBottom: 8 },
   buttonRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   viewSimilarButton: {
     flex: 1,
@@ -3079,17 +3829,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#832729',
   },
-  skeletonButton: {
-    flex: 1,
-    height: 32,
-  },
-  skeletonIcon: {
-    width: 32,
-    height: 32,
-  },
+  skeletonButton: { flex: 1, height: 32 },
+  skeletonIcon: { width: 32, height: 32 },
   centerContent: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20 },
   errorText: { fontSize: 16, color: 'red', textAlign: 'center', marginBottom: 10 },
-  emptyText: { fontSize: 16, color: '#666' },
+  emptyText: { fontSize: 16, color: '#666', textAlign: 'center' },
   retryButton: { backgroundColor: '#832729', paddingHorizontal: 20, paddingVertical: 10, borderRadius: 8 },
   retryText: { color: '#fff', fontWeight: '600' },
   bottomFilterBar: {
@@ -3122,8 +3866,59 @@ const styles = StyleSheet.create({
     maxHeight: '60%',
   },
   modalTitle: { fontSize: 18, fontWeight: '700', marginBottom: 16, color: '#000' },
-  modalOption: { paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#eee' },
+  modalOption: { paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#eee', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   modalOptionText: { fontSize: 16, color: '#333' },
+  activeSortText: { color: '#832729', fontWeight: '700' },
+
+  // Filter Styles
+  filterOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  filterOptionLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  checkbox: {
+    width: 24,
+    height: 24,
+    borderRadius: 6,
+    borderWidth: 2,
+    borderColor: '#832729',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  checkboxActive: {
+    backgroundColor: '#832729',
+  },
+  filterActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+    gap: 12,
+  },
+  clearBtn: {
+    flex: 1,
+    paddingVertical: 14,
+    borderWidth: 1,
+    borderColor: '#832729',
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  clearText: { color: '#832729', fontWeight: '600' },
+  applyBtn: {
+    flex: 1,
+    backgroundColor: '#832729',
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  applyText: { color: '#fff', fontWeight: '600' },
 });
 
 export default IndividualCategory;

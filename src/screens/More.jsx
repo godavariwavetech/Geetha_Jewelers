@@ -244,18 +244,60 @@ import {
   Dimensions,
   StatusBar,
   Platform,
+  Alert, // ← Add this import
 } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 import MaterialIcon from "react-native-vector-icons/MaterialIcons";
+import { useDispatch } from 'react-redux';
+import { logout } from '../redux/slices/authSlice'; // Adjust path if needed
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width } = Dimensions.get("window");
 
 const ProfileScreen = ({ navigation }) => {
+  const dispatch = useDispatch();
+
+  const handleLogout = () => {
+    Alert.alert(
+      "Logout",
+      "Are you sure you want to logout?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Yes, Logout",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              // Clear local storage
+              await AsyncStorage.clear();
+
+              // Reset Redux auth state
+              dispatch(logout());
+
+              // Navigate to SignIn and reset navigation stack
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'SignIn' }],
+              });
+            } catch (error) {
+              console.error('Logout failed:', error);
+              Alert.alert('Error', 'Failed to logout. Please try again.');
+            }
+          },
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
       <View style={styles.mainContainer}>
-        {/* Header - Fixed at Top */}
+        {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Icon name="arrow-left" size={24} color="#000" />
@@ -293,7 +335,7 @@ const ProfileScreen = ({ navigation }) => {
             ))}
           </ScrollView>
 
-          {/* My Bookings Option */}
+          {/* Options */}
           <TouchableOpacity style={styles.optionCard} onPress={() => navigation.navigate("MyOrders")}>
             <View style={styles.optionLeft}>
               <Icon name="shopping-bag" size={20} color="#832729" />
@@ -302,8 +344,7 @@ const ProfileScreen = ({ navigation }) => {
             <Icon name="chevron-right" size={20} color="#832729" />
           </TouchableOpacity>
 
-          {/* Profile and Support */}
-          <TouchableOpacity style={styles.optionCard} onPress={()=>{navigation.navigate("Profile1")}}>
+          <TouchableOpacity style={styles.optionCard} onPress={() => navigation.navigate("Profile1")}>
             <View style={styles.optionLeft}>
               <Icon name="user" size={20} color="#832729" />
               <Text style={styles.optionText}>Profile</Text>
@@ -313,11 +354,12 @@ const ProfileScreen = ({ navigation }) => {
 
           <TouchableOpacity style={styles.optionCard} onPress={() => navigation.navigate("MyAddresses")}>
             <View style={styles.optionLeft}>
-              <MaterialIcon name="support-agent" size={20} color="#832729" />
+              <MaterialIcon name="location-on" size={20} color="#832729" />
               <Text style={styles.optionText}>My Addresses</Text>
             </View>
             <Icon name="chevron-right" size={20} color="#832729" />
           </TouchableOpacity>
+
           <TouchableOpacity style={styles.optionCard}>
             <View style={styles.optionLeft}>
               <MaterialIcon name="support-agent" size={20} color="#832729" />
@@ -326,7 +368,7 @@ const ProfileScreen = ({ navigation }) => {
             <Icon name="chevron-right" size={20} color="#832729" />
           </TouchableOpacity>
 
-          {/* Smart Savings Scheme Banner */}
+          {/* Banner */}
           <View style={styles.bannerCard}>
             <Image
               source={require("../assets/lastbanner.png")}
@@ -335,9 +377,9 @@ const ProfileScreen = ({ navigation }) => {
             />
           </View>
 
-          {/* Logout Button */}
+          {/* Logout Button with Confirmation */}
           <View style={styles.logoutContainer}>
-            <TouchableOpacity style={styles.logoutButton}>
+            <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
               <Icon name="log-out" size={18} color="#fff" />
               <Text style={styles.logoutText}>Logout</Text>
             </TouchableOpacity>
@@ -350,6 +392,7 @@ const ProfileScreen = ({ navigation }) => {
 
 export default ProfileScreen;
 
+// Styles remain the same
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
@@ -368,7 +411,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderBottomWidth: 1,
     borderBottomColor: "#f0f0f0",
-    gap:5
+    gap: 5,
   },
   headerTitle: {
     fontSize: 18,

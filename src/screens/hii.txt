@@ -1,547 +1,638 @@
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#000',
-  },
-  keyboardView: {
-    flex: 1,
-  },
-  scrollContainer: {
-    flexGrow: 1,
-  },
-  backgroundImage: {
-    flex: 1,
-    width: '100%',
-    // minHeight: height,
-    height:"50%"
-  },
-  bottomSection: {
-    position: 'absolute',
-    bottom: 0,
-    width: '100%',
-    height: responsiveHeight(60),
-    overflow: 'hidden',
-  },
-  curve: {
-    position: 'absolute',
-    top: -1,
-    left: 0,
-    zIndex: 2,
-  },
-  whiteBackground: {
-    position: 'absolute',
-    top: responsiveHeight(68),
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: '#FFFFFF',
-    zIndex: 1,
-  },
-  contentContainer: {
-    position: 'absolute',
-    top: responsiveHeight(18),
-    left: 0,
-    right: 0,
-    paddingHorizontal: responsiveWidth(8),
-    paddingBottom: responsiveHeight(3),
-    zIndex: 3,
-  },
-  title: {
-    fontSize: responsiveFontSize(2.8),
-    fontWeight: '700',
-    color: '#1A1A1A',
-    marginBottom: responsiveHeight(0.8),
-    lineHeight: responsiveFontSize(3.4),
-  },
-  subtitle: {
-    fontSize: responsiveFontSize(1.7),
-    color: '#666666',
-    marginBottom: responsiveHeight(4),
-    lineHeight: responsiveFontSize(2.3),
-  },
-  otpContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: responsiveHeight(3),
-    paddingHorizontal: responsiveWidth(5),
-  },
-  otpInput: {
-    width: responsiveWidth(15),
-    height: responsiveWidth(15),
-    borderWidth: 1.5,
-    borderColor: '#CCCCCC',
-    borderRadius: 8,
-    fontSize: responsiveFontSize(2.8),
-    fontWeight: '600',
-    color: '#000',
-    backgroundColor: '#FFFFFF',
-  },
-  resendContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: responsiveHeight(3.5),
-  },
-  resendText: {
-    fontSize: responsiveFontSize(1.6),
-    color: '#666666',
-    marginRight: 8,
-  },
-  resendLink: {
-    fontSize: responsiveFontSize(1.6),
-    color: '#0A5C4A',
-    fontWeight: '600',
-    textDecorationLine: 'underline',
-  },
-  resendLinkDisabled: {
-    color: '#CCCCCC',
-  },
-  verifyButton: {
-    backgroundColor: '#0A5C4A',
-    borderRadius: 8,
-    paddingVertical: responsiveHeight(1.8),
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  verifyButtonDisabled: {
-    backgroundColor: '#CCCCCC',
-    opacity: 0.6,
-  },
-  verifyButtonText: {
-    fontSize: responsiveFontSize(2),
-    fontWeight: '700',
-    color: '#FFFFFF',
-    lineHeight: responsiveFontSize(2.4),
-  },  // Modal Styles
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  modalContainer: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 24,
-    width: '90%',
-    maxWidth: 400,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  modalIconContainer: {
-    marginBottom: 16,
-  },
-  modalTitle: {
-    fontSize: responsiveFontSize(2.4),
-    fontWeight: '700',
-    color: '#1A1A1A',
-    marginBottom: 12,
-    textAlign: 'center',
-  },
-  modalMessage: {
-    fontSize: responsiveFontSize(1.8),
-    color: '#666666',
-    marginBottom: 24,
-    textAlign: 'center',
-    lineHeight: 24,
-  },
-  modalButton: {
-    backgroundColor: '#0A5C4A',
-    borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 40,
-    minWidth: 120,
-  },
-  modalButtonText: {
-    fontSize: responsiveFontSize(1.9),
-    fontWeight: '600',
-    color: '#FFFFFF',
-    textAlign: 'center',
-  },
-});
-
-
-
-
-//////////////////////
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  ImageBackground,
-  StatusBar,
   SafeAreaView,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+  Modal,
+  TextInput,
   KeyboardAvoidingView,
   Platform,
-  Modal,
-  ScrollView,
-  Keyboard,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context'; // ← ADD THIS
-import Svg, { Path, Defs, Filter, FeFlood, FeColorMatrix, FeOffset, FeGaussianBlur, FeComposite, FeBlend, G } from 'react-native-svg';
-import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-native-responsive-dimensions';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
-import { requestOtp } from '../redux/slices/authSlice';
+import RazorpayCheckout from 'react-native-razorpay';
+import {
+  fetchCartItems,
+} from '../redux/slices/cartSlice';
+import {
+  getCustomerAddresses,
+  addCustomerDeliveryAddress,
+} from '../redux/slices/authSlice';
+import {
+  placeOrder,
+  updatePaymentDetails,
+  resetOrderState,
+} from '../redux/slices/orderSlice';
 
-const LoginScreen = ({ navigation }) => {
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [errorModalVisible, setErrorModalVisible] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+const PRIMARY_COLOR = '#832729'; // You can change this to match your theme
 
-  const dispatch = useDispatch();
-  const { loading } = useSelector((state) => state.Auth);
-
-  // Get safe area insets (especially bottom for Android gesture nav)
+const Cart = ({ navigation, route }) => {
   const insets = useSafeAreaInsets();
+  const dispatch = useDispatch();
 
-  const validatePhoneNumber = (number) => {
-    const phoneRegex = /^[6-9]\d{9}$/;
-    return phoneRegex.test(number);
+  const { customerId, customerName, customerMobile } = useSelector((state) => state.Auth || {});
+  const { addressList = [] } = useSelector((state) => state.Auth || {});
+  const { cartItems = [], loading: cartLoading } = useSelector((state) => state.cart || {});
+  const { order, loading: orderLoading, error: orderError } = useSelector((state) => state.order || {});
+
+  const [addressModalVisible, setAddressModalVisible] = useState(false);
+  const [addAddressModalVisible, setAddAddressModalVisible] = useState(false);
+  const [selectedAddressIndex, setSelectedAddressIndex] = useState(0);
+
+  // Add address form
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [addressLine, setAddressLine] = useState('');
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('');
+  const [district, setDistrict] = useState('');
+  const [pincode, setPincode] = useState('');
+  const [phone, setPhone] = useState('');
+  const [addressType, setAddressType] = useState('home');
+  const [customAddressType, setCustomAddressType] = useState('');
+  const [errors, setErrors] = useState({});
+
+  // Fetch data on mount
+  useEffect(() => {
+    if (customerId) {
+      dispatch(fetchCartItems(customerId));
+      dispatch(getCustomerAddresses({ customerId }));
+    }
+  }, [dispatch, customerId]);
+
+  // Handle order error
+  useEffect(() => {
+    if (orderError) {
+      Alert.alert('Order Failed', orderError?.message || 'Unable to place order.');
+      dispatch(resetOrderState());
+    }
+  }, [orderError]);
+
+  // Razorpay payment flow – triggered when order is created successfully
+  // useEffect(() => {
+  //   if (orderLoading || !order) return;
+
+  //   if (!order.razorpay_order_id || !order.key_id) {
+  //     Alert.alert('Error', 'Payment gateway details missing.');
+  //     dispatch(resetOrderState());
+  //     return;
+  //   }
+
+  //   const selectedAddress = addressList[selectedAddressIndex];
+
+  //   const options = {
+  //     description: 'Jewellery Order Payment',
+  //     image: 'https://your-logo-url.com/logo.png',
+  //     currency: 'INR',
+  //     key: order.key_id,
+  //     amount: (grandTotal * 100),
+  //     name: 'Geeta Jewellers',
+  //     order_id: order.razorpay_order_id,
+  //     prefill: {
+  //       name: customerName || selectedAddress?.customer_name || 'Customer',
+  //       contact: customerMobile || selectedAddress?.customer_mobile_number || '',
+  //       email: selectedAddress?.customer_email || '',
+  //     },
+  //     theme: { color: PRIMARY_COLOR },
+  //   };
+
+  //   RazorpayCheckout.open(
+  //     options,
+  //     async (successData) => {
+  //       try {
+
+  //         console.log({
+  //             payment_id: successData.razorpay_payment_id,
+  //             razorpay_order_id: order.razorpay_order_id,
+  //             order_id: order.id,
+  //             order_status: 0,
+  //           },'>>>>>>>>>>>>>>>>>>>')
+  //         await dispatch(
+  //           updatePaymentDetails({
+  //             payment_id: successData.razorpay_payment_id,
+  //             razorpay_order_id: order.razorpay_order_id,
+  //             order_id: order.id,
+  //             order_status: 0,
+  //           })
+  //         ).unwrap();
+
+  //         dispatch(resetOrderState());
+
+  //         navigation.replace('OrderDetails', { order_id: order.id });
+  //       } catch (err) {
+  //         Alert.alert('Verification Failed', 'Payment received but verification failed.');
+  //         dispatch(resetOrderState());
+  //       }
+  //     },
+  //     (errorData) => {
+  //       dispatch(resetOrderState());
+  //       const message = errorData?.error?.description || 'Payment cancelled or failed.';
+  //       Alert.alert('Payment Failed', message);
+  //     }
+  //   );
+  // }, [order, orderLoading]);
+
+  // Calculations (same as Cart screen)
+  const subTotal = cartItems.reduce((sum, item) => sum + Number(item.total_price || 0), 0);
+  const deliveryCharge = 0;
+  const couponDiscount = 0;
+  const grandTotal = subTotal + deliveryCharge - couponDiscount;
+
+  const selectedAddress = addressList[selectedAddressIndex];
+
+  const formatAddress = (addr) => {
+    if (!addr) return 'No address selected';
+    const parts = [];
+    if (addr.addressLine || addr.address) parts.push(addr.addressLine || addr.address);
+    if (addr.city) parts.push(addr.city);
+    if (addr.state) parts.push(addr.state);
+    if (addr.pincode) parts.push(addr.pincode);
+    return parts.length > 0 ? parts.join(', ') : 'Address incomplete';
   };
 
-  const handlePhoneNumberChange = (text) => {
-    const numericText = text.replace(/[^0-9]/g, '');
-    setPhoneNumber(numericText);
+  const buildOrderPayload = () => {
+    if (!selectedAddress || cartItems.length === 0) return null;
+
+    const fullAddress = [
+      selectedAddress.addressLine || selectedAddress.address || '',
+      selectedAddress.city || '',
+      selectedAddress.state || '',
+      selectedAddress.district || '',
+      selectedAddress.pincode ? ` - ${selectedAddress.pincode}` : '',
+    ]
+      .filter(Boolean)
+      .join(', ');
+
+    const sub_order_array = cartItems.map((item) => ({
+      product_id: item.product_id?.toString() || '',
+      product_name: item.product_name || '',
+      product_image: item.product_main_image || '',
+      category_id: item.category_id?.toString() || '',
+      sub_category_id: item.subcategory_id?.toString() || '',
+      size_id: item.size_id?.toString() || '0',
+      size: item.size || '',
+      gross_weight: item.gross_weight || '0',
+      item_price: item.total_price?.toString() || '0',
+      sub_item_count: '1',
+      item_total_amount: item.total_price?.toString() || '0',
+    }));
+
+    return {
+      customer_id: customerId?.toString() || '',
+      customer_name: customerName || selectedAddress.customer_name || 'User',
+      customer_mobile_number: customerMobile || selectedAddress.customer_mobile_number || '',
+      item_count: cartItems.length.toString(),
+      sub_total_amount: subTotal.toString(),
+      coupon_amount: couponDiscount.toString(),
+      delivery_charges: deliveryCharge.toString(),
+      total_amount: (subTotal + deliveryCharge).toString(),
+      grand_total: grandTotal.toString(),
+      payment_type: 'Pay Online',
+      order_status: '7',
+      coupon_id: '',
+      order_pincode: selectedAddress.pincode?.toString() || '',
+      delivery_address: fullAddress,
+      sub_order_array,
+    };
   };
 
-  const handleSendOTP = async () => {
-    Keyboard.dismiss();
-
-    if (!phoneNumber || phoneNumber.trim() === '') {
-      setErrorMessage('Please enter your mobile number');
-      setErrorModalVisible(true);
+  const handleProceed = async() => {
+    if (cartItems.length === 0) {
+      Alert.alert('Empty Cart', 'Your cart is empty.');
       return;
     }
 
-    if (phoneNumber.length !== 10) {
-      setErrorMessage('Mobile number must be 10 digits');
-      setErrorModalVisible(true);
+      const selectedAddress = addressList[selectedAddressIndex];
+
+    if (addressList.length === 0 || !selectedAddress) {
+      Alert.alert('Address Required', 'Please add or select a delivery address.');
       return;
     }
 
-    if (!validatePhoneNumber(phoneNumber)) {
-      setErrorMessage('Please enter a valid Indian mobile number');
-      setErrorModalVisible(true);
+    const payload = buildOrderPayload();
+    if (!payload) {
+      Alert.alert('Error', 'Failed to prepare order.');
       return;
     }
+
+    const response = await dispatch(placeOrder(payload));
+
+
+    const options = {
+      description: 'Jewellery Order Payment',
+      image: 'https://your-logo-url.com/logo.png',
+      currency: 'INR',
+      key:  response.payload.key_id,
+      amount: (100),
+      name: 'Geeta Jewellers',
+      order_id: response.payload.razorpay_order_id,
+      prefill: {
+        name: customerName || selectedAddress?.customer_name || 'Customer',
+        contact: customerMobile || selectedAddress?.customer_mobile_number || '',
+        email: selectedAddress?.customer_email || '',
+      },
+      theme: { color: PRIMARY_COLOR },
+    };
+
+    RazorpayCheckout.open(
+      options,
+      async (successData) => {
+        try {
+          await dispatch(
+            updatePaymentDetails({
+              payment_id: successData.razorpay_payment_id,
+              razorpay_order_id: order.razorpay_order_id,
+              order_id: order.id,
+              order_status: 0,
+            })
+          ).unwrap();
+
+          dispatch(resetOrderState());
+
+          navigation.replace('OrderDetails', { order_id: order.id });
+        } catch (err) {
+          console.log(err,">>>>>>>>>err RRazorpay")
+          Alert.alert('Verification Failed', 'Payment received but verification failed.');
+          dispatch(resetOrderState());
+        }
+      },
+      (errorData) => {
+        dispatch(resetOrderState());
+        // const message = errorData?.error?.description || 'Payment cancelled or failed.';
+        // Alert.alert('Payment Failed', message);
+      }
+    );
+
+  };
+
+  const clearAddressFields = () => {
+    setName('');
+    setEmail('');
+    setAddressLine('');
+    setCity('');
+    setState('');
+    setDistrict('');
+    setPincode('');
+    setPhone('');
+    setAddressType('home');
+    setCustomAddressType('');
+    setErrors({});
+  };
+
+  const validateAddress = () => {
+    const newErrors = {};
+    if (!name.trim()) newErrors.name = 'Full Name is required';
+    if (!addressLine.trim()) newErrors.addressLine = 'Address Line is required';
+    if (!city.trim()) newErrors.city = 'City is required';
+    if (!state.trim()) newErrors.state = 'State is required';
+    if (!district.trim()) newErrors.district = 'District is required';
+    if (!pincode.trim() || pincode.length !== 6) newErrors.pincode = 'Valid 6-digit pincode required';
+    if (!phone.trim() || phone.length !== 10) newErrors.phone = 'Valid 10-digit phone required';
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSaveAddress = async () => {
+    if (!validateAddress()) return;
+
+    const finalType = addressType === 'other' ? customAddressType : addressType;
 
     try {
-      const result = await dispatch(requestOtp({ phoneNumber })).unwrap();
+      await dispatch(
+        addCustomerDeliveryAddress({
+          userId: customerId,
+          addressType: finalType,
+          addressLine: addressLine.trim(),
+          city: city.trim(),
+          state: state.trim(),
+          district: district.trim(),
+          pincode: parseInt(pincode),
+          customerName: name.trim(),
+          customerPhone: phone.trim(),
+          customerEmail: email.trim() || undefined,
+        })
+      ).unwrap();
 
-      navigation.navigate('OTPVerification', {
-        phoneNumber,
-        serverOtp: result.loginotp?.toString(),
-        userInd: result.user_ind,
-        message: result.message,
-      });
+      await dispatch(getCustomerAddresses({ customerId })).unwrap();
+      setAddAddressModalVisible(false);
+      clearAddressFields();
     } catch (err) {
-      let errorMsg = 'Failed to send OTP. Please try again.';
-      if (err?.response?.data?.message) errorMsg = err.response.data.message;
-      else if (err?.message) errorMsg = err.message;
-      else if (typeof err === 'string') errorMsg = err;
-
-      setErrorMessage(errorMsg);
-      setErrorModalVisible(true);
+      Alert.alert('Error', 'Failed to save address.');
     }
   };
 
+  const renderCartItem = (item) => (
+    <View style={styles.itemCard} key={item.id}>
+      <Image
+        source={{ uri: item.product_main_image || 'https://via.placeholder.com/70' }}
+        style={styles.image}
+        resizeMode="cover"
+      />
+      <View style={{ flex: 1, marginLeft: 10 }}>
+        <Text style={styles.itemTitle} numberOfLines={2}>
+          {item.product_name}
+        </Text>
+        {item.size && <Text style={styles.itemSize}>Size: {item.size}</Text>}
+        <Text style={styles.itemPrice}>₹{Number(item.total_price).toLocaleString('en-IN')}</Text>
+        <Text style={styles.itemWeight}>
+          {item.gross_weight} g • {item.karat}K
+        </Text>
+      </View>
+    </View>
+  );
+
   return (
-    <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
-      <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
+    <SafeAreaView style={styles.container}>
+      <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={24} color="#000" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Payment</Text>
+      </View>
 
-      {/* KEY FIX: Proper KeyboardAvoidingView + padding for bottom inset */}
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{ flex: 1 }}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
-      >
-        <ScrollView
-          contentContainerStyle={{ flexGrow: 1 }}
-          keyboardShouldPersistTaps="handled"
-          bounces={false}
-          showsVerticalScrollIndicator={false}
-        >
-          <ImageBackground
-            source={require('../assets/lg.png')}
-            style={styles.backgroundImage}
-            resizeMode="cover"
-          >
-            {/* Bottom curved white section */}
-            <View style={styles.bottomSection}>
-              <Svg
-                height={responsiveHeight(68)}
-                width="100%"
-                viewBox="0 0 393 576"
-                preserveAspectRatio="none"
-                style={styles.curve}
-              >
-                {/* Your SVG remains unchanged */}
-                <Defs>
-                  <Filter id="filter0_d_35_4416" x="-42.0811" y="0" width="477.163" height="735.962" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-                    <FeFlood floodOpacity="0" result="BackgroundImageFix" />
-                    <FeColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
-                    <FeOffset dy="-7" />
-                    <FeGaussianBlur stdDeviation="10" />
-                    <FeComposite in2="hardAlpha" operator="out" />
-                    <FeColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.3 0" />
-                    <FeBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_35_4416" />
-                    <FeBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_35_4416" result="shape" />
-                  </Filter>
-                </Defs>
-                <G filter="url(#filter0_d_35_4416)">
-                  <Path
-                    d="M79.6416 72.9354C28.1047 44.4338 -9.64722 61.0598 -22.0811 72.9354V722.962H405.536L415.082 92.1732C401.743 95.2047 379.263 79.7585 374.463 72.9354C350.816 50.4968 326.21 38.3269 316.863 35.0468C247.136 9.5815 205.573 50.7333 178.926 72.9354C167.305 84.8111 131.179 101.437 79.6416 72.9354Z"
-                    fill="white"
-                  />
-                </G>
-              </Svg>
+      <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom + 100 }}>
+        {cartLoading ? (
+          <ActivityIndicator style={{ marginTop: 20 }} size="large" color={PRIMARY_COLOR} />
+        ) : cartItems.length === 0 ? (
+          <Text style={{ textAlign: 'center', marginTop: 50, fontSize: 18 }}>Your cart is empty</Text>
+        ) : (
+          <>
+            {/* Cart Items */}
+            {cartItems.map(renderCartItem)}
 
-              <View style={styles.whiteBackground} />
-
-              {/* Main Content with dynamic bottom padding */}
-              <View style={[styles.contentContainer, { paddingBottom: insets.bottom + responsiveHeight(5) }]}>
-                <Text style={styles.title}>login / Sign up</Text>
-                <Text style={styles.subtitle}>Enter Mobile number for OTP</Text>
-
-                <View style={styles.inputContainer}>
-                  <Text style={styles.inputLabel}>Enter Mobile Number</Text>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Enter 10-digit mobile number"
-                    placeholderTextColor="#999"
-                    keyboardType="phone-pad"
-                    value={phoneNumber}
-                    onChangeText={handlePhoneNumberChange}
-                    maxLength={10}
-                    returnKeyType="done"
-                    onSubmitEditing={handleSendOTP}
-                    autoFocus={false}
-                  />
-                </View>
-
-                <Text style={styles.termsText}>
-                  By Continuing, I agree to{' '}
-                  <Text style={styles.termsLink}>Terms of use</Text>
-                  {' & '}
-                  <Text style={styles.termsLink}>Privacy Policy</Text>
-                </Text>
-
+            {/* Delivery Address */}
+            <View style={styles.addressSection}>
+              <Text style={styles.sectionTitle}>Delivery Address</Text>
+              {addressList.length === 0 ? (
                 <TouchableOpacity
-                  style={[
-                    styles.sendOTPButton,
-                    (phoneNumber.length !== 10 || loading) && styles.sendOTPButtonDisabled,
-                  ]}
-                  onPress={handleSendOTP}
-                  disabled={phoneNumber.length !== 10 || loading}
+                  style={styles.addAddressBtn}
+                  onPress={() => setAddAddressModalVisible(true)}
                 >
-                  {loading ? (
-                    <ActivityIndicator color="#FFFFFF" size="small" />
-                  ) : (
-                    <Text style={styles.sendOTPButtonText}>Send OTP</Text>
-                  )}
+                  <Ionicons name="add-circle-outline" size={20} color={PRIMARY_COLOR} />
+                  <Text style={styles.addAddressText}>Add Delivery Address</Text>
                 </TouchableOpacity>
+              ) : (
+                <View style={styles.selectedAddressCard}>
+                  <View style={styles.addressHeader}>
+                    <Text style={styles.addressName}>
+                      {selectedAddress?.customer_name || 'User'}
+                    </Text>
+                    <TouchableOpacity onPress={() => setAddressModalVisible(true)}>
+                      <Text style={styles.changeText}>Change</Text>
+                    </TouchableOpacity>
+                  </View>
+                  <Text style={styles.addressText}>{formatAddress(selectedAddress)}</Text>
+                  <Text style={styles.addressPhone}>
+                    Phone: {selectedAddress?.customer_mobile_number || 'N/A'}
+                  </Text>
+                </View>
+              )}
+            </View>
+
+            {/* Order Summary */}
+            <View style={styles.pricingContainer}>
+              <Text style={styles.pricingHeader}>Order Summary</Text>
+              <View style={styles.pricingRow}>
+                <Text style={styles.label}>Sub Total ({cartItems.length} items)</Text>
+                <Text style={styles.value}>₹{subTotal.toLocaleString('en-IN')}</Text>
+              </View>
+              <View style={styles.pricingRow}>
+                <Text style={styles.label}>Delivery Charge</Text>
+                <Text style={[styles.value, { color: '#4CAF50' }]}>Free</Text>
+              </View>
+              <View style={styles.separator} />
+              <View style={styles.pricingRow}>
+                <Text style={styles.totalLabel}>Total Amount</Text>
+                <Text style={[styles.totalValue, { color: PRIMARY_COLOR }]}>
+                  ₹{grandTotal.toLocaleString('en-IN')}
+                </Text>
               </View>
             </View>
-          </ImageBackground>
-        </ScrollView>
-      </KeyboardAvoidingView>
+          </>
+        )}
+      </ScrollView>
 
-      {/* Error Modal */}
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={errorModalVisible}
-        onRequestClose={() => setErrorModalVisible(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContainer}>
-            <View style={styles.modalIconContainer}>
-              <Ionicons name="close-circle" size={50} color="#D32F2F" />
+      {/* Fixed Bottom Checkout Button */}
+      {cartItems.length > 0 && (
+        <View style={[styles.checkoutWrapper, { paddingBottom: insets.bottom + 20 }]}>
+          <View style={styles.checkoutSummary}>
+            <View>
+              <Text style={styles.checkoutTotalText}>Total</Text>
+              <Text style={styles.checkoutAmount}>₹{grandTotal.toLocaleString('en-IN')}</Text>
             </View>
-            <Text style={styles.modalTitle}>Oops!</Text>
-            <Text style={styles.modalMessage}>{errorMessage}</Text>
             <TouchableOpacity
-              style={styles.modalButton}
-              onPress={() => setErrorModalVisible(false)}
+              style={[styles.checkoutBtn, { backgroundColor: PRIMARY_COLOR }]}
+              onPress={handleProceed}
+              disabled={orderLoading}
             >
-              <Text style={styles.modalButtonText}>OK</Text>
+              {orderLoading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={styles.checkoutBtnText}>Proceed to Pay</Text>
+              )}
             </TouchableOpacity>
           </View>
         </View>
+      )}
+
+      {/* Address Selection Modal */}
+      <Modal visible={addressModalVisible} transparent animationType="slide">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>Select Delivery Address</Text>
+            <ScrollView style={{ maxHeight: 400 }}>
+              {addressList.map((addr, index) => (
+                <TouchableOpacity
+                  key={addr.id || index}
+                  style={[
+                    styles.addressListItem,
+                    selectedAddressIndex === index && styles.selectedListItem,
+                  ]}
+                  onPress={() => {
+                    setSelectedAddressIndex(index);
+                    setAddressModalVisible(false);
+                  }}
+                >
+                  <Text style={styles.addressListName}>{addr.customer_name}</Text>
+                  <Text style={styles.addressListText}>{formatAddress(addr)}</Text>
+                  <Text style={styles.addressListPhone}>
+                    Phone: {addr.customer_mobile_number}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+            <View style={styles.modalActions}>
+              <TouchableOpacity
+                style={styles.cancelBtn}
+                onPress={() => setAddressModalVisible(false)}
+              >
+                <Text style={styles.cancelText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.addNewBtn}
+                onPress={() => {
+                  setAddressModalVisible(false);
+                  setAddAddressModalVisible(true);
+                }}
+              >
+                <Text style={styles.addNewText}>+ Add New Address</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Add Address Modal – same as Cart */}
+      <Modal visible={addAddressModalVisible} animationType="slide" transparent>
+        <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+          <View style={styles.myAddressesModalOverlay}>
+            <ScrollView contentContainerStyle={styles.myAddressesModalScrollContent} keyboardShouldPersistTaps="handled">
+              <View style={styles.myAddressesModalContainer}>
+                <Text style={styles.myAddressesModalTitle}>Add Address</Text>
+
+                <View style={{ marginBottom: 12 }}>
+                  <Text style={styles.fieldLabel}>Address Type</Text>
+                  <View style={{ flexDirection: 'row', marginTop: 8, gap: 12 }}>
+                    {['home', 'work', 'other'].map((type) => (
+                      <TouchableOpacity
+                        key={type}
+                        onPress={() => setAddressType(type)}
+                        style={{
+                          padding: 8,
+                          borderWidth: 0.5,
+                          backgroundColor: addressType === type ? PRIMARY_COLOR : '#fff',
+                          borderRadius: 4,
+                        }}
+                      >
+                        <Text style={{ color: addressType === type ? '#fff' : '#000' }}>
+                          {type.charAt(0).toUpperCase() + type.slice(1)}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                  {addressType === 'other' && (
+                    <TextInput
+                      placeholder="Enter Custom Type"
+                      placeholderTextColor="#999"
+                      style={styles.input}
+                      value={customAddressType}
+                      onChangeText={setCustomAddressType}
+                    />
+                  )}
+                </View>
+
+                <TextInput placeholder="Full Name" placeholderTextColor="#9999" style={styles.input} value={name} onChangeText={setName} />
+                {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
+
+                <TextInput placeholder="Email (Optional)" placeholderTextColor="#9999" style={styles.input} value={email} onChangeText={setEmail} keyboardType="email-address" />
+
+                <TextInput placeholder="Address Line" placeholderTextColor="#9999" style={styles.input} value={addressLine} onChangeText={setAddressLine} />
+                {errors.addressLine && <Text style={styles.errorText}>{errors.addressLine}</Text>}
+
+                <TextInput placeholder="City" placeholderTextColor="#9999" style={styles.input} value={city} onChangeText={setCity} />
+                {errors.city && <Text style={styles.errorText}>{errors.city}</Text>}
+
+                <TextInput placeholder="State" placeholderTextColor="#9999" style={styles.input} value={state} onChangeText={setState} />
+                {errors.state && <Text style={styles.errorText}>{errors.state}</Text>}
+
+                <TextInput placeholder="District" placeholderTextColor="#9999" style={styles.input} value={district} onChangeText={setDistrict} />
+                {errors.district && <Text style={styles.errorText}>{errors.district}</Text>}
+
+                <TextInput placeholder="Pincode" placeholderTextColor="#9999" style={styles.input} keyboardType="numeric" value={pincode} onChangeText={setPincode} maxLength={6} />
+                {errors.pincode && <Text style={styles.errorText}>{errors.pincode}</Text>}
+
+                <TextInput placeholder="Phone Number" placeholderTextColor="#9999" style={styles.input} keyboardType="numeric" value={phone} onChangeText={setPhone} maxLength={10} />
+                {errors.phone && <Text style={styles.errorText}>{errors.phone}</Text>}
+
+                <View style={styles.myAddressesModalActions}>
+                  <TouchableOpacity style={styles.buttonOutlinedFull} onPress={() => { setAddAddressModalVisible(false); clearAddressFields(); }}>
+                    <Text style={styles.modalButtonText}>Cancel</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.buttonFilled} onPress={handleSaveAddress}>
+                    <Text style={[styles.modalButtonText, { color: '#fff' }]}>Save</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </ScrollView>
+          </View>
+        </KeyboardAvoidingView>
       </Modal>
     </SafeAreaView>
   );
 };
 
-export default LoginScreen;
-
-// Updated Styles
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#000',
-  },
-  backgroundImage: {
-    flex: 1,
-    width: '100%',
-    justifyContent: 'flex-end',
-  },
-  bottomSection: {
-    width: '100%',
-    height: responsiveHeight(68),
-    overflow: 'hidden',
-  },
-  curve: {
-    position: 'absolute',
-    top: -1,
-    left: 0,
-    zIndex: 2,
-  },
-  whiteBackground: {
-    ...StyleSheet.absoluteFillObject,
-    top: responsiveHeight(68),
-    backgroundColor: '#FFFFFF',
-    zIndex: 1,
-  },
-  contentContainer: {
-    position: 'absolute',
-    top: responsiveHeight(20),
-    left: 0,
-    right: 0,
-    paddingHorizontal: responsiveWidth(8),
-    zIndex: 3,
-    // paddingBottom will be applied dynamically via insets
-  },
-  title: {
-    fontSize: responsiveFontSize(2.8),
-    fontWeight: '700',
-    color: '#1A1A1A',
-    marginBottom: responsiveHeight(0.9),
-  },
-  subtitle: {
-    fontSize: responsiveFontSize(1.8),
-    color: '#666666',
-    marginBottom: responsiveHeight(3.5),
-  },
-  inputContainer: {
-    marginBottom: responsiveHeight(2.5),
-  },
-  inputLabel: {
-    fontSize: responsiveFontSize(1.7),
-    color: '#333333',
-    marginBottom: 8,
-    fontWeight: '500',
-  },
-  input: {
-    borderBottomWidth: 1.5,
-    borderBottomColor: '#CCCCCC',
-    paddingVertical: 12,
-    fontSize: responsiveFontSize(1.9),
-    color: '#000',
-  },
-  termsText: {
-    fontSize: responsiveFontSize(1.5),
-    color: '#666666',
-    lineHeight: 20,
-    marginBottom: responsiveHeight(4),
-  },
-  termsLink: {
-    color: '#0A5C4A',
-    fontWeight: '600',
-  },
-  sendOTPButton: {
-    backgroundColor: '#0A5C4A',
-    borderRadius: 8,
-    paddingVertical: responsiveHeight(1.8),
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  sendOTPButtonDisabled: {
-    backgroundColor: '#CCCCCC',
-    opacity: 0.6,
-  },
-  sendOTPButtonText: {
-    fontSize: responsiveFontSize(2),
-    fontWeight: '700',
-    color: '#FFFFFF',
-  },
+  container: { flex: 1, backgroundColor: '#fff' },
+  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, backgroundColor: '#fff' },
+  headerTitle: { flex: 1, marginLeft: 16, fontSize: 20, fontWeight: '600', color: '#000' },
 
-  // Modal Styles (unchanged)
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' },
-  modalContainer: { backgroundColor: '#FFF', borderRadius: 16, padding: 24, width: '90%', alignItems: 'center' },
-  modalIconContainer: { marginBottom: 16 },
-  modalTitle: { fontSize: responsiveFontSize(2.4), fontWeight: '700', color: '#1A1A1A', marginBottom: 12 },
-  modalMessage: { fontSize: responsiveFontSize(1.8), color: '#666', textAlign: 'center', marginBottom: 24 },
-  modalButton: { backgroundColor: '#0A5C4A', paddingVertical: 12, paddingHorizontal: 40, borderRadius: 8 },
-  modalButtonText: { color: '#FFF', fontWeight: '600', fontSize: responsiveFontSize(1.9) },
+  itemCard: { flexDirection: 'row', backgroundColor: '#F8F8F8', marginHorizontal: 16, marginVertical: 8, borderRadius: 12, padding: 12 },
+  image: { width: 80, height: 80, borderRadius: 10 },
+  itemTitle: { fontSize: 14, fontWeight: '500' },
+  itemSize: { fontSize: 13, color: '#555', marginTop: 4 },
+  itemPrice: { fontSize: 16, fontWeight: '700', marginTop: 6 },
+  itemWeight: { fontSize: 12, color: '#777', marginTop: 4 },
+
+  addressSection: { marginHorizontal: 16, marginTop: 20 },
+  sectionTitle: { fontSize: 17, fontWeight: '700', marginBottom: 12 },
+  addAddressBtn: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#f9f9f9', padding: 16, borderRadius: 12, borderWidth: 1, borderColor: '#ddd', borderStyle: 'dashed' },
+  addAddressText: { marginLeft: 10, fontSize: 15, color: PRIMARY_COLOR, fontWeight: '600' },
+  selectedAddressCard: { backgroundColor: '#f9f9f9', padding: 16, borderRadius: 12, borderWidth: 1, borderColor: '#eee' },
+  addressHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 },
+  addressName: { fontSize: 16, fontWeight: '600' },
+  changeText: { color: PRIMARY_COLOR, fontWeight: '600' },
+  addressText: { fontSize: 14, color: '#555', lineHeight: 20 },
+  addressPhone: { fontSize: 14, color: '#777', marginTop: 4 },
+
+  pricingContainer: { marginHorizontal: 16, paddingVertical: 16, backgroundColor: '#f9f9f9', borderRadius: 12, marginTop: 20 },
+  pricingHeader: { fontSize: 17, fontWeight: '700', marginBottom: 12, paddingHorizontal: 16 },
+  pricingRow: { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 16, marginVertical: 6 },
+  label: { fontSize: 15, color: '#555' },
+  value: { fontSize: 15, color: '#000', fontWeight: '600' },
+  separator: { height: 1, backgroundColor: '#E0E0E0', marginVertical: 12 },
+  totalLabel: { fontSize: 17, fontWeight: '700' },
+  totalValue: { fontSize: 19, fontWeight: '800' },
+
+  checkoutWrapper: { position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: '#fff', borderTopWidth: 1, borderColor: '#E0E0E0', paddingTop: 12 },
+  checkoutSummary: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16 },
+  checkoutTotalText: { fontSize: 14, color: '#555' },
+  checkoutAmount: { fontSize: 20, fontWeight: '800', color: PRIMARY_COLOR },
+  checkoutBtn: { borderRadius: 12, paddingVertical: 16, paddingHorizontal: 30 },
+  checkoutBtnText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
+  modalContainer: { backgroundColor: '#fff', borderTopLeftRadius: 12, borderTopRightRadius: 12, padding: 20, maxHeight: '80%' },
+  modalTitle: { fontSize: 18, fontWeight: '700', marginBottom: 16, textAlign: 'center' },
+  addressListItem: { paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#eee' },
+  selectedListItem: { backgroundColor: '#f0f0f0', borderRadius: 8, padding: 12 },
+  addressListName: { fontSize: 15, fontWeight: '600' },
+  addressListText: { fontSize: 14, color: '#555' },
+  addressListPhone: { fontSize: 13, color: '#777' },
+  modalActions: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 20 },
+  cancelBtn: { flex: 1, padding: 12, borderWidth: 1, borderColor: '#ccc', borderRadius: 8, alignItems: 'center', marginRight: 8 },
+  cancelText: { fontSize: 16 },
+  addNewBtn: { flex: 1, backgroundColor: PRIMARY_COLOR, padding: 12, borderRadius: 8, alignItems: 'center' },
+  addNewText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+
+  myAddressesModalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
+  myAddressesModalScrollContent: { flexGrow: 1, justifyContent: 'flex-end' },
+  myAddressesModalContainer: { backgroundColor: '#fff', padding: 20, borderTopLeftRadius: 12, borderTopRightRadius: 12 },
+  myAddressesModalTitle: { fontSize: 20, fontWeight: '600', marginBottom: 12 },
+  fieldLabel: { fontSize: 14, color: '#000', marginBottom: 8 },
+  input: { marginBottom: 12, borderRadius: 4, paddingHorizontal: 12, paddingVertical: 12, borderColor: '#919191', borderWidth: 0.5, backgroundColor: '#fff' },
+  errorText: { color: 'red', fontSize: 12, marginBottom: 8, marginTop: -8 },
+  myAddressesModalActions: { flexDirection: 'row', justifyContent: 'space-between', gap: 12, marginTop: 20 },
+  buttonOutlinedFull: { flex: 1, padding: 12, borderRadius: 6, borderColor: '#000', borderWidth: 1, alignItems: 'center' },
+  buttonFilled: { flex: 1, padding: 12, borderRadius: 6, backgroundColor: PRIMARY_COLOR, alignItems: 'center' },
+  modalButtonText: { color: '#000', fontSize: 16 },
 });
 
-
-
-export const fetchProducts = createAsyncThunk(
-  'category/fetchProducts',
-  async ({ userId, categoryId, gender }, { rejectWithValue }) => {
-    try {
-      if (!userId) {
-        return rejectWithValue('userId is required');
-      }
-
-      // At least one filter must be provided
-      if (!categoryId && !gender) {
-        return rejectWithValue('At least one filter (categoryId or gender) must be provided');
-      }
-
-      // Build payload
-      const payload = {
-        user_id: userId,
-      };
-
-      if (categoryId) {
-        payload.category_id = categoryId;
-      }
-      if (gender) {
-        payload.gender = gender;
-      }
-
-      console.log('Request payload to GET_PRODUCTS:', payload);
-
-      const res = await api.post(endpoints.GET_PRODUCTS, payload);
-      console.log('Response from GET_PRODUCTS:', res.data);
-
-      if (res.data?.status === 200 && res.data?.data) {
-        return res.data.data; // This will be stored in state.category.products
-      } else {
-        return rejectWithValue(res.data?.message || 'No product data found');
-      }
-    } catch (err) {
-      console.error('fetchProducts error:', err);
-
-      const errorMessage =
-        err.response?.data?.message ||
-        err.message ||
-        'Failed to fetch products. Please try again.';
-
-      return rejectWithValue({ message: errorMessage });
-    }
-  }
-);
+export default Cart;
+// cart screen code till 29-12-2025
