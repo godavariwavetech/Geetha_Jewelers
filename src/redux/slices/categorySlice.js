@@ -391,6 +391,31 @@ export const fetchOccasions = createAsyncThunk(
   }
 );
 
+export const fetchCatalogueProducts = createAsyncThunk(
+  'category/fetchCatalogueProducts',
+  async (_, { fulfillWithValue, rejectWithValue }) => {
+    try {
+      const res = await api.get(endpoints.GET_CATALOGE_PRODUCTS);
+
+      if (res.data?.status === 200 && res.data?.data) {
+        return fulfillWithValue(res.data.data);
+      } else {
+        return rejectWithValue('No catalogue products found');
+      }
+    } catch (err) {
+      console.error('fetchCatalogueProducts error:', {
+        message: err.message,
+        status: err.response?.status,
+        response: err.response?.data,
+      });
+      return rejectWithValue({
+        message: err.response?.data?.message || err.message || 'Failed to fetch catalogue products',
+        status: err.response?.status,
+      });
+    }
+  }
+);
+
 
 const categorySlice = createSlice({
   name: 'category',
@@ -439,6 +464,10 @@ const categorySlice = createSlice({
     homeSections: [],
 homeSectionsLoading: false,
 homeSectionsError: null,
+
+  catalogueProducts: [],
+    catalogueProductsLoading: false,
+    catalogueProductsError: null,
   },
   reducers: {
     clearSearchSuggestions: (state) => {
@@ -647,7 +676,18 @@ homeSectionsError: null,
   state.homeSectionsLoading = false;
   state.homeSectionsError = action.payload.message;
 })
-
+.addCase(fetchCatalogueProducts.pending, (state) => {
+        state.catalogueProductsLoading = true;
+        state.catalogueProductsError = null;
+      })
+      .addCase(fetchCatalogueProducts.fulfilled, (state, action) => {
+        state.catalogueProductsLoading = false;
+        state.catalogueProducts = action.payload;
+      })
+      .addCase(fetchCatalogueProducts.rejected, (state, action) => {
+        state.catalogueProductsLoading = false;
+        state.catalogueProductsError = action.payload.message || action.payload;
+      })
   },
 });
 export const { clearSearchSuggestions ,clearProductDetails } = categorySlice.actions;

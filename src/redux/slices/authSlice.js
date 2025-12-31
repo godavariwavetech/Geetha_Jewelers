@@ -95,7 +95,6 @@ export const getUserProfileDetails = createAsyncThunk(
     }
   }
 );
-
 export const updateUserProfile = createAsyncThunk(
   'auth/updateUserProfile',
   async (
@@ -146,7 +145,6 @@ export const updateUserProfile = createAsyncThunk(
     }
   }
 );
-
 export const addCustomerDeliveryAddress = createAsyncThunk(
   'auth/addCustomerDeliveryAddress',
   async (
@@ -219,7 +217,6 @@ export const getCustomerAddresses = createAsyncThunk(
     }
   }
 );
-
 export const deleteCustomerAddress = createAsyncThunk(
   'auth/deleteCustomerAddress',
   async ({ addressId }, { fulfillWithValue, rejectWithValue }) => {
@@ -250,7 +247,6 @@ export const deleteCustomerAddress = createAsyncThunk(
     }
   }
 );
-
 export const requestLocationPermission = createAsyncThunk(
   'auth/requestLocationPermission',
   async (_, { rejectWithValue }) => {
@@ -267,7 +263,6 @@ export const requestLocationPermission = createAsyncThunk(
     }
   }
 );
-
 // 👈 NEW: Thunk to check current permission status (no prompt)
 export const checkLocationPermission = createAsyncThunk(
   'auth/checkLocationPermission',
@@ -285,7 +280,6 @@ export const checkLocationPermission = createAsyncThunk(
     }
   }
 );
-
 // 👈 NEW: Thunk to get current location (with permission check/request if needed)
 export const getCurrentLocation = createAsyncThunk(
   'auth/getCurrentLocation',

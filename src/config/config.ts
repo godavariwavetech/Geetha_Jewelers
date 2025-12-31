@@ -40,5 +40,6 @@ export const endpoints = {
   GLOBAL_SEARCH:"globalsearch",
   GET_PROMO_VIDEO:"getpromovideo",
   GET_SERVICE_AVAILABILITY:"getserviceavailability",
-  GET_OCCASIONS:"getoccasions"
+  GET_OCCASIONS:"getoccasions",
+  GET_CATALOGE_PRODUCTS:"getcatalogueproducts"
 };
