@@ -202,11 +202,19 @@ const MyAddresses = () => {
       <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
         <View style={[styles.container, { paddingTop: insets.top }]}>
           {/* Header */}
+         {/* Header */}
           <View style={styles.header}>
-            <TouchableOpacity onPress={() =>{navigation.goBack()}}>
+            <TouchableOpacity 
+              onPress={() => navigation.goBack()}
+              // ADD zIndex: 10 HERE so it sits above the absolute title
+              style={{ zIndex: 10, padding: 5 }} 
+            >
               <Feather name="arrow-left" size={22} color="#000" />
             </TouchableOpacity>
+
             <Text style={styles.headerTitle}>My Addresses</Text>
+            
+            {/* This empty view is fine, it balances the layout */}
             <View style={{ width: 22 }} />
           </View>
 

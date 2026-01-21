@@ -14,6 +14,7 @@ import pincodeReducer from './slices/pincodeSlice';
 import applicationDataReducer from './slices/applicationDataSlice';
 import orderReducer from './slices/orderSlice'; 
 import serviceAvailabilityReducer from './slices/serviceAvailabilitySlice'
+import schemeReducer from './slices/schemeSlice';
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
@@ -32,6 +33,7 @@ export const store = configureStore({
     applicationData: applicationDataReducer,
     order: orderReducer,
     serviceAvailability: serviceAvailabilityReducer,
+    scheme: schemeReducer
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

@@ -21,7 +21,7 @@ import {
   getUserProfileDetails,
   updateUserProfile,
 } from '../redux/slices/authSlice'; // adjust path if needed
-
+import { PermissionsAndroid, Platform } from 'react-native';
 const { width } = Dimensions.get('window');
 
 function Profile({ navigation }) {
@@ -75,12 +75,35 @@ function Profile({ navigation }) {
     );
   };
 
-  const openCamera = () => {
-    launchCamera(
-      { mediaType: 'photo', includeBase64: true, cameraType: 'front' },
-      (response) => handleImageResponse(response)
-    );
-  };
+  const openCamera = async () => {
+  if (Platform.OS === 'android') {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+        {
+          title: "Camera Permission",
+          message: "App needs access to your camera ",
+          buttonNeutral: "Ask Me Later",
+          buttonNegative: "Cancel",
+          buttonPositive: "OK"
+        }
+      );
+      if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+        Alert.alert("Permission Denied", "Camera permission is required to take photos.");
+        return;
+      }
+    } catch (err) {
+      console.warn(err);
+      return;
+    }
+  }
+
+  // If permission granted (or if iOS), launch camera
+  launchCamera(
+    { mediaType: 'photo', includeBase64: true, cameraType: 'front' },
+    (response) => handleImageResponse(response)
+  );
+};
 
   const openGallery = () => {
     launchImageLibrary(

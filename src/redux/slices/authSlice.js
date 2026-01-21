@@ -329,6 +329,41 @@ export const getCurrentLocation = createAsyncThunk(
   }
 );
 
+export const deleteUserAccount = createAsyncThunk(
+  'auth/deleteUserAccount',
+  async ({ userId }, { fulfillWithValue, rejectWithValue }) => {
+    try {
+      const payload = {
+        user_id: userId,
+      };
+      
+      console.log('deleteUserAccount payload:', payload);
+      
+      // using endpoints.DELETE_USER_ACCOUNT (make sure to add this to your config file)
+      // or hardcode "deleteuseraccount" if you haven't updated config yet
+      const res = await api.post(endpoints.DELETE_USER_ACCOUNT, payload); 
+      
+      console.log('deleteUserAccount response:', res.data);
+
+      if (res.data?.status === 200) {
+        return fulfillWithValue(res.data);
+      } else {
+        return rejectWithValue('Failed to delete account');
+      }
+    } catch (err) {
+      console.error('deleteUserAccount error:', {
+        message: err.message,
+        status: err.response?.status,
+        response: err.response?.data,
+      });
+      return rejectWithValue({
+        message: err.response?.data?.message || err.message || 'Error deleting account',
+        status: err.response?.status,
+      });
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
@@ -353,6 +388,9 @@ const authSlice = createSlice({
     locationId: null, // Optional unique ID for the location
     currentLocationStatus: 'idle', // 👈 NEW: Status for getCurrentLocation
     currentLocationError: null, // 👈 NEW: Error for getCurrentLocation
+
+    deleteAccountStatus: 'idle', // 👈 New state
+    deleteAccountError: null,
   },
   reducers: {
     logout(state) {
@@ -514,7 +552,25 @@ const authSlice = createSlice({
       .addCase(getCurrentLocation.rejected, (state, action) => {
         state.currentLocationStatus = 'failed';
         state.currentLocationError = action.payload;
-      });
+      })
+      .addCase(deleteUserAccount.pending, (state) => {
+        state.deleteAccountStatus = 'loading';
+        state.deleteAccountError = null;
+      })
+      .addCase(deleteUserAccount.fulfilled, (state) => {
+        state.deleteAccountStatus = 'succeeded';
+        // Reset user data effectively logging them out
+        state.customerId = null;
+        state.customerOtp = null;
+        state.customerMobile = null;
+        state.customerName = null;
+        state.customerProfile = null;
+        state.addressList = [];
+      })
+      .addCase(deleteUserAccount.rejected, (state, action) => {
+        state.deleteAccountStatus = 'failed';
+        state.deleteAccountError = action.payload?.message || 'Failed to delete account';
+      })
   },
 });
 

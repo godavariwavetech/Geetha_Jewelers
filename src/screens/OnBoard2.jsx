@@ -35,7 +35,7 @@ const OnBoard2 = ({ navigation }) => {
   };
 
   const handleSkip = () => {
-    navigation.replace('DrawerNavigation'); // Skip = go to app without login
+    navigation.replace('SignIn'); // Skip = go to app without login
   };
 
   // Prevent flash of onboarding if already logged in

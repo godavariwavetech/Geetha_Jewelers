@@ -11,6 +11,7 @@ import Home from '../screens/Home';
 import More from '../screens/More';
 import Rewards from '../screens/Rewards';
 import GoldScheme from '../screens/GoldScheme';
+import SchemeApplicationScreen from '../screens/SchemeApplicationScreen';
 import WishList from '../screens/WishList';
 import Location from '../screens/Location';
 import ProductDetailsScreen from '../screens/ProductDetailsScreen';
@@ -25,6 +26,8 @@ import MyAddresses from '../screens/MyAddresses';
 import MyOrders from '../screens/MyOrders';
 import SearchScreen from '../screens/SearchScreen';
 import IndividualCategory from '../screens/IndividualCategory';
+import MySchemesScreen from '../screens/MySchemesScreen';
+import IndividualSchemeDetails from '../screens/IndividualSchemeDetails';
 
 import ContactUs from '../screens/ContactUs';
 import RefundPolicyScreen from '../screens/RefundPolicyScreen';
@@ -34,8 +37,6 @@ import SelectOnMap from '../screens/SelectOnMap';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Entypo from "react-native-vector-icons/Entypo";
 import Feather from "react-native-vector-icons/Feather";
-
-
 import OrderSuccessScreen from '../screens/OrderSuccessScreen';
 import OnBoard1 from '../screens/OnBoard1';
 import OnBoard2 from '../screens/OnBoard2';
@@ -240,6 +241,9 @@ const AppNavigation = () => {
         <Stack.Screen name="Splash2" component={Splash2} />
         <Stack.Screen name="PdfViewerScreen" component={PdfViewerScreen} />
         <Stack.Screen name="Form" component={Form} />
+        <Stack.Screen name="SchemeApplicationScreen" component={SchemeApplicationScreen} />
+        <Stack.Screen name="MySchemesScreen" component={MySchemesScreen} />
+        <Stack.Screen name="IndividualSchemeDetails" component={IndividualSchemeDetails} />
       </Stack.Navigator>
     </NavigationContainer>
   );

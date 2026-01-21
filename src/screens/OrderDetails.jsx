@@ -684,9 +684,9 @@ const OrderDetails = ({ route, navigation }) => {
               ₹{Number(orderDetails.grand_total).toLocaleString("en-IN")}
             </Text>
           </View>
-          <Text style={styles.paymentMode}>
+          {/* <Text style={styles.paymentMode}>
             Payment: {orderDetails.payment_type || "COD"}
-          </Text>
+          </Text> */}
         </View>
       </ScrollView>
 

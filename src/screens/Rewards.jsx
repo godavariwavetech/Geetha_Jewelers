@@ -1,160 +1,404 @@
-// import React from 'react';
+
+// import React, { useEffect } from 'react';
 // import {
 //   View,
 //   Text,
-//   Image,
-//   TouchableOpacity,
 //   StyleSheet,
-//   StatusBar,
 //   FlatList,
+//   Image,
+//   Dimensions,
+//   TouchableOpacity,
 // } from 'react-native';
-// import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-// import Icon from 'react-native-vector-icons/Ionicons';
+// import { useSafeAreaInsets } from 'react-native-safe-area-context';
+// import { useDispatch, useSelector } from 'react-redux';
+// import { fetchCatalogueProducts } from '../redux/slices/categorySlice';
+// import LinearGradient from 'react-native-linear-gradient';
+// import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder';
+// import { useNavigation } from '@react-navigation/native'; // <--- 1. Import Hook
 
-// const GeetaGoldScreen = ({ navigation }) => {
+// // Setup Shimmer
+// const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
+
+// const { width } = Dimensions.get('window');
+// const ITEM_WIDTH = (width - 36) / 2;
+
+// const DiamondEarringCatalogueScreen = () => {
 //   const insets = useSafeAreaInsets();
+//   const dispatch = useDispatch();
+//   const navigation = useNavigation(); // <--- 2. Initialize Navigation
 
-//   const metalCategories = [
-//     {
-//       id: '1',
-//       name: 'Gold',
-//       image: require('../assets/haaram.png'),
-//     },
-//     {
-//       id: '2',
-//       name: 'Silver',
-//       image: require('../assets/diamondearring.png'),
-//     },
-//     {
-//       id: '3',
-//       name: 'Platinum',
-//       image: require('../assets/diamondring.png'),
-//     },
-//   ];
+//   // Select Category Data
+//   const {
+//     catalogueProducts = [],
+//     catalogueProductsLoading = false,
+//     catalogueProductsError = null,
+//   } = useSelector((state) => state.category);
 
+//   // Select User ID (Assuming you have an auth slice)
+//   // If you don't have a user logged in, this might be null or undefined
+//   const userId = useSelector((state) => state.auth?.user?.id || null); // <--- 3. Get User ID
+
+//   useEffect(() => {
+//     dispatch(fetchCatalogueProducts());
+//   }, [dispatch]);
+
+//   // --- 1. The Real Product Item (Updated with Navigation) ---
 //   const renderItem = ({ item }) => (
 //     <TouchableOpacity
-//       style={styles.categoryCard}
+//       style={styles.card}
 //       activeOpacity={0.8}
-//     onPress={() =>
-//   navigation.navigate('PdfViewerScreen', {
-//     pdfUrl: 'https://www.grtjewels.com/asia/wp-content/uploads/2016/06/singapore-catalogue.pdf?srsltid=AfmBOoriCd5awVMLcG7DrMxsJldvjN4H1w4FQhgXJZeyMse49yY4To1P',
-//   })
-// }
+//       onPress={() => {
+//         // <--- 4. Navigation Logic matches your target screen requirements
+//         navigation.navigate('ProductDetailsScreen', {
+//           product_id: item.id, // or item.product_id depending on your API response
+//           user_id: userId,
+//         });
+//       }}
 //     >
-//       <Image source={item.image} style={styles.categoryImage} />
-//       <View style={styles.categoryTextContainer}>
-//         <Text style={styles.categoryName}>{item.name}</Text>
-//         <Text style={styles.subText}>Explore exquisite {item.name} jewelry</Text>
-//       </View>
-//       <Icon name="chevron-forward" size={22} color="#9C9C9C" />
+//       <Image
+//         source={{ uri: item.product_main_image }}
+//         style={styles.image}
+//         resizeMode="cover"
+//       />
+//       <Text style={styles.title} numberOfLines={2}>
+//         {item.product_name}
+//       </Text>
 //     </TouchableOpacity>
 //   );
 
-//   return (
-//     <SafeAreaView style={[styles.safeArea, {  }]}>
-//       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-
-//       {/* Header */}
-//       <View style={styles.header}>
-//         <TouchableOpacity onPress={() => navigation.goBack()}>
-//           <Icon name="arrow-back" size={22} color="#000" />
-//         </TouchableOpacity>
-//         <Text style={styles.headerTitle}>Geeta Gold</Text>
-//         <View style={{ width: 22 }} /> {/* Spacer for layout balance */}
-//       </View>
-
-//       {/* Category List */}
-//       <FlatList
-//         data={metalCategories}
-//         renderItem={renderItem}
-//         keyExtractor={(item) => item.id}
-//         contentContainerStyle={styles.listContainer}
-//         showsVerticalScrollIndicator={false}
+//   // --- 2. The Skeleton/Shimmer Item ---
+//   const renderSkeletonItem = () => (
+//     <View style={styles.card}>
+//       <ShimmerPlaceholder
+//         style={styles.skeletonImage}
+//         shimmerColors={['#E0E0E0', '#F5F5F5', '#E0E0E0']}
 //       />
+//       <View style={{ alignItems: 'center', marginTop: 10 }}>
+//         <ShimmerPlaceholder
+//           style={styles.skeletonTextLine}
+//           shimmerColors={['#E0E0E0', '#F5F5F5', '#E0E0E0']}
+//         />
+//         <ShimmerPlaceholder
+//           style={[styles.skeletonTextLine, { width: '60%', marginTop: 6 }]}
+//           shimmerColors={['#E0E0E0', '#F5F5F5', '#E0E0E0']}
+//         />
+//       </View>
+//     </View>
+//   );
 
-//       {/* WhatsApp Floating Button */}
-//       {/* <TouchableOpacity style={styles.whatsappButton} activeOpacity={0.8}>
-//         <Icon name="logo-whatsapp" size={26} color="#fff" />
-//       </TouchableOpacity> */}
-//     </SafeAreaView>
+//   if (catalogueProductsError) {
+//     return (
+//       <View style={styles.errorContainer}>
+//         <Text style={styles.errorText}>Error: {catalogueProductsError}</Text>
+//       </View>
+//     );
+//   }
+
+//   return (
+//     <View
+//       style={[
+//         styles.container,
+//         {
+//           paddingTop: insets.top,
+//           paddingBottom: insets.bottom,
+//         },
+//       ]}
+//     >
+//       <Text style={styles.header}>Diamond Earrings Catalogue</Text>
+
+//       {catalogueProductsLoading ? (
+//         <FlatList
+//           data={[1, 2, 3, 4, 5, 6, 7, 8]}
+//           keyExtractor={(item) => item.toString()}
+//           renderItem={renderSkeletonItem}
+//           numColumns={2}
+//           showsVerticalScrollIndicator={false}
+//           columnWrapperStyle={styles.row}
+//           contentContainerStyle={{ paddingBottom: 20 }}
+//         />
+//       ) : (
+//         <FlatList
+//           data={catalogueProducts}
+//           keyExtractor={(item) => item.id.toString()}
+//           renderItem={renderItem}
+//           numColumns={2}
+//           showsVerticalScrollIndicator={false}
+//           columnWrapperStyle={styles.row}
+//           contentContainerStyle={{ paddingBottom: 20 }}
+//           ListEmptyComponent={
+//             <View style={styles.emptyContainer}>
+//               <Text>No products available</Text>
+//             </View>
+//           }
+//         />
+//       )}
+//     </View>
 //   );
 // };
 
-// export default GeetaGoldScreen;
+// export default DiamondEarringCatalogueScreen;
 
 // const styles = StyleSheet.create({
-//   safeArea: {
+//   container: {
 //     flex: 1,
-//     backgroundColor: '#F9F9F9',
-//   },
-//   header: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     justifyContent: 'space-between',
-//     // backgroundColor: '#fff',
-//     paddingHorizontal: 18,
-//     paddingVertical: 14,
-//     // borderBottomWidth: 0.6,
-//     // borderBottomColor: '#E5E5E5',
-//     // elevation: 1,
-//   },
-//   headerTitle: {
-//     fontSize: 20,
-//     fontWeight: '600',
-//     color: '#000',
-//   },
-//   listContainer: {
-//     paddingVertical: 10,
-//   },
-//   categoryCard: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
 //     backgroundColor: '#fff',
-//     marginHorizontal: 16,
-//     marginBottom: 14,
-//     padding: 14,
-//     borderRadius: 14,
-//     elevation: 3,
-//     shadowColor: '#000',
-//     shadowOpacity: 0.08,
-//     shadowOffset: { width: 0, height: 2 },
-//     shadowRadius: 3,
+//     paddingHorizontal: 12,
 //   },
-//   categoryImage: {
-//     width: 80,
-//     height: 80,
-//     borderRadius: 12,
-//     marginRight: 14,
-//   },
-//   categoryTextContainer: {
+//   errorContainer: {
 //     flex: 1,
-//   },
-//   categoryName: {
-//     fontSize: 17,
-//     fontWeight: '600',
-//     color: '#1A1A1A',
-//   },
-//   subText: {
-//     fontSize: 13,
-//     color: '#707070',
-//     marginTop: 3,
-//   },
-//   whatsappButton: {
-//     position: 'absolute',
-//     bottom: 24,
-//     right: 20,
-//     width: 60,
-//     height: 60,
-//     borderRadius: 30,
-//     backgroundColor: '#25D366',
 //     justifyContent: 'center',
 //     alignItems: 'center',
-//     elevation: 6,
+//     padding: 20,
+//   },
+//   errorText: {
+//     color: 'red',
+//     fontSize: 16,
+//   },
+//   emptyContainer: {
+//     flex: 1,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     paddingTop: 50,
+//   },
+//   header: {
+//     fontSize: 20,
+//     fontWeight: '600',
+//     marginVertical: 16,
+//     color: '#262626',
+//   },
+//   row: {
+//     justifyContent: 'space-between',
+//   },
+//   card: {
+//     width: ITEM_WIDTH,
+//     marginBottom: 16,
+//     backgroundColor: '#fff',
+//     borderRadius: 8,
+//     elevation: 2,
 //     shadowColor: '#000',
-//     shadowOpacity: 0.25,
-//     shadowOffset: { width: 0, height: 3 },
+//     shadowOffset: { width: 0, height: 1 },
+//     shadowOpacity: 0.1,
 //     shadowRadius: 4,
+//     paddingBottom: 10,
+//   },
+//   image: {
+//     width: '100%',
+//     height: ITEM_WIDTH,
+//     borderTopLeftRadius: 8,
+//     borderTopRightRadius: 8,
+//   },
+//   title: {
+//     marginTop: 8,
+//     fontSize: 14,
+//     textAlign: 'center',
+//     color: '#333',
+//     paddingHorizontal: 4,
+//   },
+//   skeletonImage: {
+//     width: '100%',
+//     height: ITEM_WIDTH,
+//     borderTopLeftRadius: 8,
+//     borderTopRightRadius: 8,
+//   },
+//   skeletonTextLine: {
+//     height: 12,
+//     width: '80%',
+//     borderRadius: 6,
+//   },
+// });
+// import React, { useEffect } from 'react';
+// import {
+//   View,
+//   Text,
+//   StyleSheet,
+//   FlatList,
+//   Image,
+//   Dimensions,
+//   TouchableOpacity,
+// } from 'react-native';
+// import { useSafeAreaInsets } from 'react-native-safe-area-context';
+// import { useDispatch, useSelector } from 'react-redux';
+// import { fetchCatalogueProducts } from '../redux/slices/categorySlice';
+// import LinearGradient from 'react-native-linear-gradient';
+// import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder';
+// import { useNavigation } from '@react-navigation/native';
+// const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
+// const { width } = Dimensions.get('window');
+// const ITEM_WIDTH = (width - 36) / 2;
+// const DiamondEarringCatalogueScreen = () => {
+//   const insets = useSafeAreaInsets();
+//   const dispatch = useDispatch();
+//   const navigation = useNavigation();
+//   const {
+//     catalogueProducts = [],
+//     catalogueProductsLoading = false,
+//     catalogueProductsError = null,
+//   } = useSelector((state) => state.category);
+//   const { customerId } = useSelector((state) => state.Auth || {});
+
+//   useEffect(() => {
+//     dispatch(fetchCatalogueProducts());
+//   }, [dispatch]);
+//   const renderItem = ({ item }) => (
+//     <TouchableOpacity
+//       style={styles.card}
+//       activeOpacity={0.8}
+//       onPress={() => {
+       
+//         navigation.navigate('ProductDetailsScreen', {
+//           product_id: item.id, 
+//           user_id: customerId, 
+//         });
+//       }}
+//     >
+//       <Image
+//         source={{ uri: item.product_main_image }}
+//         style={styles.image}
+//         resizeMode="cover"
+//       />
+//       <Text style={styles.title} numberOfLines={2}>
+//         {item.product_name}
+//       </Text>
+//     </TouchableOpacity>
+//   );
+
+//   const renderSkeletonItem = () => (
+//     <View style={styles.card}>
+//       <ShimmerPlaceholder
+//         style={styles.skeletonImage}
+//         shimmerColors={['#E0E0E0', '#F5F5F5', '#E0E0E0']}
+//       />
+      
+//       <View style={{ alignItems: 'center', marginTop: 10 }}>
+//         <ShimmerPlaceholder
+//           style={styles.skeletonTextLine}
+//           shimmerColors={['#E0E0E0', '#F5F5F5', '#E0E0E0']}
+//         />
+//         <ShimmerPlaceholder
+//           style={[styles.skeletonTextLine, { width: '60%', marginTop: 6 }]}
+//           shimmerColors={['#E0E0E0', '#F5F5F5', '#E0E0E0']}
+//         />
+//       </View>
+//     </View>
+//   );
+
+//   if (catalogueProductsError) {
+//     return (
+//       <View style={styles.errorContainer}>
+//         <Text style={styles.errorText}>Error: {catalogueProductsError}</Text>
+//       </View>
+//     );
+//   }
+
+//   return (
+//     <View
+//       style={[
+//         styles.container,
+//         {
+//           paddingTop: insets.top +15,
+//           paddingBottom: insets.bottom,
+//         },
+//       ]}
+//     >
+      
+//            {catalogueProductsLoading ? (
+//         <FlatList
+//           data={[1, 2, 3, 4, 5, 6, 7, 8]}
+//           keyExtractor={(item) => item.toString()}
+//           renderItem={renderSkeletonItem}
+//           numColumns={2}
+//           showsVerticalScrollIndicator={false}
+//           columnWrapperStyle={styles.row}
+//           contentContainerStyle={{ paddingBottom: 20 }}
+//         />
+//       ) : (
+//         <FlatList
+//           data={catalogueProducts}
+//           keyExtractor={(item) => item.id.toString()}
+//           renderItem={renderItem}
+//           numColumns={2}
+//           showsVerticalScrollIndicator={false}
+//           columnWrapperStyle={styles.row}
+//           contentContainerStyle={{ paddingBottom: 20 }}
+//           ListEmptyComponent={
+//             <View style={styles.emptyContainer}>
+//               <Text>No products available</Text>
+//             </View>
+//           }
+//         />
+//       )}
+//     </View>
+//   );
+// };
+
+// export default DiamondEarringCatalogueScreen;
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: '#fff',
+//     paddingHorizontal: 12,
+//   },
+//   errorContainer: {
+//     flex: 1,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     padding: 20,
+//   },
+//   errorText: {
+//     color: 'red',
+//     fontSize: 16,
+//   },
+//   emptyContainer: {
+//     flex: 1,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     paddingTop: 50,
+//   },
+//   header: {
+//     fontSize: 20,
+//     fontWeight: '600',
+//     marginVertical: 16,
+//     color: '#262626',
+//   },
+//   row: {
+//     justifyContent: 'space-between',
+//   },
+//   card: {
+//     width: ITEM_WIDTH,
+//     marginBottom: 16,
+//     backgroundColor: '#fff',
+//     borderRadius: 8,
+//     elevation: 2,
+//     shadowColor: '#000',
+//     shadowOffset: { width: 0, height: 1 },
+//     shadowOpacity: 0.1,
+//     shadowRadius: 4,
+//     paddingBottom: 10,
+//   },
+//   image: {
+//     width: '100%',
+//     height: ITEM_WIDTH,
+//     borderTopLeftRadius: 8,
+//     borderTopRightRadius: 8,
+//   },
+//   title: {
+//     marginTop: 8,
+//     fontSize: 14,
+//     textAlign: 'center',
+//     color: '#333',
+//     paddingHorizontal: 4,
+//   },
+//   skeletonImage: {
+//     width: '100%',
+//     height: ITEM_WIDTH,
+//     borderTopLeftRadius: 8,
+//     borderTopRightRadius: 8,
+//   },
+//   skeletonTextLine: {
+//     height: 12,
+//     width: '80%',
+//     borderRadius: 6,
 //   },
 // });
 import React, { useEffect } from 'react';
@@ -165,19 +409,31 @@ import {
   FlatList,
   Image,
   Dimensions,
-  ActivityIndicator,
   TouchableOpacity,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchCatalogueProducts } from '../redux/slices/categorySlice'; // Adjust the import path
+import { fetchCatalogueProducts } from '../redux/slices/categorySlice';
+import LinearGradient from 'react-native-linear-gradient';
+import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder';
+import { useNavigation } from '@react-navigation/native';
 
+const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 const { width } = Dimensions.get('window');
-const ITEM_WIDTH = (width - 36) / 2; // 12px padding on each side + gap
+const ITEM_WIDTH = (width - 36) / 2;
+
+// Font family constants
+const FONTS = {
+  regular: 'SF-Pro-Display-Regular',
+  medium: 'SF-Pro-Display-Medium',
+  semibold: 'SF-Pro-Display-Semibold',
+  bold: 'SF-Pro-Display-Bold',
+};
 
 const DiamondEarringCatalogueScreen = () => {
   const insets = useSafeAreaInsets();
   const dispatch = useDispatch();
+  const navigation = useNavigation();
 
   const {
     catalogueProducts = [],
@@ -185,12 +441,23 @@ const DiamondEarringCatalogueScreen = () => {
     catalogueProductsError = null,
   } = useSelector((state) => state.category);
 
+  const { customerId } = useSelector((state) => state.Auth || {});
+
   useEffect(() => {
     dispatch(fetchCatalogueProducts());
   }, [dispatch]);
 
   const renderItem = ({ item }) => (
-    <TouchableOpacity style={styles.card} activeOpacity={0.8}>
+    <TouchableOpacity
+      style={styles.card}
+      activeOpacity={0.8}
+      onPress={() => {
+        navigation.navigate('ProductDetailsScreen', {
+          product_id: item.id,
+          user_id: customerId,
+        });
+      }}
+    >
       <Image
         source={{ uri: item.product_main_image }}
         style={styles.image}
@@ -202,13 +469,25 @@ const DiamondEarringCatalogueScreen = () => {
     </TouchableOpacity>
   );
 
-  if (catalogueProductsLoading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#000" />
+  const renderSkeletonItem = () => (
+    <View style={styles.card}>
+      <ShimmerPlaceholder
+        style={styles.skeletonImage}
+        shimmerColors={['#E0E0E0', '#F5F5F5', '#E0E0E0']}
+      />
+      
+      <View style={{ alignItems: 'center', marginTop: 10 }}>
+        <ShimmerPlaceholder
+          style={styles.skeletonTextLine}
+          shimmerColors={['#E0E0E0', '#F5F5F5', '#E0E0E0']}
+        />
+        <ShimmerPlaceholder
+          style={[styles.skeletonTextLine, { width: '60%', marginTop: 6 }]}
+          shimmerColors={['#E0E0E0', '#F5F5F5', '#E0E0E0']}
+        />
       </View>
-    );
-  }
+    </View>
+  );
 
   if (catalogueProductsError) {
     return (
@@ -223,27 +502,37 @@ const DiamondEarringCatalogueScreen = () => {
       style={[
         styles.container,
         {
-          paddingTop: insets.top,
+          paddingTop: insets.top + 15,
           paddingBottom: insets.bottom,
         },
       ]}
     >
-      <Text style={styles.header}>Diamond Earrings Catalogue</Text>
-
-      <FlatList
-        data={catalogueProducts}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={renderItem}
-        numColumns={2}
-        showsVerticalScrollIndicator={false}
-        columnWrapperStyle={styles.row}
-        contentContainerStyle={{ paddingBottom: 20 }}
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Text>No products available</Text>
-          </View>
-        }
-      />
+      {catalogueProductsLoading ? (
+        <FlatList
+          data={[1, 2, 3, 4, 5, 6, 7, 8]}
+          keyExtractor={(item) => item.toString()}
+          renderItem={renderSkeletonItem}
+          numColumns={2}
+          showsVerticalScrollIndicator={false}
+          columnWrapperStyle={styles.row}
+          contentContainerStyle={{ paddingBottom: 20 }}
+        />
+      ) : (
+        <FlatList
+          data={catalogueProducts}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderItem}
+          numColumns={2}
+          showsVerticalScrollIndicator={false}
+          columnWrapperStyle={styles.row}
+          contentContainerStyle={{ paddingBottom: 20 }}
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>No products available</Text>
+            </View>
+          }
+        />
+      )}
     </View>
   );
 };
@@ -256,12 +545,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     paddingHorizontal: 12,
   },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-  },
   errorContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -271,6 +554,7 @@ const styles = StyleSheet.create({
   errorText: {
     color: 'red',
     fontSize: 16,
+    fontFamily: FONTS.medium,
   },
   emptyContainer: {
     flex: 1,
@@ -278,11 +562,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 50,
   },
-  header: {
-    fontSize: 20,
-    fontWeight: '600',
-    marginVertical: 16,
-    color: '#262626',
+  emptyText: {
+    fontSize: 16,
+    fontFamily: FONTS.regular,
+    color: '#666',
   },
   row: {
     justifyContent: 'space-between',
@@ -297,19 +580,31 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
+    paddingBottom: 10,
   },
   image: {
     width: '100%',
     height: ITEM_WIDTH,
-    borderRadius: 8,
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
   },
   title: {
     marginTop: 8,
     fontSize: 14,
+    fontFamily: FONTS.medium,
     textAlign: 'center',
     color: '#333',
     paddingHorizontal: 4,
   },
+  skeletonImage: {
+    width: '100%',
+    height: ITEM_WIDTH,
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
+  },
+  skeletonTextLine: {
+    height: 12,
+    width: '80%',
+    borderRadius: 6,
+  },
 });
-
-

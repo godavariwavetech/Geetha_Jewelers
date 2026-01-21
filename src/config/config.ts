@@ -1,4 +1,4 @@
-export const baseURL = 'https://geethajewapi.godavariwave.com/public_app'; 
+export const baseURL = 'https://geetajewellers.co.in:2088/public_app'; 
 
 export const endpoints = {
   REQUEST_LOGIN_OPT:'getuserloginotp',
@@ -41,5 +41,15 @@ export const endpoints = {
   GET_PROMO_VIDEO:"getpromovideo",
   GET_SERVICE_AVAILABILITY:"getserviceavailability",
   GET_OCCASIONS:"getoccasions",
-  GET_CATALOGE_PRODUCTS:"getcatalogueproducts"
+  GET_CATALOGE_PRODUCTS:"getcatalogueproducts",
+  DELETE_USER_ACCOUNT: "deleteuseraccount",
+  ADD_SCHEME_HOLDER_DETAILS:"addschemeholderdetails",
+  GET_DAILY_METAL_RATES:"getdailymetalrates",
+  CHECK_SCHEME_HOLDER:"checkschemeholder",
+  GENERATE_ORDER_ID:"generateorderid",
+  GET_SCHEME_BANNERS:"getschemebanners",
+  UPDATE_SCHEME_DETAILS:"updateschemedetails",
+  GET_USER_SCHEMES:"getuserschemes",
+  GET_SCHEME_DETAILS:"getschemedetails",
+  PAY_SCHEME_INSTALLMENT:"payschemeinstallment"
 };
