@@ -390,58 +390,102 @@ const WishList = () => {
     });
   };
 
-  const renderItem = ({ item }) => (
-    <TouchableOpacity
-      activeOpacity={0.85}
-      onPress={() => handleProductPress(item)}
-      style={styles.cardWrapper}
-    >
-      <View style={styles.card}>
-        {/* Remove Heart Icon */}
-        <TouchableOpacity
-          style={styles.heartIcon}
-          onPress={(e) => {
-            e.stopPropagation();
-            handleRemoveFromWishlist(item.wishlist_id, item.product_id);
-          }}
-        >
-          <Ionicons name="heart" size={20} color="#E53935" />
-        </TouchableOpacity>
+  // const renderItem = ({ item }) => (
+  //   <TouchableOpacity
+  //     activeOpacity={0.85}
+  //     onPress={() => handleProductPress(item)}
+  //     style={styles.cardWrapper}
+  //   >
+  //     <View style={styles.card}>
+  //       {/* Remove Heart Icon */}
+  //       <TouchableOpacity
+  //         style={styles.heartIcon}
+  //         onPress={(e) => {
+  //           e.stopPropagation();
+  //           handleRemoveFromWishlist(item.wishlist_id, item.product_id);
+  //         }}
+  //       >
+  //         <Ionicons name="heart" size={20} color="#E53935" />
+  //       </TouchableOpacity>
 
-        {/* Product Image */}
-        <Image
-          source={{ uri: item.product_main_image }}
-          style={styles.image}
-          resizeMode="contain"
-          // defaultSource={require('../assets/haaram.png')}
-        />
+  //       {/* Product Image */}
+  //       <Image
+  //         source={{ uri: item.product_main_image }}
+  //         style={styles.image}
+  //         resizeMode="contain"
+  //         // defaultSource={require('../assets/haaram.png')}
+  //       />
 
-        {/* Product Info */}
-        <View style={styles.infoContainer}>
-          <Text style={styles.name} numberOfLines={2}>
-            {item.product_name}
+  //       {/* Product Info */}
+  //       <View style={styles.infoContainer}>
+  //         <Text style={styles.name} numberOfLines={2}>
+  //           {item.product_name}
+  //         </Text>
+
+  //         <View style={styles.priceRow}>
+  //           <Text style={styles.salePrice}>
+  //             ₹ {item.total_value || 4000} /g
+  //           </Text>
+  //         </View>
+
+  //         <TouchableOpacity
+  //           style={styles.cartBtn}
+  //           onPress={(e) => {
+  //             e.stopPropagation();
+  //             // navigation.navigate('Cart');
+  //           }}
+  //         >
+  //           <Text style={styles.cartBtnText}>View similar</Text>
+  //         </TouchableOpacity>
+  //       </View>
+  //     </View>
+  //   </TouchableOpacity>
+  // );
+const renderItem = ({ item }) => (
+  <TouchableOpacity
+    activeOpacity={0.85}
+    onPress={() => handleProductPress(item)}
+    style={styles.cardWrapper}
+  >
+    <View style={styles.card}>
+      {/* Heart Icon */}
+      <TouchableOpacity
+        style={styles.heartIcon}
+        onPress={(e) => {
+          e.stopPropagation();
+          handleRemoveFromWishlist(item.wishlist_id, item.product_id);
+        }}
+      >
+        <Ionicons name="heart" size={20} color="#E53935" />
+      </TouchableOpacity>
+
+      {/* Product Image */}
+      <Image
+        source={{ uri: item.product_main_image }}
+        style={styles.image}
+        resizeMode="contain"
+        // defaultSource={require('../assets/haaram.png')}
+      />
+
+      {/* Product Info */}
+      <View style={styles.infoContainer}>
+        <Text style={styles.name} numberOfLines={2}>
+          {item.product_name}
+        </Text>
+
+        <View style={styles.priceRow}>
+          <Text style={styles.salePrice}>
+            ₹ {item.total_value || 4000} /g
           </Text>
+        </View>
 
-          <View style={styles.priceRow}>
-            <Text style={styles.salePrice}>
-              ₹ {item.total_value || 4000} /g
-            </Text>
-          </View>
-
-          <TouchableOpacity
-            style={styles.cartBtn}
-            onPress={(e) => {
-              e.stopPropagation();
-              // navigation.navigate('Cart');
-            }}
-          >
-            <Text style={styles.cartBtnText}>View similar</Text>
-          </TouchableOpacity>
+        <View style={styles.cartBtn}>
+          <Text style={styles.cartBtnText}>View similar</Text>
         </View>
       </View>
-    </TouchableOpacity>
-  );
-
+    </View>
+  </TouchableOpacity>
+);
   const renderEmpty = () => (
     <View style={styles.emptyContainer}>
       <Ionicons name="heart-outline" size={60} color="#ccc" />

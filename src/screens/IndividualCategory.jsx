@@ -4224,64 +4224,120 @@ const IndividualCategory = () => {
     return rows;
   };
 
-  const renderProductCard = (item) => {
-    const isWishlisted = item.wishlist_flag === 1;
-    const isLoading = addRemoveLoader === item.id;
+  // const renderProductCard = (item) => {
+  //   const isWishlisted = item.wishlist_flag === 1;
+  //   const isLoading = addRemoveLoader === item.id;
 
-    return (
+  //   return (
+  //     <TouchableOpacity
+  //       style={[styles.card, { height: CARD_HEIGHT }]}
+  //       onPress={() => handleProductPress(item)}
+  //       activeOpacity={0.85}
+  //     >
+  //       <TouchableOpacity
+  //         style={styles.favoriteIcon}
+  //         onPress={(e) => {
+  //           e.stopPropagation();
+  //           handleWishlistToggle(item);
+  //         }}
+  //         disabled={isLoading}
+  //       >
+  //         {isLoading ? (
+  //           <ActivityIndicator size={18} color="#832729" />
+  //         ) : (
+  //           <Ionicons
+  //             name={isWishlisted ? 'heart' : 'heart-outline'}
+  //             size={22}
+  //             color={isWishlisted ? '#FF0000' : '#666'}
+  //           />
+  //         )}
+  //       </TouchableOpacity>
+
+  //       <Image
+  //         source={{ uri: item.product_main_image }}
+  //         style={styles.image}
+  //         resizeMode="contain"
+  //       />
+
+  //       <View style={styles.content}>
+  //         <Text style={styles.title} numberOfLines={2}>
+  //           {item.product_name}
+  //         </Text>
+  //         <View style={{ flexDirection: "row", gap: 5 }}>
+  //           <Text style={styles.price} numberOfLines={1}>
+  //             ₹ {item.total_price?.toLocaleString()}
+  //           </Text>
+  //           <Text style={styles.price} numberOfLines={1}>
+  //             ({item.gross_weight?.toLocaleString()} g )
+  //           </Text>
+  //         </View>
+
+  //         <View style={styles.buttonRow}>
+  //           <TouchableOpacity style={styles.viewSimilarButton} >
+  //             <Text style={styles.viewSimilarText}>View Details</Text>
+  //           </TouchableOpacity>
+  //         </View>
+  //       </View>
+  //     </TouchableOpacity>
+  //   );
+  // };
+const renderProductCard = (item) => {
+  const isWishlisted = item.wishlist_flag === 1;
+  const isLoading = addRemoveLoader === item.id;
+
+  return (
+    <TouchableOpacity
+      style={[styles.card, { height: CARD_HEIGHT }]}
+      onPress={() => handleProductPress(item)}
+      activeOpacity={0.85}
+    >
       <TouchableOpacity
-        style={[styles.card, { height: CARD_HEIGHT }]}
-        onPress={() => handleProductPress(item)}
-        activeOpacity={0.85}
+        style={styles.favoriteIcon}
+        onPress={(e) => {
+          e.stopPropagation();
+          handleWishlistToggle(item);
+        }}
+        disabled={isLoading}
       >
-        <TouchableOpacity
-          style={styles.favoriteIcon}
-          onPress={(e) => {
-            e.stopPropagation();
-            handleWishlistToggle(item);
-          }}
-          disabled={isLoading}
-        >
-          {isLoading ? (
-            <ActivityIndicator size={18} color="#832729" />
-          ) : (
-            <Ionicons
-              name={isWishlisted ? 'heart' : 'heart-outline'}
-              size={22}
-              color={isWishlisted ? '#FF0000' : '#666'}
-            />
-          )}
-        </TouchableOpacity>
+        {isLoading ? (
+          <ActivityIndicator size={18} color="#832729" />
+        ) : (
+          <Ionicons
+            name={isWishlisted ? 'heart' : 'heart-outline'}
+            size={22}
+            color={isWishlisted ? '#FF0000' : '#666'}
+          />
+        )}
+      </TouchableOpacity>
 
-        <Image
-          source={{ uri: item.product_main_image }}
-          style={styles.image}
-          resizeMode="contain"
-        />
+      <Image
+        source={{ uri: item.product_main_image }}
+        style={styles.image}
+        resizeMode="contain"
+      />
 
-        <View style={styles.content}>
-          <Text style={styles.title} numberOfLines={2}>
-            {item.product_name}
+      <View style={styles.content}>
+        <Text style={styles.title} numberOfLines={2}>
+          {item.product_name}
+        </Text>
+        <View style={{ flexDirection: "row", gap: 5 }}>
+          <Text style={styles.price} numberOfLines={1}>
+            ₹ {item.total_price?.toLocaleString()}
           </Text>
-          <View style={{ flexDirection: "row", gap: 5 }}>
-            <Text style={styles.price} numberOfLines={1}>
-              ₹ {item.total_price?.toLocaleString()}
-            </Text>
-            <Text style={styles.price} numberOfLines={1}>
-              ({item.gross_weight?.toLocaleString()} g )
-            </Text>
-          </View>
+          <Text style={styles.price} numberOfLines={1}>
+            ({item.gross_weight?.toLocaleString()} g )
+          </Text>
+        </View>
 
-          <View style={styles.buttonRow}>
-            <TouchableOpacity style={styles.viewSimilarButton}>
-              <Text style={styles.viewSimilarText}>View Details</Text>
-            </TouchableOpacity>
+        <View style={styles.buttonRow}>
+          <View style={styles.viewSimilarButton}>
+            <Text style={styles.viewSimilarText}>View Details</Text>
           </View>
         </View>
-      </TouchableOpacity>
-    );
-  };
-
+      </View>
+    </TouchableOpacity>
+  );
+};
   const renderRow = ({ item }) => {
     if (item.type === 'row') {
       return (
@@ -4340,7 +4396,7 @@ const IndividualCategory = () => {
         </TouchableOpacity>
 
         <Image
-          source={require('../assets/geethalogo.png')}
+          source={require('../assets/geethalogo1.png')}
           style={styles.headerLogo}
           resizeMode="contain"
         />

@@ -51,5 +51,6 @@ export const endpoints = {
   UPDATE_SCHEME_DETAILS:"updateschemedetails",
   GET_USER_SCHEMES:"getuserschemes",
   GET_SCHEME_DETAILS:"getschemedetails",
-  PAY_SCHEME_INSTALLMENT:"payschemeinstallment"
+  PAY_SCHEME_INSTALLMENT:"payschemeinstallment",
+  POST_PLAYER_ID:"postplayerid"
 };

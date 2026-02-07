@@ -1265,7 +1265,7 @@ const handleCardNavigation = (card, sectionType) => {
                 Join flexible gold saving plans and grow your wealth with ease.
               </Text>
             </View>
-            <TouchableOpacity style={styles.savingsArrowButton}>
+            <TouchableOpacity style={styles.savingsArrowButton} onPress={() => navigation.navigate("GoldScheme")}  >
               <Ionicons name="chevron-forward" size={20} color="#832729" />
             </TouchableOpacity>
           </LinearGradient>

@@ -1375,7 +1375,7 @@ const CategoryNavigationScreen = () => {
       {/* Header */}
       <View style={styles.header}>
         <Image
-          source={require('../assets/geethalogo.png')}
+          source={require('../assets/geethalogo1.png')}
           style={styles.logo}
           resizeMode="contain"
         />

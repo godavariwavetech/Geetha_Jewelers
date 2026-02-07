@@ -637,8 +637,8 @@ const IndividualSchemeDetails = () => {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [processingPayment, setProcessingPayment] = useState(false);
 
-  const schemeId = schemeDetails?.id || schemeIdFromRoute;
-
+  // const schemeId = schemeDetails?.id || schemeIdFromRoute;
+const schemeId = route.params?.id;
   useEffect(() => {
     if (schemeId) {
       dispatch(fetchSchemeDetails(schemeId));
@@ -811,7 +811,7 @@ const IndividualSchemeDetails = () => {
         <View style={styles.mainCard}>
           <View style={styles.cardHeader}>
             <View>
-              <Text style={styles.schemeName}>Geeta Gold Plus</Text>
+              <Text style={styles.schemeName}>Geeta Jewellers</Text>
               <Text style={styles.schemeId}>#{schemeDetails.scheme_id || '—'}</Text>
             </View>
             <View style={[
@@ -852,10 +852,10 @@ const IndividualSchemeDetails = () => {
               <Text style={styles.infoLabel}>Phone</Text>
               <Text style={styles.infoValue}>{schemeDetails.phone_number || '—'}</Text>
             </View>
-            <View style={styles.infoItem}>
+            {/* <View style={styles.infoItem}>
               <Text style={styles.infoLabel}>Card No</Text>
               <Text style={styles.infoValue}>{schemeDetails.card_no || '—'}</Text>
-            </View>
+            </View> */}
           </View>
 
           {schemeDetails.address && (

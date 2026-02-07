@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "196174996103",
+    "project_id": "geeta-jewellers",
+    "storage_bucket": "geeta-jewellers.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:196174996103:android:b7e3b84150f44d26d54e22",
+        "android_client_info": {
+          "package_name": "com.geethajewellers"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA--QZx9IW9xnT5LTqCOCpil2Aht0uy0Y8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

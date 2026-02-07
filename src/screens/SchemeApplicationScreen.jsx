@@ -2282,6 +2282,7 @@ const SchemeApplicationScreen = () => {
                 card_no: cardNumber.replace(/\s/g, ''),
                 payment_id: successData.razorpay_payment_id,
                 id: schemeHolder.id,
+                user_id:userId
               };
 
               await dispatch(updateSchemeDetails(updatePayload)).unwrap();
@@ -2352,7 +2353,7 @@ const SchemeApplicationScreen = () => {
               {/* User Name */}
               <View style={styles.inputGroup}>
                 <Text style={styles.label}>Your Full Name</Text>
-                <TextInput
+                {/* <TextInput
                   style={styles.input}
                   placeholder="Enter your full name"
                   placeholderTextColor="#999"
@@ -2360,7 +2361,16 @@ const SchemeApplicationScreen = () => {
                   onChangeText={setUserName}
                   autoCapitalize="words"
                   editable={!schemeHolder?.name}
-                />
+                /> */}
+                <TextInput
+  style={styles.input}
+  placeholder="Enter your full name"
+  placeholderTextColor="#999"
+  value={userName}
+  onChangeText={setUserName}
+  autoCapitalize="words"
+  editable={true} // Hardcoded to true
+/>
               </View>
 
               {/* Agent Name */}
@@ -2434,7 +2444,7 @@ const SchemeApplicationScreen = () => {
               </View>
 
               {/* Card Number */}
-              <View style={styles.inputGroup}>
+              {/* <View style={styles.inputGroup}>
                 <Text style={styles.label}>Card Number</Text>
                 <TextInput
                   style={styles.input}
@@ -2448,12 +2458,12 @@ const SchemeApplicationScreen = () => {
                     setCardNumber(formatted);
                   }}
                 />
-              </View>
+              </View> */}
 
-              <Text style={styles.noteText}>
+              {/* <Text style={styles.noteText}>
                 Note: You will pay ₹{installmentAmount ? parseInt(installmentAmount).toLocaleString('en-IN') : '0'} monthly 
                 for {tenure ? `${tenure} months` : '...'} .
-              </Text>
+              </Text> */}
             </View>
           </ScrollView>
         )}

@@ -655,13 +655,13 @@ const ProfileScreen = ({ navigation }) => {
           </TouchableOpacity>
 
           {/* Banner */}
-          <View style={styles.bannerCard}>
+          {/* <View style={styles.bannerCard}>
             <Image
               source={require("../assets/lastbanner.png")}
               style={styles.bannerImageFull}
               resizeMode="cover"
             />
-          </View>
+          </View> */}
 
           {/* Logout Button */}
           <View style={styles.logoutContainer}>

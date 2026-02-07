@@ -364,6 +364,25 @@ export const deleteUserAccount = createAsyncThunk(
   }
 );
 
+export const postPlayerId = createAsyncThunk(
+  'auth/postPlayerId',
+  async ({ userId, playerId }, { rejectWithValue }) => {
+
+    try {
+      const payload = {
+        user_id: userId,
+        player_id: playerId,
+      };
+      console.log(payload,"to send tokennnnnnnnnnnnnnnnnn")
+      // Uses the endpoint from your config
+      const res = await api.post(endpoints.POST_PLAYER_ID, payload); 
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err?.response?.data?.message || 'Failed to sync token');
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
@@ -391,6 +410,8 @@ const authSlice = createSlice({
 
     deleteAccountStatus: 'idle', // 👈 New state
     deleteAccountError: null,
+
+     playerId: null,
   },
   reducers: {
     logout(state) {
@@ -421,6 +442,10 @@ const authSlice = createSlice({
     },
     setLocationId(state, action) {
       state.locationId = action.payload;
+    },
+    setPlayerId: (state, action) => { // 👈 Added this
+      state.playerId = action.payload;
+      console.log('PlayerId set in Redux:', action.payload);
     },
   },
   extraReducers: (builder) => {
@@ -571,6 +596,10 @@ const authSlice = createSlice({
         state.deleteAccountStatus = 'failed';
         state.deleteAccountError = action.payload?.message || 'Failed to delete account';
       })
+        .addCase(postPlayerId.fulfilled, (state, action) => {
+        // You can also update state here once the API confirms success
+        state.loading = false;
+      });
   },
 });
 

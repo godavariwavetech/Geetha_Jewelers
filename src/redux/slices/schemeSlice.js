@@ -555,6 +555,26 @@ export const paySchemeInstallment = createAsyncThunk(
   }
 );
 
+export const updateSchemeDetails = createAsyncThunk(
+  'scheme/updateSchemeDetails',
+  async (updatePayload, { fulfillWithValue, rejectWithValue }) => {
+    try {
+      console.log('Updating Scheme Details Payload:', updatePayload);
+      const res = await api.post(endpoints.UPDATE_SCHEME_DETAILS, updatePayload);
+      console.log('Update Scheme Response:', res.data);
+
+      if (res.data?.status === 200) {
+        return fulfillWithValue(res.data);
+      } else {
+        return rejectWithValue(res.data?.message || 'Failed to update scheme details');
+      }
+    } catch (err) {
+      console.error('updateSchemeDetails error:', err);
+      return rejectWithValue(err.response?.data?.message || err.message);
+    }
+  }
+);
+
 // ────────────────────────────────────────────────
 // Slice
 // ────────────────────────────────────────────────
@@ -598,7 +618,13 @@ const schemeSlice = createSlice({
     installmentPaymentLoading: false,
     installmentPaymentSuccess: null,
     installmentPaymentError: null,
-    lastPaymentMessage: null,     // ← helps UI know about "Scheme completed"
+    lastPaymentMessage: null,  
+    
+    //     // Update Scheme
+    updateSchemeLoading: false,
+    updateSchemeError: null,
+    updateSchemeSuccess: null,
+    // ← helps UI know about "Scheme completed"
   },
 
   reducers: {
@@ -738,7 +764,20 @@ const schemeSlice = createSlice({
       .addCase(paySchemeInstallment.rejected, (state, action) => {
         state.installmentPaymentLoading = false;
         state.installmentPaymentError = action.payload;
-      });
+      })
+            .addCase(updateSchemeDetails.pending, (state) => {
+        state.updateSchemeLoading = true;
+        state.updateSchemeError = null;
+        state.updateSchemeSuccess = null;
+      })
+      .addCase(updateSchemeDetails.fulfilled, (state, action) => {
+        state.updateSchemeLoading = false;
+        state.updateSchemeSuccess = action.payload;
+      })
+      .addCase(updateSchemeDetails.rejected, (state, action) => {
+        state.updateSchemeLoading = false;
+        state.updateSchemeError = action.payload;
+      })
   },
 });
 
