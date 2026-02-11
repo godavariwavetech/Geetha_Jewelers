@@ -849,6 +849,12 @@ const schemeId = route.params?.id;
               </Text>
             </View>
             <View style={styles.infoItem}>
+              <Text style={styles.infoLabel}>Locked Gold</Text>
+              <Text style={styles.infoValue}>
+                ₹{Number(schemeDetails.total_locked_gold || 0).toLocaleString('en-IN')}
+              </Text>
+            </View>
+            <View style={styles.infoItem}>
               <Text style={styles.infoLabel}>Phone</Text>
               <Text style={styles.infoValue}>{schemeDetails.phone_number || '—'}</Text>
             </View>

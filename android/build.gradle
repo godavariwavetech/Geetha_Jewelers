@@ -10,7 +10,18 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+         maven {
+            url "https://notifee.app/android/maven"
+        }
     }
+
+    allprojects {
+	repositories {
+		maven {
+                   url "$rootDir/../node_modules/@notifee/react-native/android/libs"
+               }
+	}
+}
     dependencies {
         classpath("com.android.tools.build:gradle")
         classpath("com.facebook.react:react-native-gradle-plugin")

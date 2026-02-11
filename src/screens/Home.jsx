@@ -952,7 +952,7 @@ import {
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useSharedValue } from "react-native-reanimated";
 import LinearGradient from "react-native-linear-gradient";
 import { DrawerActions } from "@react-navigation/native";
@@ -964,7 +964,7 @@ import {
   fetchBanners,
   fetchHomeSections,
 } from "../redux/slices/categorySlice";
-
+import {postPlayerId} from '../redux/slices/authSlice'
 // Shimmer Placeholder
 import { createShimmerPlaceholder } from "react-native-shimmer-placeholder";
 const ShimmerPlaceHolder = createShimmerPlaceholder(LinearGradient);
@@ -993,7 +993,7 @@ const HomeScreen = () => {
     homeSections = [],
     homeSectionsLoading,
   } = useSelector((state) => state.category);
- const { customerId, addressList = [] } = useSelector((state) => state.Auth || {});
+ const { customerId, addressList = [], playerId } = useSelector((state) => state.Auth || {});
   // Find dynamic sections
   const categorySection = homeSections.find((s) => s.section_type === "Category");
   const diamondSection = homeSections.find((s) => s.section_type === "Diamond");
@@ -1001,7 +1001,29 @@ const HomeScreen = () => {
 
   // TODO: Replace with actual logged-in user ID from auth
   const userId = 1;
+// useEffect(() => {
+//     const unsubscribe = navigation.addListener('focus', () => {
+//       dispatch(postPlayerId({
+//         userId: customerId,
+//         playerId: playerId
+//       }));
+//     });
 
+//     return unsubscribe;
+//   }, [dispatch, navigation]);
+
+useFocusEffect(
+    useCallback(() => {
+      // This runs every time the screen comes into focus (e.g., opened or navigated back to)
+      if (customerId && playerId) { // ← Optional: Guard against undefined values to avoid unnecessary API calls
+        dispatch(postPlayerId({
+          userId: customerId,
+          playerId: playerId,
+        }));
+        console.log("🔥 postPlayerId dispatched on focus:", { userId: customerId, playerId }); // ← Optional: For debugging
+      }
+    }, [dispatch, customerId, playerId]) // ← Include dependencies to recreate callback if they change
+  );
   useEffect(() => {
     dispatch(fetchCategories());
     dispatch(fetchBanners());
@@ -1181,15 +1203,20 @@ const handleCardNavigation = (card, sectionType) => {
         </View>
 
         {/* Search Bar */}
-        <View style={styles.searchContainer}>
-          <Ionicons name="search" size={20} color="#832729" style={{ marginRight: 8 }} />
-          <TextInput
-            placeholder="Search here your favourite Jewellery"
-            placeholderTextColor="#999"
-            style={styles.searchInput}
-          />
-          {/* <Ionicons name="filter-outline" size={20} color="#832729" style={{ marginLeft: 8 }} /> */}
-        </View>
+        <TouchableOpacity onPress={() => { navigation.navigate("SearchScreen") }}>
+  <View style={styles.searchContainer}>
+    <Ionicons name="search" size={20} color="#832729" style={{ marginRight: 8 }} />
+    <TextInput
+      placeholder="Search here your favourite Jewellery"
+      placeholderTextColor="#999"
+      style={styles.searchInput}
+      editable={false}
+      pointerEvents="none"
+    />
+    {/* <Ionicons name="filter-outline" size={20} color="#832729" style={{ marginLeft: 8 }} /> */}
+  </View>
+</TouchableOpacity>
+        
 
         {/* Top Categories Scroll */}
         <ScrollView

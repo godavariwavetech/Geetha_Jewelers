@@ -15,6 +15,7 @@ import applicationDataReducer from './slices/applicationDataSlice';
 import orderReducer from './slices/orderSlice'; 
 import serviceAvailabilityReducer from './slices/serviceAvailabilitySlice'
 import schemeReducer from './slices/schemeSlice';
+import searchReducer from './slices/searchSlice';
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
@@ -33,7 +34,9 @@ export const store = configureStore({
     applicationData: applicationDataReducer,
     order: orderReducer,
     serviceAvailability: serviceAvailabilityReducer,
-    scheme: schemeReducer
+    scheme: schemeReducer,
+    search: searchReducer,
+
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

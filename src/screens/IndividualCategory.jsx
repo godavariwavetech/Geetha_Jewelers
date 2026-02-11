@@ -4453,7 +4453,7 @@ const renderProductCard = (item) => {
       )}
 
       {/* Bottom Filter Bar */}
-      <View style={[styles.bottomFilterBar, { paddingBottom: insets.bottom + 10 }]}>
+      <View style={[styles.bottomFilterBar, { paddingBottom: insets.bottom + 20 }]}>
         <TouchableOpacity
           style={styles.bottomFilterButton}
           onPress={() => setFilterModalVisible(true)}
@@ -4564,7 +4564,7 @@ const renderProductCard = (item) => {
               </TouchableOpacity>
             ))}
 
-            <View style={styles.filterActions}>
+            <View style={[styles.filterActions,]}>
               <TouchableOpacity
                 style={styles.clearBtn}
                 onPress={() =>
@@ -4804,6 +4804,35 @@ const styles = StyleSheet.create({
     color: '#fff', 
     fontFamily: FONTS.semibold 
   },
+
+  //
+  bottomFilterBar: {
+  position: 'absolute',
+  bottom: 0, // Keep this 0 so the background color extends to the bottom
+  left: 0,
+  right: 0,
+  // height: 60, // REMOVE THIS: Fixed height prevents safe area padding from working correctly
+  backgroundColor: '#fff',
+  flexDirection: 'row',
+  alignItems: 'center', 
+  justifyContent: 'space-around',
+  borderTopWidth: 1,
+  borderTopColor: '#eee',
+  
+  // Shadow/Elevation
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: -2 },
+  shadowOpacity: 0.1,
+  shadowRadius: 4,
+  elevation: 20, // Increased to ensure it stays above system layers
+},
+bottomFilterButton: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'center',
+  paddingVertical: 15, // Provide internal height via padding instead of fixed height
+  flex: 1,
+}
 });
 
 export default IndividualCategory;

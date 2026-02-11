@@ -364,21 +364,54 @@ export const deleteUserAccount = createAsyncThunk(
   }
 );
 
+// export const postPlayerId = createAsyncThunk(
+//   'auth/postPlayerId',
+//   async ({ userId, playerId }, { rejectWithValue }) => {
+
+//     try {
+//       const payload = {
+//         user_id: userId,
+//         player_id: playerId,
+//       };
+//       console.log(payload,"to send tokennnnnnnnnnnnnnnnnn")
+//       // Uses the endpoint from your config
+//       const res = await api.post(endpoints.POST_PLAYER_ID, payload); 
+//       return res.data;
+//     } catch (err) {
+//       return rejectWithValue(err?.response?.data?.message || 'Failed to sync token');
+//     }
+//   }
+// );
 export const postPlayerId = createAsyncThunk(
   'auth/postPlayerId',
   async ({ userId, playerId }, { rejectWithValue }) => {
+    console.log('🔍 Thunk STARTED with args:', { userId, playerId }); // ← New: Confirm thunk entry
 
     try {
       const payload = {
         user_id: userId,
         player_id: playerId,
       };
-      console.log(payload,"to send tokennnnnnnnnnnnnnnnnn")
+      console.log(payload, "to send tokennnnnnnnnnnnnnnnnn"); // ← Your existing log (already firing)
+
+      console.log('📡 About to call API with endpoint:', endpoints.POST_PLAYER_ID); // ← New: Log endpoint for verification
+
       // Uses the endpoint from your config
-      const res = await api.post(endpoints.POST_PLAYER_ID, payload); 
+      const res = await api.post(endpoints.POST_PLAYER_ID, payload);
+      
+      console.log('✅ API SUCCESS - Response:', res.data); // ← New: Log full response on success
       return res.data;
     } catch (err) {
-      return rejectWithValue(err?.response?.data?.message || 'Failed to sync token');
+      console.error('❌ API ERROR - Full error object:', err); // ← New: Log entire error for details
+      console.error('❌ API ERROR - Response data (if any):', err?.response?.data); // ← New: Break down error structure
+      console.error('❌ API ERROR - Status (if any):', err?.response?.status); // ← New: HTTP status code
+
+      const errorMessage = err?.response?.data?.message || err.message || 'Failed to sync token (unknown error)';
+      console.log('💥 Rejecting with message:', errorMessage); // ← New: Log the exact rejection value
+
+      return rejectWithValue(errorMessage);
+    } finally {
+      console.log('🏁 Thunk ENDED (success or failure)'); // ← New: Always logs end of thunk
     }
   }
 );
@@ -603,5 +636,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout ,setLocation,setLocationName,setLocationId,} = authSlice.actions;
+export const { logout ,setLocation,setLocationName,setLocationId,setPlayerId} = authSlice.actions;
 export default authSlice.reducer;
