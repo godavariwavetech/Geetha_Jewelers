@@ -2777,7 +2777,7 @@ const confirmRemove = async () => {
                     ₹{Number(item.total_price).toLocaleString('en-IN')}
                   </Text>
                   <Text style={styles.itemWeight}>
-                    {item.gross_weight} g • {item.karat}K
+                    {item.weight} g • {item.karat}K
                   </Text>
                 </View>
               </View>
@@ -2956,6 +2956,7 @@ const confirmRemove = async () => {
 
                 <TextInput
                   placeholder="Email (Optional)"
+                  placeholderTextColor="#999"
                   style={styles.input}
                   value={email}
                   onChangeText={setEmail}
@@ -2964,20 +2965,22 @@ const confirmRemove = async () => {
 
                 <TextInput
                   placeholder="Address Line"
+                  placeholderTextColor="#999"
                   style={styles.input}
                   value={addressLine}
                   onChangeText={setAddressLine}
                 />
                 {errors.addressLine && <Text style={styles.errorText}>{errors.addressLine}</Text>}
 
-                <TextInput placeholder="City" style={styles.input} value={city} onChangeText={setCity} />
+                <TextInput placeholder="City" style={styles.input} placeholderTextColor="#999" value={city} onChangeText={setCity} />
                 {errors.city && <Text style={styles.errorText}>{errors.city}</Text>}
 
-                <TextInput placeholder="State" style={styles.input} value={state} onChangeText={setState} />
+                <TextInput placeholder="State" style={styles.input} value={state} placeholderTextColor="#999" onChangeText={setState} />
                 {errors.state && <Text style={styles.errorText}>{errors.state}</Text>}
 
                 <TextInput
                   placeholder="District"
+                  placeholderTextColor="#999"
                   style={styles.input}
                   value={district}
                   onChangeText={setDistrict}
@@ -2986,6 +2989,7 @@ const confirmRemove = async () => {
 
                 <TextInput
                   placeholder="Pincode"
+                  placeholderTextColor="#999"
                   style={styles.input}
                   keyboardType="numeric"
                   value={pincode}
@@ -2996,6 +3000,7 @@ const confirmRemove = async () => {
 
                 <TextInput
                   placeholder="Phone Number"
+                  placeholderTextColor="#999"
                   style={styles.input}
                   keyboardType="numeric"
                   value={phone}

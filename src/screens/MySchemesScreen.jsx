@@ -406,7 +406,7 @@ const MySchemesScreen = ({ navigation }) => {
             <Text style={styles.emptyText}>You don't have any active schemes yet</Text>
             <TouchableOpacity
               style={styles.joinButton}
-              onPress={() => navigation.navigate('GoldScheme')}
+             onPress={() => navigation.navigate('GoldScheme')}
             >
               <Text style={styles.joinButtonText}>Join a New Scheme</Text>
             </TouchableOpacity>

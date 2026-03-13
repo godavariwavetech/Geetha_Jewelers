@@ -604,6 +604,7 @@ import {
   fetchSchemeDetails,
   generateOrderId,
   paySchemeInstallment,
+  insertPaySchemeInstallment
 } from '../redux/slices/schemeSlice';
 
 // Font family constants
@@ -659,88 +660,243 @@ const schemeId = route.params?.id;
 
   const remainingInstallments = Math.max(0, totalInstallments - paidInstallments);
 
-  const handlePayNextInstallment = async () => {
-    if (!schemeDetails?.installment_amount || !schemeId) {
-      Alert.alert('Error', 'Missing required information to process payment');
-      return;
-    }
+  // const handlePayNextInstallment = async () => {
+  //   if (!schemeDetails?.installment_amount || !schemeId) {
+  //     Alert.alert('Error', 'Missing required information to process payment');
+  //     return;
+  //   }
 
-    const installmentAmount = Number(schemeDetails.installment_amount);
+  //   const installmentAmount = Number(schemeDetails.installment_amount);
 
-    Alert.alert(
-      'Confirm Payment',
-      `Pay next installment of ₹${installmentAmount.toLocaleString('en-IN')}?`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Pay Now',
-          onPress: async () => {
-            setProcessingPayment(true);
+  //   Alert.alert(
+  //     'Confirm Payment',
+  //     `Pay next installment of ₹${installmentAmount.toLocaleString('en-IN')}?`,
+  //     [
+  //       { text: 'Cancel', style: 'cancel' },
+  //       {
+  //         text: 'Pay Now',
+  //         onPress: async () => {
+  //           setProcessingPayment(true);
 
-            try {
-              const orderResponse = await dispatch(generateOrderId(installmentAmount)).unwrap();
-              const { orderId, payment_key_id } = orderResponse;
+  //           try {
+  //             const orderResponse = await dispatch(generateOrderId(installmentAmount)).unwrap();
+  //             const { orderId, payment_key_id } = orderResponse;
 
-              const options = {
-                description: 'Gold Scheme - Next Installment',
-                image: 'https://geetajewellers.co.in/logo.png',
-                currency: 'INR',
-                key: payment_key_id,
-                amount: orderId.amount,
-                name: 'Geeta Jewellers',
-                order_id: orderId.id,
-                prefill: {
-                  name: schemeDetails.name || 'Customer',
-                  email: schemeDetails.email || 'customer@geetajewellers.com',
-                  contact: schemeDetails.phone_number || '9999999999',
-                },
-                theme: { color: ACCENT_COLOR },
-                modal: {
-                  ondismiss: () => {
-                    console.log('[Razorpay] Modal dismissed by user');
-                  },
-                },
-              };
+  //             const options = {
+  //               description: 'Gold Scheme - Next Installment',
+  //               image: 'https://geetajewellers.co.in/logo.png',
+  //               currency: 'INR',
+  //               key: payment_key_id,
+  //               amount: orderId.amount,
+  //               name: 'Geeta Jewellers',
+  //               order_id: orderId.id,
+  //               prefill: {
+  //                 name: schemeDetails.name || 'Customer',
+  //                 email: schemeDetails.email || 'customer@geetajewellers.com',
+  //                 contact: schemeDetails.phone_number || '9999999999',
+  //               },
+  //               theme: { color: ACCENT_COLOR },
+  //               modal: {
+  //                 ondismiss: () => {
+  //                   console.log('[Razorpay] Modal dismissed by user');
+  //                 },
+  //               },
+  //             };
 
-              const paymentData = await RazorpayCheckout.open(options);
+  //             const paymentData = await RazorpayCheckout.open(options);
 
-              console.log('Razorpay Payment Success:', paymentData);
+  //             console.log('Razorpay Payment Success:', paymentData);
 
-              const payResult = await dispatch(
-                paySchemeInstallment({
-                  schemeId,
-                  installmentAmount,
-                  paymentId: paymentData.razorpay_payment_id,
-                })
-              ).unwrap();
+  //             const payResult = await dispatch(
+  //               paySchemeInstallment({
+  //                 schemeId,
+  //                 installmentAmount,
+  //                 paymentId: paymentData.razorpay_payment_id,
+  //               })
+  //             ).unwrap();
 
-              // Refresh scheme details after payment
-              await dispatch(fetchSchemeDetails(schemeId));
+  //             // Refresh scheme details after payment
+  //             await dispatch(fetchSchemeDetails(schemeId));
 
-              setShowSuccessModal(true);
-            } catch (error) {
-              console.error('Payment flow failed:', error);
+  //             setShowSuccessModal(true);
+  //           } catch (error) {
+  //             console.error('Payment flow failed:', error);
 
-              if (error.code === 0 || String(error.description || '').toLowerCase().includes('cancel')) {
-                return;
-              }
+  //             if (error.code === 0 || String(error.description || '').toLowerCase().includes('cancel')) {
+  //               return;
+  //             }
 
-              const errorMessage =
-                installmentPaymentError ||
-                error.description ||
-                error.message ||
-                'Payment could not be processed. Please try again.';
+  //             const errorMessage =
+  //               installmentPaymentError ||
+  //               error.description ||
+  //               error.message ||
+  //               'Payment could not be processed. Please try again.';
 
-              Alert.alert('Payment Failed', errorMessage);
-            } finally {
-              setProcessingPayment(false);
+  //             Alert.alert('Payment Failed', errorMessage);
+  //           } finally {
+  //             setProcessingPayment(false);
+  //           }
+  //         },
+  //       },
+  //     ]
+  //   );
+  // };
+
+
+// const handlePayNextInstallment = async () => {
+//   if (!schemeDetails?.installment_amount || !schemeId) {
+//     Alert.alert('Error', 'Missing required information to process payment');
+//     return;
+//   }
+
+//   const installmentAmount = Number(schemeDetails.installment_amount);
+
+//   Alert.alert(
+//     'Confirm Payment',
+//     `Pay next installment of ₹${installmentAmount.toLocaleString('en-IN')}?`,
+//     [
+//       { text: 'Cancel', style: 'cancel' },
+//       {
+//         text: 'Pay Now',
+//         onPress: async () => {
+//           setProcessingPayment(true);
+
+//           try {
+//             // 1. Generate Razorpay Order ID
+//             const orderResponse = await dispatch(generateOrderId(installmentAmount)).unwrap();
+//             const { orderId, payment_key_id } = orderResponse;
+
+//             // 2. NEW: Record the attempt in your database BEFORE opening Razorpay
+//             // Note: We use orderId.id which is the "order_SQIVyhPzvFIagV" string
+//             await dispatch(insertPaySchemeInstallment({
+//               schemeId: Number(schemeId),
+//               orderId: orderId.id, 
+//               installmentAmount: installmentAmount
+//             })).unwrap();
+
+//             // 3. Open Razorpay Checkout
+//             const options = {
+//               description: 'Gold Scheme - Next Installment',
+//               image: 'https://geetajewellers.co.in/logo.png',
+//               currency: 'INR',
+//               key: payment_key_id,
+//               amount: orderId.amount,
+//               name: 'Geeta Jewellers',
+//               order_id: orderId.id,
+//               prefill: {
+//                 name: schemeDetails.name || 'Customer',
+//                 email: schemeDetails.email || 'customer@geetajewellers.com',
+//                 contact: schemeDetails.phone_number || '9999999999',
+//               },
+//               theme: { color: ACCENT_COLOR },
+//             };
+
+//             const paymentData = await RazorpayCheckout.open(options);
+
+//             // 4. Update the record with actual Payment ID after success
+//             await dispatch(
+//               paySchemeInstallment({
+//                 schemeId,
+//                 installmentAmount,
+//                 paymentId: paymentData.razorpay_payment_id,
+//               })
+//             ).unwrap();
+
+//             await dispatch(fetchSchemeDetails(schemeId));
+//             setShowSuccessModal(true);
+
+//           } catch (error) {
+//             console.error('Payment flow failed:', error);
+//             // Handle cancel or error...
+//             if (error.code === 0 || String(error.description || '').toLowerCase().includes('cancel')) {
+//                return;
+//             }
+//             Alert.alert('Payment Failed', error.message || 'Processing failed');
+//           } finally {
+//             setProcessingPayment(false);
+//           }
+//         },
+//       },
+//     ]
+//   );
+// };
+
+const handlePayNextInstallment = async () => {
+  if (!schemeDetails?.installment_amount || !schemeId) {
+    Alert.alert('Error', 'Missing required information to process payment');
+    return;
+  }
+
+  const installmentAmount = Number(schemeDetails.installment_amount);
+
+  Alert.alert(
+    'Confirm Payment',
+    `Pay next installment of ₹${installmentAmount.toLocaleString('en-IN')}?`,
+    [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Pay Now',
+        onPress: async () => {
+          setProcessingPayment(true);
+
+          try {
+            // 1. Generate Razorpay Order ID
+            const orderResponse = await dispatch(generateOrderId(installmentAmount)).unwrap();
+            const { orderId, payment_key_id } = orderResponse;
+
+            // 2. Record the attempt in your database BEFORE opening Razorpay
+            await dispatch(insertPaySchemeInstallment({
+              schemeId: Number(schemeId),
+              orderId: orderId.id, 
+              installmentAmount: installmentAmount
+            })).unwrap();
+
+            // 3. Open Razorpay Checkout
+            const options = {
+              description: 'Gold Scheme - Next Installment',
+              image: 'https://geetajewellers.co.in/logo.png',
+              currency: 'INR',
+              key: payment_key_id,
+              amount: orderId.amount,
+              name: 'Geeta Jewellers',
+              order_id: orderId.id, // passing order_id to Razorpay UI
+              prefill: {
+                name: schemeDetails.name || 'Customer',
+                email: schemeDetails.email || 'customer@geetajewellers.com',
+                contact: schemeDetails.phone_number || '9999999999',
+              },
+              theme: { color: ACCENT_COLOR },
+            };
+
+            const paymentData = await RazorpayCheckout.open(options);
+
+            // 4. Update the record with actual Payment ID AND Order ID
+            await dispatch(
+              paySchemeInstallment({
+                schemeId,
+                installmentAmount,
+                paymentId: paymentData.razorpay_payment_id,
+                order_id: orderId.id, // <--- INCLUDED ORDER_ID KEY HERE
+              })
+            ).unwrap();
+
+            await dispatch(fetchSchemeDetails(schemeId));
+            setShowSuccessModal(true);
+
+          } catch (error) {
+            console.error('Payment flow failed:', error);
+            if (error.code === 0 || String(error.description || '').toLowerCase().includes('cancel')) {
+               return;
             }
-          },
+            Alert.alert('Payment Failed', error.message || 'Processing failed');
+          } finally {
+            setProcessingPayment(false);
+          }
         },
-      ]
-    );
-  };
-
+      },
+    ]
+  );
+};
   const handleSuccessClose = () => {
     setShowSuccessModal(false);
   };

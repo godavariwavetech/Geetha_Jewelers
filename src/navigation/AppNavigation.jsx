@@ -244,6 +244,7 @@ const AppNavigation = () => {
         <Stack.Screen name="SchemeApplicationScreen" component={SchemeApplicationScreen} />
         <Stack.Screen name="MySchemesScreen" component={MySchemesScreen} />
         <Stack.Screen name="IndividualSchemeDetails" component={IndividualSchemeDetails} />
+        <Stack.Screen name="GoldScheme" component={GoldScheme} />
       </Stack.Navigator>
     </NavigationContainer>
   );

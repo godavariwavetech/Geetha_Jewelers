@@ -4408,9 +4408,9 @@ const renderProductCard = (item) => {
           <TouchableOpacity onPress={() => navigation.navigate('Cart')}>
             <Ionicons name="cart-outline" size={22} color="#832729" />
           </TouchableOpacity>
-          <TouchableOpacity>
+          {/* <TouchableOpacity>
             <Ionicons name="notifications-outline" size={22} color="#832729" />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       </View>
 

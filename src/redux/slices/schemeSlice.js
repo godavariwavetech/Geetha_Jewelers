@@ -524,12 +524,13 @@ export const fetchSchemeDetails = createAsyncThunk(
 
 export const paySchemeInstallment = createAsyncThunk(
   'scheme/paySchemeInstallment',
-  async ({ schemeId, installmentAmount, paymentId }, { fulfillWithValue, rejectWithValue }) => {
+  async ({ schemeId, installmentAmount, paymentId,order_id }, { fulfillWithValue, rejectWithValue }) => {
     try {
       const payload = {
         id: Number(schemeId),
         installment_amount: Number(installmentAmount),
         payment_id: paymentId.trim(),
+        order_id: order_id,
       };
 
       const response = await api.post(endpoints.PAY_SCHEME_INSTALLMENT, payload);
@@ -570,6 +571,27 @@ export const updateSchemeDetails = createAsyncThunk(
       }
     } catch (err) {
       console.error('updateSchemeDetails error:', err);
+      return rejectWithValue(err.response?.data?.message || err.message);
+    }
+  }
+);
+
+export const insertPaySchemeInstallment = createAsyncThunk(
+  'scheme/insertPaySchemeInstallment',
+  async ({ schemeId, orderId, installmentAmount }, { rejectWithValue }) => {
+    try {
+      const payload = {
+        id: schemeId,
+        order_id: orderId,
+        installment_amount: installmentAmount,
+      };
+      const res = await api.post(endpoints.INSERT_PAY_SCHEME_INSTALLMENT, payload);
+      
+      if (res.data?.status === 200) {
+        return res.data;
+      }
+      return rejectWithValue(res.data?.message || 'Failed to record initial payment record');
+    } catch (err) {
       return rejectWithValue(err.response?.data?.message || err.message);
     }
   }
@@ -778,6 +800,16 @@ const schemeSlice = createSlice({
         state.updateSchemeLoading = false;
         state.updateSchemeError = action.payload;
       })
+      .addCase(insertPaySchemeInstallment.pending, (state) => {
+  state.paymentLoading = true;
+})
+.addCase(insertPaySchemeInstallment.fulfilled, (state) => {
+  state.paymentLoading = false;
+})
+.addCase(insertPaySchemeInstallment.rejected, (state, action) => {
+  state.paymentLoading = false;
+  state.paymentError = action.payload;
+})
   },
 });
 

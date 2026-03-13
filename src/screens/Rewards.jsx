@@ -503,7 +503,7 @@ const DiamondEarringCatalogueScreen = () => {
         styles.container,
         {
           paddingTop: insets.top + 15,
-          paddingBottom: insets.bottom,
+          paddingBottom: insets.bottom+100,
         },
       ]}
     >

@@ -480,7 +480,7 @@ const renderItem = ({ item }) => (
         </View>
 
         <View style={styles.cartBtn}>
-          <Text style={styles.cartBtnText}>View similar</Text>
+          <Text style={styles.cartBtnText}>View Details</Text>
         </View>
       </View>
     </View>

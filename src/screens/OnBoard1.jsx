@@ -237,7 +237,7 @@ const OnBoard1 = ({ navigation }) => {
   const handleNext = () => {
     if (userExists) {
       // If user exists -> Go to Home (Drawer)
-      navigation.navigate('DrawerNavigation');
+      navigation.replace('DrawerNavigation');
     } else {
       // If user does NOT exist -> Continue Onboarding
       navigation.navigate('OnBoard2');

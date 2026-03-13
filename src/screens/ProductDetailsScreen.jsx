@@ -1343,6 +1343,10 @@ const ProductDetailsScreen = () => {
   const [cartErrorMessage, setCartErrorMessage] = useState('');
   const [activeTab, setActiveTab] = useState('details'); // ← New: Tab state
 
+
+const [selectedWeight, setSelectedWeight] = useState(null);
+const [selectedWeightData, setSelectedWeightData] = useState(null);
+
   // Cleanup on unmount
   useEffect(() => {
     return () => {
@@ -1391,6 +1395,12 @@ const ProductDetailsScreen = () => {
       setLocalProductDetails(productDetails);
       setSelectedImageIndex(0);
       setExpandedSection(null);
+
+ if (productDetails.weight_variants?.length > 0) {
+      setSelectedWeight(productDetails.weight_variants[0].weight);
+      setSelectedWeightData(productDetails.weight_variants[0]);
+    }
+
     }
   }, [productDetails, product_id]);
 
@@ -1489,11 +1499,22 @@ const ProductDetailsScreen = () => {
     }
 
     try {
+      // await dispatch(addToCart({
+      //   user_id: currentUserId,
+      //   product_id: parseInt(product_id),
+      //   size_id,
+      // })).unwrap();
+      if (!selectedWeightData) {
+  Alert.alert('Select Weight', 'Please select a weight before adding to cart.');
+  return;
+}
       await dispatch(addToCart({
-        user_id: currentUserId,
-        product_id: parseInt(product_id),
-        size_id,
-      })).unwrap();
+  user_id: currentUserId,
+  product_id: parseInt(product_id),
+  size_id,
+  weight_id: selectedWeightData?.id || 0,
+  weight: selectedWeightData?.weight || 0,
+})).unwrap();
 
       setCartErrorMessage('Item added to cart successfully!');
       setCartErrorModalVisible(true);
@@ -1591,9 +1612,9 @@ const ProductDetailsScreen = () => {
           >
             <Text style={styles.viewSimilarBtnText}>View Details</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.cartBtn}>
+          {/* <TouchableOpacity style={styles.cartBtn}>
             <Ionicons name="cart-outline" size={16} color="#832729" />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       </View>
          </TouchableOpacity>
@@ -1657,12 +1678,13 @@ const ProductDetailsScreen = () => {
               {localProductDetails.has_diamond === 1 ? (
                 <>
                   <Ionicons name="diamond" size={16} color="#FFD700" />
-                  <Text style={styles.infoLabel}>{localProductDetails.diamond_clarity} ct</Text>
+                  <Text style={styles.infoLabel}>{localProductDetails.diamond_weight} ct</Text>
                 </>
               ) : (
                 <>
                   <Ionicons name="scale-outline" size={16} color="#FFD700" />
-                  <Text style={styles.infoLabel}>{localProductDetails.gross_weight} g</Text>
+                  <Text style={styles.infoLabel}>{selectedWeightData?.weight} g</Text>
+                 
                 </>
               )}
             </View>
@@ -1694,6 +1716,38 @@ const ProductDetailsScreen = () => {
               </View>
             </View>
           )}
+
+
+          {localProductDetails.weight_variants?.length > 0 && (
+  <View style={styles.sizeSection}>
+    <Text style={styles.sizeSectionTitle}>Select Weight</Text>
+
+    <View style={styles.sizeButtonsRow}>
+      {localProductDetails.weight_variants.map((item) => (
+        <TouchableOpacity
+          key={item.id}
+          style={[
+            styles.sizeButton,
+            selectedWeight === item.weight && styles.selectedSizeButton,
+          ]}
+          onPress={() => {
+            setSelectedWeight(item.weight);
+            setSelectedWeightData(item);
+          }}
+        >
+          <Text
+            style={[
+              styles.sizeButtonText,
+              selectedWeight === item.weight && styles.selectedSizeButtonText,
+            ]}
+          >
+            {item.weight} g
+          </Text>
+        </TouchableOpacity>
+      ))}
+    </View>
+  </View>
+)}
 
           {/* TABS: Product Details | Price Breakup */}
           <View style={styles.tabsContainer}>
@@ -1861,24 +1915,7 @@ const ProductDetailsScreen = () => {
               )}
             </>
           ) : (
-            /* PRICE BREAKUP SECTION */
-            // <View style={styles.priceBreakupContainer}>
-            //   <Text style={styles.priceBreakupTitle}>Price Breakup</Text>
-
-            //   <View style={styles.breakupRow}>
-            //     <Text style={styles.breakupLabel}>Gold Rate (per gram)</Text>
-            //     <Text style={styles.breakupValue}>₹{parseFloat(localProductDetails.metal_rate || 0).toLocaleString()}</Text>
-            //   </View>
-
-            //   <View style={styles.breakupRow}>
-            //     <Text style={styles.breakupLabel}>Gold Weight</Text>
-            //     <Text style={styles.breakupValue}>{localProductDetails.gross_weight} g</Text>
-            //   </View>
-
-            //   <View style={styles.breakupRow}>
-            //     <Text style={styles.breakupLabel}>Gold Value</Text>
-            //     <Text style={styles.breakupValue}>₹{Math.round(localProductDetails.metal_value || 0).toLocaleString()}</Text>
-            //   </View>
+           
 <View style={styles.priceBreakupContainer}>
   <Text style={styles.priceBreakupTitle}>Price Breakup</Text>
 
@@ -1895,11 +1932,11 @@ const ProductDetailsScreen = () => {
   <View style={styles.breakupRow}>
     <View style={{ flex: 1 }}>
       <Text style={styles.breakupLabel}>Weight</Text>
-      <Text style={styles.breakupSubValue}>{localProductDetails.gross_weight} g</Text>
+      <Text style={styles.breakupSubValue}>{selectedWeightData?.weight} g</Text>
     </View>
     <View style={{ flex: 1, alignItems: 'flex-end' }}>
       <Text style={styles.breakupLabel}>Metal Value</Text>
-      <Text style={styles.breakupSubValue}>₹{(localProductDetails.metal_value || 0).toLocaleString()}</Text>
+      <Text style={styles.breakupSubValue}>₹{(selectedWeightData?.metal_value || 0).toLocaleString()}</Text>
     </View>
   </View>
              {/* Diamond Section */}
@@ -1915,7 +1952,7 @@ const ProductDetailsScreen = () => {
         </View>
         <View style={{ flex: 1, alignItems: 'flex-end' }}>
           <Text style={styles.breakupLabel}>Diamond Value</Text>
-          <Text style={styles.breakupSubValue}>₹{(localProductDetails.diamond_value || 0).toLocaleString()}</Text>
+          <Text style={styles.breakupSubValue}>₹{(selectedWeightData?.diamond_value || 0).toLocaleString()}</Text>
         </View>
       </View>
     </>
@@ -1949,33 +1986,33 @@ const ProductDetailsScreen = () => {
 
   <View style={styles.breakupRow}>
     <Text style={styles.breakupLabel}>Making Charges</Text>
-    <Text style={styles.breakupValue}>₹{parseInt(localProductDetails.makingcharges || 0).toLocaleString()}</Text>
+    <Text style={styles.breakupValue}>₹{(selectedWeightData?.makingcharges || 0).toLocaleString()}</Text>
   </View>
 
   <View style={styles.breakupRow}>
     <Text style={styles.breakupLabel}>Sub Total</Text>
-    <Text style={styles.breakupValue}>₹{(localProductDetails.sub_total || 0).toLocaleString()}</Text>
+    <Text style={styles.breakupValue}>₹{(selectedWeightData?.sub_total || 0).toLocaleString()}</Text>
   </View>
 
   <View style={styles.breakupRow}>
-    <Text style={styles.breakupLabel}>GST ({localProductDetails.gst_percentage || 3}%)</Text>
-    <Text style={styles.breakupValue}>₹{(localProductDetails.gst_amount || 0).toLocaleString()}</Text>
+    <Text style={styles.breakupLabel}>GST ({selectedWeightData?.gst_percentage || 3}%)</Text>
+    <Text style={styles.breakupValue}>₹{(selectedWeightData?.gst_amount || 0).toLocaleString()}</Text>
   </View>
 
   <View style={styles.breakupTotalRow}>
     <Text style={styles.breakupTotalLabel}>Grand Total</Text>
-    <Text style={styles.breakupTotalValue}>₹{localProductDetails.total_price?.toLocaleString()}</Text>
+    <Text style={styles.breakupTotalValue}>₹{selectedWeightData?.total_price?.toLocaleString()}</Text>
   </View>
 </View>
           )}
 
           {/* Savings Banner */}
-          <TouchableOpacity style={styles.savingsBanner}>
+          {/* <TouchableOpacity style={styles.savingsBanner}>
             <Image source={require('../assets/diamondbanner.png')} style={styles.savingsBannerImage} />
             <TouchableOpacity style={styles.exploreBadge}>
               <Ionicons name="arrow-forward-circle" size={28} color="#fff" />
             </TouchableOpacity>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           <Text style={styles.sectionTitle}>You may also like</Text>
           {recommendedProductsLoading ? (

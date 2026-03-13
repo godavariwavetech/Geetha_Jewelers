@@ -942,7 +942,7 @@ import {
   StyleSheet,
   Dimensions,
   SafeAreaView,
-  StatusBar,
+  StatusBar,RefreshControl,
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Carousel from "react-native-reanimated-carousel";
@@ -1011,7 +1011,26 @@ const HomeScreen = () => {
 
 //     return unsubscribe;
 //   }, [dispatch, navigation]);
+const [refreshing, setRefreshing] = React.useState(false);
 
+
+const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    
+    try {
+      // Dispatch all actions and wait for them to finish
+      // We use Promise.all to run them in parallel for better performance
+      await Promise.all([
+        dispatch(fetchCategories()).unwrap(),
+        dispatch(fetchBanners()).unwrap(),
+        dispatch(fetchHomeSections()).unwrap(),
+      ]);
+    } catch (error) {
+      console.error("Refresh failed:", error);
+    } finally {
+      setRefreshing(false);
+    }
+  }, [dispatch]);
 useFocusEffect(
     useCallback(() => {
       // This runs every time the screen comes into focus (e.g., opened or navigated back to)
@@ -1179,6 +1198,15 @@ const handleCardNavigation = (card, sectionType) => {
         style={[styles.container, { paddingTop: insets.top }]}
         contentContainerStyle={{ paddingBottom: insets.bottom + 100 }}
         showsVerticalScrollIndicator={false}
+
+        refreshControl={
+          <RefreshControl 
+            refreshing={refreshing} 
+            onRefresh={onRefresh} 
+            colors={["#832729"]} // Android spinner color
+            tintColor="#832729"   // iOS spinner color
+          />
+        }
       >
         {/* Header */}
         <View style={styles.header}>

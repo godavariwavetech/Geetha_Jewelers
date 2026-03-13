@@ -13,6 +13,7 @@ export const requestOtp = createAsyncThunk(
         customer_mobile_number: phoneNumber,
       };
       const res = await api.post(endpoints.REQUEST_LOGIN_OPT, payload);
+      console.log(res,"after sending the phone number ")
       if (res.data) {
         return fulfillWithValue(res.data);
       } else {
@@ -74,7 +75,7 @@ export const getUserProfileDetails = createAsyncThunk(
       };
       console.log('getUserProfileDetails payload:', payload);
       const res = await api.post(endpoints.USER_PROFILE_DETAILS, payload);
-      console.log('getUserProfileDetails response:', res.data);
+      console.log('getUserProfileDetails response:++++++++++++++++++++++++++++++++++', res.data);
 
       if (res.data?.data?.length > 0) {
         return fulfillWithValue(res.data.data[0]);

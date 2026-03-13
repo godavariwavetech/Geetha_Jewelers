@@ -1556,7 +1556,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { launchImageLibrary } from 'react-native-image-picker';
-
+import { fetchUserSchemes } from '../redux/slices/schemeSlice';
 import { 
   addSchemeHolderDetails, 
   fetchDailyMetalRates, 
@@ -1578,7 +1578,7 @@ const GoldScheme = () => {
   const dispatch = useDispatch();
 
   const customerId = useSelector((state) => state.Auth.customerId);
-  
+  const { userSchemes, schemesLoading } = useSelector((state) => state.scheme);
   const { 
     isRegistered,
     checkLoading,
@@ -1603,7 +1603,8 @@ const GoldScheme = () => {
     if (customerId) {
       dispatch(checkSchemeHolder(customerId));
       dispatch(fetchDailyMetalRates());
-      dispatch(fetchSchemeBanners()); // Fetch banners
+      dispatch(fetchSchemeBanners()); 
+         dispatch(fetchUserSchemes(customerId));// Fetch banners
     }
   }, [dispatch, customerId]);
 
@@ -1697,87 +1698,264 @@ const GoldScheme = () => {
     </ScrollView>
   );
 
-  const renderGoldSchemeUI = () => (
-    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 20 }]}>
-      <View style={styles.titleSection}>
-        {/* <Text style={styles.mainTitle}>Metal Rates in Rajahmundry</Text> */}
-        <Text style={styles.dateText}>
-          {new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
-        </Text>
-      </View>
+//   const renderGoldSchemeUI = () => (
+// <ScrollView
+//   showsVerticalScrollIndicator={false}
+//   contentContainerStyle={[
+//     styles.scrollContent,
+//     { paddingBottom: insets.bottom + 20, }
+//   ]}
+// >      <View style={styles.titleSection}>
+//         {/* <Text style={styles.mainTitle}>Metal Rates in Rajahmundry</Text> */}
+//         <Text style={styles.dateText}>
+//           {new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+//         </Text>
+//       </View>
 
-      <View style={styles.tabsContainer}>
-        <View style={styles.tabsWrapper}>
-          {tabs.map((tab, index) => (
-            <TouchableOpacity
-              key={index}
-              style={[
-                styles.tabButton,
-                selectedTab === tab && [styles.selectedTabButton, { backgroundColor: ACCENT_COLOR, borderColor: ACCENT_COLOR }]
-              ]}
-              onPress={() => setSelectedTab(tab)}
-            >
-              <Text style={[styles.tabText, selectedTab === tab && styles.selectedTabText]}>{tab}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-        <View style={styles.coinIconContainer}>
-          <Image source={require('../assets/coins.png')} style={styles.coinIcon} resizeMode="contain" />
-        </View>
-      </View>
+//       <View style={styles.tabsContainer}>
+//         <View style={styles.tabsWrapper}>
+//           {tabs.map((tab, index) => (
+//             <TouchableOpacity
+//               key={index}
+//               style={[
+//                 styles.tabButton,
+//                 selectedTab === tab && [styles.selectedTabButton, { backgroundColor: ACCENT_COLOR, borderColor: ACCENT_COLOR }]
+//               ]}
+//               onPress={() => setSelectedTab(tab)}
+//             >
+//               <Text style={[styles.tabText, selectedTab === tab && styles.selectedTabText]}>{tab}</Text>
+//             </TouchableOpacity>
+//           ))}
+//         </View>
+//         <View style={styles.coinIconContainer}>
+//           <Image source={require('../assets/coins.png')} style={styles.coinIcon} resizeMode="contain" />
+//         </View>
+//       </View>
 
-      <View style={styles.ratesContainer}>
-        {metalRatesLoading ? (
-          <ActivityIndicator size="small" color={ACCENT_COLOR} style={{ marginVertical: 20 }} />
-        ) : displayRates.length > 0 ? (
-          displayRates.map((rate, index) => (
-            <View key={index} style={styles.rateCard}>
-              <View style={{ height: 20, justifyContent: 'center' }}>
-                <Text style={styles.rateType} numberOfLines={1} adjustsFontSizeToFit>{rate.type}</Text>
-              </View>
-              <Text style={styles.ratePrice}>₹{rate.price?.toLocaleString('en-IN')}</Text>
-              <View style={styles.changeContainer}>
-                <Text style={[styles.changeText, { color: '#0D5C4A' }]}>Live</Text>
-                <Ionicons name="pulse" size={12} color="#0D5C4A" />
-              </View>
+//       <View style={styles.ratesContainer}>
+//         {metalRatesLoading ? (
+//           <ActivityIndicator size="small" color={ACCENT_COLOR} style={{ marginVertical: 20 }} />
+//         ) : displayRates.length > 0 ? (
+//           displayRates.map((rate, index) => (
+//             <View key={index} style={styles.rateCard}>
+//               <View style={{ height: 20, justifyContent: 'center' }}>
+//                 <Text style={styles.rateType} numberOfLines={1} adjustsFontSizeToFit>{rate.type}</Text>
+//               </View>
+//               <Text style={styles.ratePrice}>₹{rate.price?.toLocaleString('en-IN')}</Text>
+//               <View style={styles.changeContainer}>
+//                 <Text style={[styles.changeText, { color: '#0D5C4A' }]}>Live</Text>
+//                 <Ionicons name="pulse" size={12} color="#0D5C4A" />
+//               </View>
+//             </View>
+//           ))
+//         ) : (
+//           <Text style={{ textAlign: 'center', color: '#999', marginTop: 20 }}>
+//             {metalRatesError || 'Rates unavailable'}
+//           </Text>
+//         )}
+//       </View>
+
+//       {/* Dynamic Banners */}
+//       <View style={styles.bannersContainer}>
+//         {bannersLoading ? (
+//            <ActivityIndicator size="small" color={ACCENT_COLOR} />
+//         ) : schemeBanners && schemeBanners.length > 0 ? (
+//           schemeBanners.map((banner) => (
+//             <TouchableOpacity 
+//               key={banner.id} 
+//               activeOpacity={0.9} 
+//               onPress={() => handleBannerPress(banner.banner_image)} 
+//               style={styles.bannerTouchable}
+//             >
+//               <ImageBackground 
+//                 source={{ uri: banner.banner_image }} 
+//                 style={styles.promoBanner} 
+//                 resizeMode="cover" 
+//                 imageStyle={styles.bannerImageStyle} 
+//               />
+//             </TouchableOpacity>
+//           ))
+//         ) : (
+//            <View style={[styles.bannerTouchable, {height: BANNER_HEIGHT, backgroundColor:'#eee', justifyContent:'center', alignItems:'center'}]}>
+//               <Text style={{color:'#999'}}>No Active Schemes</Text>
+//            </View>
+//         )}
+//       </View>
+
+//       {userSchemes && userSchemes.length > 0 && (
+//   <View style={{ paddingHorizontal: 16, marginTop: 20 }}>
+    
+//     <View style={{ 
+//       flexDirection: 'row', 
+//       justifyContent: 'space-between',
+//       alignItems: 'center',
+//       marginBottom: 12 
+//     }}>
+//       <Text style={{ fontSize: 18, fontWeight: '700', color: '#000' }}>
+//         My Schemes
+//       </Text>
+
+//       <TouchableOpacity
+//         onPress={() => navigation.navigate('MySchemesScreen')}
+//       >
+//         <Text style={{ color: ACCENT_COLOR, fontWeight: '600' }}>
+//           View All
+//         </Text>
+//       </TouchableOpacity>
+//     </View>
+
+//     {userSchemes.slice(0,2).map((item) => (
+//       <TouchableOpacity
+//         key={item.id}
+//         style={{
+//           backgroundColor: '#fff',
+//           borderRadius: 12,
+//           padding: 16,
+//           marginBottom: 12,
+//           elevation: 3
+//         }}
+//         onPress={() =>
+//           navigation.navigate('IndividualSchemeDetails', { id: item.id })
+//         }
+//       >
+//         <Text style={{ fontSize: 16, fontWeight: '700', marginBottom: 4 }}>
+//           {item.name}
+//         </Text>
+
+//         <Text style={{ fontSize: 13, color: '#666', marginBottom: 10 }}>
+//           Scheme ID: {item.scheme_id}
+//         </Text>
+
+//         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          
+//           <View>
+//             <Text style={{ fontSize: 12, color: '#777' }}>Tenure</Text>
+//             <Text style={{ fontWeight: '600' }}>{item.tenure} months</Text>
+//           </View>
+
+//           <View>
+//             <Text style={{ fontSize: 12, color: '#777' }}>Monthly</Text>
+//             <Text style={{ fontWeight: '600' }}>
+//               ₹{Number(item.installment_amount).toLocaleString()}
+//             </Text>
+//           </View>
+
+//           <View>
+//             <Text style={{ fontSize: 12, color: '#777' }}>Status</Text>
+//             <Text style={{
+//               color: item.profile_status === 2 ? '#2e7d32' : '#e65100',
+//               fontWeight: '600'
+//             }}>
+//               {item.profile_status === 2 ? 'Active' : 'Under Review'}
+//             </Text>
+//           </View>
+
+//         </View>
+//       </TouchableOpacity>
+//     ))}
+
+//   </View>
+// )}
+//     </ScrollView>
+//   );
+const renderGoldSchemeUI = () => (
+  <ScrollView
+    showsVerticalScrollIndicator={false}
+    // flexGrow: 1 is the secret sauce for making the container expandable
+    contentContainerStyle={[
+      styles.scrollContent,
+      { paddingBottom: insets.bottom + 150, flexGrow: 1 } 
+    ]}
+  >
+    {/* 1. Title Section */}
+    <View style={styles.titleSection}>
+      <Text style={styles.dateText}>
+        {new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+      </Text>
+    </View>
+
+    {/* 2. Tabs */}
+    <View style={styles.tabsContainer}>
+      <View style={styles.tabsWrapper}>
+        {tabs.map((tab, index) => (
+          <TouchableOpacity
+            key={index}
+            style={[
+              styles.tabButton,
+              selectedTab === tab && [styles.selectedTabButton, { backgroundColor: ACCENT_COLOR, borderColor: ACCENT_COLOR }]
+            ]}
+            onPress={() => setSelectedTab(tab)}
+          >
+            <Text style={[styles.tabText, selectedTab === tab && styles.selectedTabText]}>{tab}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+      <View style={styles.coinIconContainer}>
+        <Image source={require('../assets/coins.png')} style={styles.coinIcon} resizeMode="contain" />
+      </View>
+    </View>
+
+    {/* 3. Rates Grid */}
+    <View style={styles.ratesContainer}>
+      {metalRatesLoading ? (
+        <ActivityIndicator size="small" color={ACCENT_COLOR} style={{ marginVertical: 20, width: '100%' }} />
+      ) : displayRates.length > 0 ? (
+        displayRates.map((rate, index) => (
+          <View key={index} style={styles.rateCard}>
+            <View style={{ height: 20, justifyContent: 'center' }}>
+              <Text style={styles.rateType} numberOfLines={1} adjustsFontSizeToFit>{rate.type}</Text>
             </View>
-          ))
-        ) : (
-          <Text style={{ textAlign: 'center', color: '#999', marginTop: 20 }}>
-            {metalRatesError || 'Rates unavailable'}
-          </Text>
-        )}
-      </View>
+            <Text style={styles.ratePrice}>₹{rate.price?.toLocaleString('en-IN')}</Text>
+            <View style={styles.changeContainer}>
+              <Text style={[styles.changeText, { color: '#0D5C4A' }]}>Live</Text>
+              <Ionicons name="pulse" size={12} color="#0D5C4A" />
+            </View>
+          </View>
+        ))
+      ) : (
+        <Text style={{ textAlign: 'center', color: '#999', marginTop: 20, width: '100%' }}>
+          {metalRatesError || 'Rates unavailable'}
+        </Text>
+      )}
+    </View>
 
-      {/* Dynamic Banners */}
-      <View style={styles.bannersContainer}>
-        {bannersLoading ? (
-           <ActivityIndicator size="small" color={ACCENT_COLOR} />
-        ) : schemeBanners && schemeBanners.length > 0 ? (
-          schemeBanners.map((banner) => (
-            <TouchableOpacity 
-              key={banner.id} 
-              activeOpacity={0.9} 
-              onPress={() => handleBannerPress(banner.banner_image)} 
-              style={styles.bannerTouchable}
-            >
-              <ImageBackground 
-                source={{ uri: banner.banner_image }} 
-                style={styles.promoBanner} 
-                resizeMode="cover" 
-                imageStyle={styles.bannerImageStyle} 
-              />
-            </TouchableOpacity>
-          ))
-        ) : (
-           <View style={[styles.bannerTouchable, {height: BANNER_HEIGHT, backgroundColor:'#eee', justifyContent:'center', alignItems:'center'}]}>
-              <Text style={{color:'#999'}}>No Active Schemes</Text>
-           </View>
-        )}
-      </View>
-    </ScrollView>
-  );
+    {/* 4. Dynamic Banners */}
+    <View style={styles.bannersContainer}>
+      {bannersLoading ? (
+         <ActivityIndicator size="small" color={ACCENT_COLOR} />
+      ) : schemeBanners?.length > 0 ? (
+        schemeBanners.map((banner) => (
+          <TouchableOpacity 
+            key={banner.id} 
+            activeOpacity={0.9} 
+            onPress={() => handleBannerPress(banner.banner_image)} 
+            style={styles.bannerTouchable}
+          >
+            <ImageBackground 
+              source={{ uri: banner.banner_image }} 
+              style={styles.promoBanner} 
+              resizeMode="cover" 
+              imageStyle={styles.bannerImageStyle} 
+            />
+          </TouchableOpacity>
+        ))
+      ) : null}
+    </View>
 
+    {/* 5. My Schemes Section - Now showing ALL data */}
+    {userSchemes && userSchemes.length > 0 && (
+      <View style={{ paddingHorizontal: 16, marginTop: 24 }}>
+        <View style={styles.schemeHeader}>
+          <Text style={styles.schemeHeaderTitle}>My Schemes</Text>
+          {/* View All removed as requested */}
+        </View>
+
+        {/* Removed .slice(0, 2) to render every item in the array */}
+        {userSchemes.map((item) => renderSchemeItem(item))}
+      </View>
+    )}
+  </ScrollView>
+);
   // ... (checkLoading check and return)
   if (checkLoading) {
     return (
@@ -1790,10 +1968,54 @@ const GoldScheme = () => {
     );
   }
 
-  return (
-    <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
+
+  const renderSchemeItem = (item) => (
+  <TouchableOpacity
+    key={item.id}
+    style={styles.schemeCard}
+    activeOpacity={0.8}
+    onPress={() => navigation.navigate('IndividualSchemeDetails', { id: item.id })}
+  >
+    <View style={styles.schemeCardContent}>
+      <Text style={styles.schemeName}>{item.name}</Text>
+      <Text style={styles.schemeId}>Scheme ID: {item.scheme_id}</Text>
+
+      <View style={styles.schemeRow}>
+        <View style={styles.infoBox}>
+          <Text style={styles.label}>Tenure</Text>
+          <Text style={styles.value}>{item.tenure} months</Text>
+        </View>
+
+        <View style={styles.infoBox}>
+          <Text style={styles.label}>Monthly</Text>
+          <Text style={styles.value}>
+            ₹{Number(item.installment_amount).toLocaleString()}
+          </Text>
+        </View>
+
+        <View style={styles.infoBox}>
+          <Text style={styles.label}>Status</Text>
+          <Text
+            style={[
+              styles.status,
+              item.profile_status === 2
+                ? styles.statusApproved
+                : styles.statusPending,
+            ]}
+          >
+            {item.profile_status === 2 ? 'Active' : 'Under Review'}
+          </Text>
+        </View>
+      </View>
+    </View>
+  </TouchableOpacity>
+);
+return (
+    <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
-      <View style={styles.header}>
+      
+      {/* Header stays fixed at top */}
+      <View style={[styles.header,{paddingTop:insets.top+5}]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color="#000" />
         </TouchableOpacity>
@@ -1802,7 +2024,11 @@ const GoldScheme = () => {
         </Text>
         <View style={styles.headerPlaceholder} />
       </View>
-      {isRegistered ? renderGoldSchemeUI() : renderRegistrationForm()}
+
+      {/* The content below the header scrolls */}
+      <View style={{ flex: 1 }}>
+        {isRegistered ? renderGoldSchemeUI() : renderRegistrationForm()}
+      </View>
     </SafeAreaView>
   );
 };
@@ -1850,6 +2076,49 @@ const styles = StyleSheet.create({
   bannerTouchable: { width: '100%', borderRadius: 16, overflow: 'hidden', backgroundColor: '#fff', elevation: 3, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4 },
   promoBanner: { height: BANNER_HEIGHT, width: '100%', justifyContent: 'center', alignItems: 'center' },
   bannerImageStyle: { borderRadius: 16 },
+  mySchemesContainer: {
+  marginTop: 20,
+  paddingHorizontal: 16,
+},
+
+schemeHeader: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginBottom: 12,
+},
+
+schemeHeaderTitle: {
+  fontSize: 18,
+  fontWeight: '700',
+  color: '#000',
+},
+
+viewAllText: {
+  fontSize: 14,
+  color: ACCENT_COLOR,
+  fontWeight: '600',
+},
+
+schemeCard: {
+  backgroundColor: '#fff',
+  borderRadius: 12,
+  marginBottom: 12,
+  elevation: 3,
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.1,
+  shadowRadius: 6,
+},
+
+schemeCardContent: {
+  padding: 16,
+},
+
+schemeRow: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+},
 });
 
 export default GoldScheme;
