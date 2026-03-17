@@ -996,7 +996,7 @@ const MyOrders = ({ navigation }) => {
     return (
       <SafeAreaView style={styles.container}>
         <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-        <View style={[styles.header, { paddingTop: insets.top }]}>
+        <View style={[styles.header, { }]}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Ionicons name="chevron-back" size={22} color={PRIMARY_COLOR} />
           </TouchableOpacity>
@@ -1016,11 +1016,11 @@ const MyOrders = ({ navigation }) => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
 
       {/* Header with safe area top padding */}
-      <View style={[styles.header, { paddingTop: insets.top }]}>
+      <View style={[styles.header, { paddingTop:insets.top}]}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="chevron-back" size={22} color={PRIMARY_COLOR} />
         </TouchableOpacity>
@@ -1035,7 +1035,7 @@ const MyOrders = ({ navigation }) => {
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -1051,7 +1051,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 12,
-    borderBottomWidth: 0.5,
+    // borderBottomWidth: 0.5,
     borderBottomColor: "#eee",
     backgroundColor: "#fff", // Ensure background covers status bar area
   },
@@ -1084,7 +1084,7 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     width: 120,
-    height: 120,
+    height: 140,
     margin: 10,
     justifyContent: "center",
     alignItems: "center",

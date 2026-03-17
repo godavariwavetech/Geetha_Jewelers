@@ -93,7 +93,7 @@
 //     // Determine if it's an object from API or a string from History
 //     const isApiItem = typeof item === 'object' && item !== null;
 //     const queryText = isApiItem ? item.search_text : item;
-    
+
 //     saveSearchHistory(queryText);
 
 //     if (isApiItem) {
@@ -236,6 +236,251 @@
 // });
 
 // export default SearchScreen;
+// import React, { useState, useEffect, useCallback } from 'react';
+// import {
+//   View,
+//   Text,
+//   StyleSheet,
+//   TextInput,
+//   FlatList,
+//   TouchableOpacity,
+//   SafeAreaView,
+//   StatusBar,
+//   ActivityIndicator,
+//   Platform,
+// } from 'react-native';
+// import { useNavigation } from '@react-navigation/native';
+// import { useSelector, useDispatch, shallowEqual } from 'react-redux';
+// import Ionicons from 'react-native-vector-icons/Ionicons';
+// import { useSafeAreaInsets } from 'react-native-safe-area-context';
+// import LinearGradient from 'react-native-linear-gradient';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+// import { fetchGlobalSearch, clearSearchSuggestions } from '../redux/slices/searchSlice';
+// import debounce from 'lodash.debounce';
+
+// const SearchScreen = () => {
+//   const insets = useSafeAreaInsets();
+//   const navigation = useNavigation();
+//   const dispatch = useDispatch();
+
+//   // Optimized selectors to prevent rerender warnings
+//   const customerId = useSelector((state) => state.Auth?.customerId);
+//   const { searchSuggestions, loading } = useSelector(
+//     (state) => state.search || { searchSuggestions: [], loading: false },
+//     shallowEqual
+//   );
+
+//   const [searchQuery, setSearchQuery] = useState('');
+//   const [searchHistory, setSearchHistory] = useState([]);
+
+//   useEffect(() => {
+//     const loadSearchHistory = async () => {
+//       try {
+//         const history = await AsyncStorage.getItem('searchHistory');
+//         if (history) setSearchHistory(JSON.parse(history));
+//       } catch (e) { console.error(e); }
+//     };
+//     loadSearchHistory();
+//   }, []);
+
+//   // API Call Logic
+//   const fetchSuggestions = useCallback(
+//     debounce((query) => {
+//       const trimmedQuery = query.trim();
+//       if (trimmedQuery.length >= 3) {
+//         // Send the object matching the new thunk signature
+//         dispatch(fetchGlobalSearch({
+//           query: trimmedQuery
+//         }));
+//       } else {
+//         dispatch(clearSearchSuggestions());
+//       }
+//     }, 500),
+//     [dispatch] // Add dependencies here
+//   );
+
+//   useEffect(() => {
+//     fetchSuggestions(searchQuery);
+//     // Cleanup if user clears the input
+//     if (searchQuery.length < 3) {
+//       dispatch(clearSearchSuggestions());
+//     }
+//   }, [searchQuery, fetchSuggestions, dispatch]);
+
+//   const saveSearchHistory = async (query) => {
+//     try {
+//       const trimmed = query.trim();
+//       if (!trimmed || trimmed.length < 3) return;
+//       let history = [trimmed, ...searchHistory.filter(item => item !== trimmed)].slice(0, 10);
+//       setSearchHistory(history);
+//       await AsyncStorage.setItem('searchHistory', JSON.stringify(history));
+//     } catch (e) { console.error(e); }
+//   };
+
+//   const clearSearchHistory = async () => {
+//     setSearchHistory([]);
+//     await AsyncStorage.removeItem('searchHistory');
+//   };
+
+//   const handleSuggestionPress = (item) => {
+//     // Determine if it's an object from API or a string from History
+//     const isApiItem = typeof item === 'object' && item !== null;
+//     const queryText = isApiItem ? item.search_text : item;
+
+//     saveSearchHistory(queryText);
+
+//     if (isApiItem) {
+//       const { search_type, id, search_tagline } = item;
+
+//       if (search_type === "1" && search_tagline === "Category") {
+//         navigation.navigate('IndividualCategory', {
+//           categoryId: id,
+//         });
+//       } else if (search_type === "2" && search_tagline === "Product") {
+//         navigation.navigate('ProductDetailsScreen', {
+//           product_id: id,
+//         });
+//       }
+//     } else {
+//       // For history items, set the query to re-trigger search
+//       setSearchQuery(queryText);
+//     }
+//   };
+
+//   const renderItem = ({ item, isHistory }) => {
+//     const displayText = isHistory ? item : item.search_text;
+//     const tagline = isHistory ? null : item.search_tagline;
+
+//     return (
+//       <TouchableOpacity
+//         style={styles.suggestionItem}
+//         onPress={() => handleSuggestionPress(item)}
+//       >
+//         <View style={styles.suggestionContent}>
+//           <Ionicons
+//             name={isHistory ? "time-outline" : "search-outline"}
+//             size={18}
+//             color="#666"
+//             style={styles.suggestionIcon}
+//           />
+//           <View>
+//             <Text style={styles.suggestionText}>{displayText}</Text>
+//             {tagline && (
+//               <Text style={styles.taglineText}>{tagline}</Text>
+//             )}
+//           </View>
+//         </View>
+//       </TouchableOpacity>
+//     );
+//   };
+
+//   return (
+//     <View style={styles.container}>
+//       <StatusBar barStyle="dark-content" backgroundColor="#832729" />
+//       <View style={[styles.header, { paddingTop: insets.top }]}> <LinearGradient colors={['#832729', '#832729']} style={styles.gradient}
+//       >
+//         <View style={styles.searchRow}>
+//           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.paddingRight}>
+//             <Ionicons name="arrow-back" size={24} color="#000" />
+//           </TouchableOpacity>
+//           <TextInput
+//             style={styles.searchInput}
+//             placeholder="Search materials or services..."
+//             placeholderTextColor="#999"
+//             value={searchQuery}
+//             onChangeText={setSearchQuery}
+//             autoFocus
+//             returnKeyType="search"
+//           />
+//           {searchQuery.length > 0 && (
+//             <TouchableOpacity onPress={() => setSearchQuery('')}>
+//               <Ionicons name="close-circle" size={20} color="#999" />
+//             </TouchableOpacity>
+//           )}
+//         </View>
+//       </LinearGradient></View>
+
+
+//       <View style={styles.body}>
+//         {loading ? (
+//           <ActivityIndicator size="large" color="#5E61EB" style={styles.mt20} />
+//         ) : (
+//           <FlatList
+//             data={searchQuery.length >= 3 ? searchSuggestions : searchHistory}
+//             keyExtractor={(item, index) => (typeof item === 'object' ? item.id.toString() : `history-${index}`)}
+//             ListHeaderComponent={() => (
+//               <View style={styles.listHeader}>
+//                 <Text style={styles.listHeaderText}>
+//                   {searchQuery.length >= 3 ? "Suggestions" : "Recent Searches"}
+//                 </Text>
+//                 {searchQuery.length < 3 && searchHistory.length > 0 && (
+//                   <TouchableOpacity onPress={clearSearchHistory}>
+//                     <Text style={styles.clearText}>Clear All</Text>
+//                   </TouchableOpacity>
+//                 )}
+//               </View>
+//             )}
+//             renderItem={({ item }) => renderItem({ item, isHistory: searchQuery.length < 3 })}
+//             ListEmptyComponent={() => (
+//               <Text style={styles.emptyText}>
+//                 {searchQuery.length >= 3 ? "No results found" : "No recent searches"}
+//               </Text>
+//             )}
+//             keyboardShouldPersistTaps="always"
+//           />
+//         )}
+//       </View>
+//     </View>
+//   );
+// };
+
+// const styles = StyleSheet.create({
+//   container: { flex: 1, backgroundColor: '#FFF' },
+//   header: { paddingHorizontal: 15, paddingBottom: 15 },
+//   searchRow: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     backgroundColor: '#FFF',
+//     borderRadius: 10,
+//     paddingHorizontal: 12,
+//     height: 50,
+//   },
+//   paddingRight: { marginRight: 10 },
+//   searchInput: {
+//     flex: 1,
+//     fontSize: 16,
+//     color: '#333',
+//     fontFamily: Platform.OS === 'ios' ? 'System' : 'Roboto',
+//   },
+//   body: { flex: 1 },
+//   listHeader: {
+//     flexDirection: 'row',
+//     justifyContent: 'space-between',
+//     padding: 15,
+//     borderBottomWidth: 1,
+//     borderBottomColor: '#F0F0F0',
+//   },
+//   listHeaderText: { fontSize: 14, fontWeight: '700', color: '#666' },
+//   clearText: { color: '#FF4D4D', fontSize: 13 },
+//   suggestionItem: {
+//     paddingVertical: 15,
+//     paddingHorizontal: 20,
+//     borderBottomWidth: 1,
+//     borderBottomColor: '#F9F9F9',
+//   },
+//   suggestionContent: { flexDirection: 'row', alignItems: 'center' },
+//   suggestionIcon: { marginRight: 15 },
+//   suggestionText: { fontSize: 16, color: '#333', fontWeight: '500' },
+//   taglineText: { fontSize: 12, color: '#5E61EB', marginTop: 2, fontWeight: '600' },
+//   emptyText: { textAlign: 'center', marginTop: 40, color: '#999' },
+//   mt20: { marginTop: 20 },
+//   gradient: {
+//     padding: 10,
+//     borderRadius: 10,
+//   }
+// });
+
+// export default SearchScreen;
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
@@ -244,7 +489,6 @@ import {
   TextInput,
   FlatList,
   TouchableOpacity,
-  SafeAreaView,
   StatusBar,
   ActivityIndicator,
   Platform,
@@ -263,8 +507,6 @@ const SearchScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
-  // Optimized selectors to prevent rerender warnings
-  const customerId = useSelector((state) => state.Auth?.customerId);
   const { searchSuggestions, loading } = useSelector(
     (state) => state.search || { searchSuggestions: [], loading: false },
     shallowEqual
@@ -273,48 +515,53 @@ const SearchScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchHistory, setSearchHistory] = useState([]);
 
+  // Load history
   useEffect(() => {
-    const loadSearchHistory = async () => {
+    (async () => {
       try {
         const history = await AsyncStorage.getItem('searchHistory');
         if (history) setSearchHistory(JSON.parse(history));
-      } catch (e) { console.error(e); }
-    };
-    loadSearchHistory();
+      } catch (e) {
+        console.log(e);
+      }
+    })();
   }, []);
 
-  // API Call Logic
- const fetchSuggestions = useCallback(
-  debounce((query) => {
-    const trimmedQuery = query.trim();
-    if (trimmedQuery.length >= 3) {
-      // Send the object matching the new thunk signature
-      dispatch(fetchGlobalSearch({ 
-        query: trimmedQuery 
-      }));
-    } else {
-      dispatch(clearSearchSuggestions());
-    }
-  }, 500),
-  [dispatch] // Add dependencies here
-);
+  // Debounced API
+  const fetchSuggestions = useCallback(
+    debounce((query) => {
+      const trimmed = query.trim();
+      if (trimmed.length >= 3) {
+        dispatch(fetchGlobalSearch({ query: trimmed }));
+      } else {
+        dispatch(clearSearchSuggestions());
+      }
+    }, 500),
+    [dispatch]
+  );
 
   useEffect(() => {
     fetchSuggestions(searchQuery);
-    // Cleanup if user clears the input
+
     if (searchQuery.length < 3) {
       dispatch(clearSearchSuggestions());
     }
+
+    return () => fetchSuggestions.cancel();
   }, [searchQuery, fetchSuggestions, dispatch]);
 
+  // Save history
   const saveSearchHistory = async (query) => {
-    try {
-      const trimmed = query.trim();
-      if (!trimmed || trimmed.length < 3) return;
-      let history = [trimmed, ...searchHistory.filter(item => item !== trimmed)].slice(0, 10);
-      setSearchHistory(history);
-      await AsyncStorage.setItem('searchHistory', JSON.stringify(history));
-    } catch (e) { console.error(e); }
+    const trimmed = query.trim();
+    if (!trimmed || trimmed.length < 3) return;
+
+    const updated = [
+      trimmed,
+      ...searchHistory.filter((i) => i !== trimmed),
+    ].slice(0, 10);
+
+    setSearchHistory(updated);
+    await AsyncStorage.setItem('searchHistory', JSON.stringify(updated));
   };
 
   const clearSearchHistory = async () => {
@@ -323,51 +570,44 @@ const SearchScreen = () => {
   };
 
   const handleSuggestionPress = (item) => {
-    // Determine if it's an object from API or a string from History
-    const isApiItem = typeof item === 'object' && item !== null;
-    const queryText = isApiItem ? item.search_text : item;
-    
-    saveSearchHistory(queryText);
+    const isApi = typeof item === 'object';
+    const text = isApi ? item.search_text : item;
 
-    if (isApiItem) {
+    saveSearchHistory(text);
+
+    if (isApi) {
       const { search_type, id, search_tagline } = item;
 
       if (search_type === "1" && search_tagline === "Category") {
-        navigation.navigate('IndividualCategory', {
-          categoryId: id, 
-        });
+        navigation.navigate('IndividualCategory', { categoryId: id });
       } else if (search_type === "2" && search_tagline === "Product") {
-        navigation.navigate('ProductDetailsScreen', {
-          product_id: id,
-        });
+        navigation.navigate('ProductDetailsScreen', { product_id: id });
       }
     } else {
-      // For history items, set the query to re-trigger search
-      setSearchQuery(queryText);
+      setSearchQuery(text);
     }
   };
 
-  const renderItem = ({ item, isHistory }) => {
-    const displayText = isHistory ? item : item.search_text;
+  const renderItem = ({ item }) => {
+    const isHistory = searchQuery.length < 3;
+    const text = isHistory ? item : item.search_text;
     const tagline = isHistory ? null : item.search_tagline;
 
     return (
       <TouchableOpacity
-        style={styles.suggestionItem}
+        style={styles.item}
         onPress={() => handleSuggestionPress(item)}
       >
-        <View style={styles.suggestionContent}>
-          <Ionicons 
-            name={isHistory ? "time-outline" : "search-outline"} 
-            size={18} 
-            color="#666" 
-            style={styles.suggestionIcon} 
+        <View style={styles.row}>
+          <Ionicons
+            name={isHistory ? 'time-outline' : 'search-outline'}
+            size={18}
+            color="#666"
+            style={{ marginRight: 12 }}
           />
           <View>
-             <Text style={styles.suggestionText}>{displayText}</Text>
-             {tagline && (
-               <Text style={styles.taglineText}>{tagline}</Text>
-             )}
+            <Text style={styles.text}>{text}</Text>
+            {tagline && <Text style={styles.tag}>{tagline}</Text>}
           </View>
         </View>
       </TouchableOpacity>
@@ -375,67 +615,85 @@ const SearchScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#832729" />
-      <LinearGradient colors={['#832729', '#832729']} style={[styles.header, { paddingTop: insets.top + 10 }]}>
-        <View style={styles.searchRow}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.paddingRight}>
-            <Ionicons name="arrow-back" size={24} color="#000" />
-          </TouchableOpacity>
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search materials or services..."
-            placeholderTextColor="#999"
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            autoFocus
-            returnKeyType="search"
-          />
-          {searchQuery.length > 0 && (
-            <TouchableOpacity onPress={() => setSearchQuery('')}>
-              <Ionicons name="close-circle" size={20} color="#999" />
+
+      {/* ✅ FULL WIDTH GRADIENT HEADER */}
+      <LinearGradient colors={['#832729', '#832729']}>
+        <View style={[styles.header, { paddingTop: insets.top }]}>
+          <View style={styles.searchBox}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Ionicons name="arrow-back" size={24} color="#000" />
             </TouchableOpacity>
-          )}
+
+            <TextInput
+              style={styles.input}
+              placeholder="Search materials or services..."
+              placeholderTextColor="#999"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              autoFocus
+            />
+
+            {searchQuery.length > 0 && (
+              <TouchableOpacity onPress={() => setSearchQuery('')}>
+                <Ionicons name="close-circle" size={20} color="#999" />
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
       </LinearGradient>
 
+      {/* BODY */}
       <View style={styles.body}>
         {loading ? (
-          <ActivityIndicator size="large" color="#5E61EB" style={styles.mt20} />
+          <ActivityIndicator size="large" color="#5E61EB" style={{ marginTop: 20 }} />
         ) : (
           <FlatList
             data={searchQuery.length >= 3 ? searchSuggestions : searchHistory}
-            keyExtractor={(item, index) => (typeof item === 'object' ? item.id.toString() : `history-${index}`)}
+            keyExtractor={(item, i) =>
+              typeof item === 'object' ? item.id.toString() : `h-${i}`
+            }
+            renderItem={renderItem}
+            keyboardShouldPersistTaps="always"
             ListHeaderComponent={() => (
-              <View style={styles.listHeader}>
-                <Text style={styles.listHeaderText}>
-                  {searchQuery.length >= 3 ? "Suggestions" : "Recent Searches"}
+              <View style={styles.headerRow}>
+                <Text style={styles.headerText}>
+                  {searchQuery.length >= 3 ? 'Suggestions' : 'Recent Searches'}
                 </Text>
+
                 {searchQuery.length < 3 && searchHistory.length > 0 && (
                   <TouchableOpacity onPress={clearSearchHistory}>
-                    <Text style={styles.clearText}>Clear All</Text>
+                    <Text style={styles.clear}>Clear All</Text>
                   </TouchableOpacity>
                 )}
               </View>
             )}
-            renderItem={({ item }) => renderItem({ item, isHistory: searchQuery.length < 3 })}
             ListEmptyComponent={() => (
-              <Text style={styles.emptyText}>
-                {searchQuery.length >= 3 ? "No results found" : "No recent searches"}
+              <Text style={styles.empty}>
+                {searchQuery.length >= 3
+                  ? 'No results found'
+                  : 'No recent searches'}
               </Text>
             )}
-            keyboardShouldPersistTaps="always"
           />
         )}
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
+export default SearchScreen;
+
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FFF' },
-  header: { paddingHorizontal: 15, paddingBottom: 15 },
-  searchRow: {
+
+  header: {
+    paddingHorizontal: 15,
+    paddingBottom: 15,
+  },
+
+  searchBox: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFF',
@@ -443,35 +701,41 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     height: 50,
   },
-  paddingRight: { marginRight: 10 },
-  searchInput: {
+
+  input: {
     flex: 1,
     fontSize: 16,
     color: '#333',
+    marginLeft: 10,
     fontFamily: Platform.OS === 'ios' ? 'System' : 'Roboto',
   },
+
   body: { flex: 1 },
-  listHeader: {
+
+  headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     padding: 15,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+    borderBottomColor: '#eee',
   },
-  listHeaderText: { fontSize: 14, fontWeight: '700', color: '#666' },
-  clearText: { color: '#FF4D4D', fontSize: 13 },
-  suggestionItem: {
+
+  headerText: { fontWeight: '700', color: '#666' },
+
+  clear: { color: '#FF4D4D' },
+
+  item: {
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#F9F9F9',
+    borderBottomColor: '#f5f5f5',
   },
-  suggestionContent: { flexDirection: 'row', alignItems: 'center' },
-  suggestionIcon: { marginRight: 15 },
-  suggestionText: { fontSize: 16, color: '#333', fontWeight: '500' },
-  taglineText: { fontSize: 12, color: '#5E61EB', marginTop: 2, fontWeight: '600' },
-  emptyText: { textAlign: 'center', marginTop: 40, color: '#999' },
-  mt20: { marginTop: 20 },
-});
 
-export default SearchScreen;
+  row: { flexDirection: 'row', alignItems: 'center' },
+
+  text: { fontSize: 16, fontWeight: '500', color: '#333' },
+
+  tag: { fontSize: 12, color: '#5E61EB', marginTop: 2 },
+
+  empty: { textAlign: 'center', marginTop: 40, color: '#999' },
+});

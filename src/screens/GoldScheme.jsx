@@ -2011,7 +2011,7 @@ const renderGoldSchemeUI = () => (
   </TouchableOpacity>
 );
 return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
       
       {/* Header stays fixed at top */}
@@ -2029,7 +2029,7 @@ return (
       <View style={{ flex: 1 }}>
         {isRegistered ? renderGoldSchemeUI() : renderRegistrationForm()}
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

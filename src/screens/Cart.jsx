@@ -2722,7 +2722,7 @@ const confirmRemove = async () => {
 };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color="#000" />
@@ -3039,7 +3039,7 @@ const confirmRemove = async () => {
         cancelText="Cancel"
         onConfirm={confirmRemove}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 const styles = StyleSheet.create({

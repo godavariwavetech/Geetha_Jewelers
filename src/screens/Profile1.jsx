@@ -191,7 +191,7 @@ function Profile({ navigation }) {
             placeholder="Enter your name"
             placeholderTextColor="#aaa"
           />
-          <MaterialCommunityIcons name="pencil-outline" size={20} color="#c6b6af" />
+          {/* <MaterialCommunityIcons name="pencil-outline" size={20} color="#c6b6af" /> */}
         </View>
 
         {/* Email */}
@@ -257,7 +257,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 18,
     marginLeft: 10,
-    color: '#004830',
+    color: '#832729',
   },
   label: {
     marginLeft: 25,

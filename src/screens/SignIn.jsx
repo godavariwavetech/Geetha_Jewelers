@@ -482,7 +482,7 @@ const SignIn = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <View style={styles.container} edges={['top']}>
       <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
 
       <KeyboardAvoidingView
@@ -619,7 +619,7 @@ const SignIn = ({ navigation }) => {
           </View>
         </View>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 };
 

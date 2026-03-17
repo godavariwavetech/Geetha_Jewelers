@@ -2262,11 +2262,7 @@ const SchemeApplicationScreen = () => {
             contact: customerProfile?.customer_mobile_number || '9999999999',
           },
           theme: { color: ACCENT_COLOR },
-          modal: {
-            ondismiss: () => {
-              console.log('Razorpay modal dismissed by user');
-            },
-          },
+          
         };
 
         RazorpayCheckout.open(options)

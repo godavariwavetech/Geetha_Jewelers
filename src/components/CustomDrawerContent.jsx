@@ -935,7 +935,7 @@ const CustomDrawerContent = (props) => {
           <Text style={styles.logoutText}>Logout</Text>
         </TouchableOpacity>
 
-        <Text style={styles.versionText}>Version {version}</Text>
+        {/* <Text style={styles.versionText}>Version {version}</Text> */}
       </ScrollView>
     </SafeAreaView>
   );
@@ -945,7 +945,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#832729' },
   profileContainer: {
     paddingHorizontal: 20,
-    paddingTop: 30,
+    paddingTop: 70,
     paddingBottom: 20,
     borderBottomWidth: 1,
     borderBottomColor: '#444',

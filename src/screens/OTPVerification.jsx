@@ -772,7 +772,7 @@ useEffect(() => {
     num ? `${num.slice(0, 2)}******${num.slice(-3)}` : '';
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <View style={styles.container} edges={['top']}>
       <StatusBar
         translucent
         backgroundColor="transparent"
@@ -978,7 +978,7 @@ useEffect(() => {
           </View>
         </View>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 };
 
