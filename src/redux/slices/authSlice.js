@@ -13,7 +13,7 @@ export const requestOtp = createAsyncThunk(
         customer_mobile_number: phoneNumber,
       };
       const res = await api.post(endpoints.REQUEST_LOGIN_OPT, payload);
-      console.log(res,"after sending the phone number ")
+      console.log(res,"after sending the phone number ++++++++++++++++++++++++++++++++")
       if (res.data) {
         return fulfillWithValue(res.data);
       } else {

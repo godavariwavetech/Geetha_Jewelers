@@ -28,7 +28,7 @@
 // // // // //   const [tenure, setTenure] = useState(null);
 // // // // //   const [installmentAmount, setInstallmentAmount] = useState(null); // Now from dropdown
 // // // // //   const [cardNumber, setCardNumber] = useState('');
-  
+
 // // // // //   const [tenureFocus, setTenureFocus] = useState(false);
 // // // // //   const [amountFocus, setAmountFocus] = useState(false);
 
@@ -187,7 +187,6 @@
 
 // // // // //             {/* Card Number */}
 
-
 // // // // //             <Text style={styles.noteText}>
 // // // // //               Note: You will pay ₹{installmentAmount ? parseInt(installmentAmount).toLocaleString('en-IN') : '0'} monthly for {tenure ? `${tenure} months` : '...'} .
 // // // // //             </Text>
@@ -339,7 +338,7 @@
 // // // //   const [tenure, setTenure] = useState(null);
 // // // //   const [installmentAmount, setInstallmentAmount] = useState(null);
 // // // //   const [cardNumber, setCardNumber] = useState(''); // Added back Card Number state
-  
+
 // // // //   // UI State
 // // // //   const [tenureFocus, setTenureFocus] = useState(false);
 // // // //   const [amountFocus, setAmountFocus] = useState(false);
@@ -365,18 +364,18 @@
 // // // //     if (!tenure) { Alert.alert('Missing Field', 'Please select Tenure'); return; }
 // // // //     if (!installmentAmount) { Alert.alert('Missing Field', 'Please select Monthly Installment Amount'); return; }
 // // // //     // Basic validation for Card Number (16 digits)
-// // // //     if (!cardNumber || cardNumber.replace(/\s/g, '').length !== 16) { 
-// // // //         Alert.alert('Invalid Card', 'Please enter a valid 16-digit card number'); 
-// // // //         return; 
+// // // //     if (!cardNumber || cardNumber.replace(/\s/g, '').length !== 16) {
+// // // //         Alert.alert('Invalid Card', 'Please enter a valid 16-digit card number');
+// // // //         return;
 // // // //     }
 
 // // // //     try {
 // // // //       // 2. Call API to Generate Order ID
 // // // //       const resultAction = await dispatch(generateOrderId(installmentAmount));
-      
+
 // // // //       if (generateOrderId.fulfilled.match(resultAction)) {
 // // // //         const { orderId, payment_key_id } = resultAction.payload;
-        
+
 // // // //         // 3. Configure Razorpay Options
 // // // //         const options = {
 // // // //           description: 'Gold Scheme Enrollment',
@@ -548,8 +547,8 @@
 
 // // // //         {/* Fixed Pay Button */}
 // // // //         <View style={[styles.bottomContainer, { paddingBottom: Math.max(insets.bottom) }]}>
-// // // //           <TouchableOpacity 
-// // // //             style={[styles.payButton, paymentLoading && { opacity: 0.7 }]} 
+// // // //           <TouchableOpacity
+// // // //             style={[styles.payButton, paymentLoading && { opacity: 0.7 }]}
 // // // //             onPress={handlePay}
 // // // //             disabled={paymentLoading}
 // // // //           >
@@ -581,7 +580,7 @@
 // // // //             <Text style={styles.modalDetailText}>
 // // // //               Amount Paid: ₹{installmentAmount ? parseInt(installmentAmount).toLocaleString('en-IN') : ''}
 // // // //             </Text>
-// // // //             <TouchableOpacity 
+// // // //             <TouchableOpacity
 // // // //               style={styles.modalButton}
 // // // //               onPress={() => {
 // // // //                 setShowSuccessModal(false);
@@ -797,18 +796,18 @@
 // // //     if (!agentName.trim()) { Alert.alert('Missing Field', 'Please enter Agent Name'); return; }
 // // //     if (!tenure) { Alert.alert('Missing Field', 'Please select Tenure'); return; }
 // // //     if (!installmentAmount) { Alert.alert('Missing Field', 'Please select Monthly Installment Amount'); return; }
-// // //     if (!cardNumber || cardNumber.replace(/\s/g, '').length !== 16) { 
-// // //         Alert.alert('Invalid Card', 'Please enter a valid 16-digit card number'); 
-// // //         return; 
+// // //     if (!cardNumber || cardNumber.replace(/\s/g, '').length !== 16) {
+// // //         Alert.alert('Invalid Card', 'Please enter a valid 16-digit card number');
+// // //         return;
 // // //     }
 
 // // //     try {
 // // //       // 2. Call API to Generate Order ID
 // // //       const resultAction = await dispatch(generateOrderId(installmentAmount));
-      
+
 // // //       if (generateOrderId.fulfilled.match(resultAction)) {
 // // //         const { orderId, payment_key_id } = resultAction.payload;
-        
+
 // // //         // 3. Configure Razorpay Options
 // // //         const options = {
 // // //           description: 'Gold Scheme Enrollment',
@@ -833,9 +832,9 @@
 // // //             console.log(`Razorpay Success: ${data.razorpay_payment_id}`);
 
 // // //             // 5. Prepare Payload for Update API
-// // //             // Note: Ensure where 'id' comes from. Assuming 'id' represents the scheme/record ID 
+// // //             // Note: Ensure where 'id' comes from. Assuming 'id' represents the scheme/record ID
 // // //             // which might be available in orderData or needs to be 0 for new insertion depending on backend.
-// // //             // Using orderId.id (from Razorpay response) usually maps to payment, but if backend requires a Table ID, 
+// // //             // Using orderId.id (from Razorpay response) usually maps to payment, but if backend requires a Table ID,
 // // //             // you might need to adjust this value.
 // // //             const updatePayload = {
 // // //               name: userName,
@@ -873,7 +872,7 @@
 // // //   const handleNavigateToTrack = () => {
 // // //     setShowSuccessModal(false);
 // // //     // Navigate to TrackScheme Screen
-// // //     navigation.replace('TrackScheme'); 
+// // //     navigation.replace('TrackScheme');
 // // //   };
 
 // // //   const isLoading = paymentLoading || updateSchemeLoading;
@@ -881,7 +880,7 @@
 // // //   return (
 // // //     <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
 // // //       <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
-      
+
 // // //       {/* Header */}
 // // //       <View style={styles.header}>
 // // //         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
@@ -1008,8 +1007,8 @@
 
 // // //         {/* Pay Button */}
 // // //         <View style={[styles.bottomContainer, { paddingBottom: Math.max(insets.bottom) }]}>
-// // //           <TouchableOpacity 
-// // //             style={[styles.payButton, isLoading && { opacity: 0.7 }]} 
+// // //           <TouchableOpacity
+// // //             style={[styles.payButton, isLoading && { opacity: 0.7 }]}
 // // //             onPress={handlePay}
 // // //             disabled={isLoading}
 // // //           >
@@ -1041,7 +1040,7 @@
 // // //             <Text style={styles.modalDetailText}>
 // // //               Amount Paid: ₹{installmentAmount ? parseInt(installmentAmount).toLocaleString('en-IN') : ''}
 // // //             </Text>
-// // //             <TouchableOpacity 
+// // //             <TouchableOpacity
 // // //               style={styles.modalButton}
 // // //               onPress={handleNavigateToTrack}
 // // //             >
@@ -1243,7 +1242,6 @@
 
 // //   const [tenureFocus, setTenureFocus] = useState(false);
 // //   const [amountFocus, setAmountFocus] = useState(false);
-
 
 // // const tenureOptions = [
 // //     { label: '6 Months', value: '6' },
@@ -1760,7 +1758,7 @@
 //     checkLoading,
 //     paymentLoading,
 //     updateSchemeLoading,
-//     schemeHolder, 
+//     schemeHolder,
 //   } = useSelector(state => state.scheme);
 
 //   const customerProfile = useSelector(state => state.Auth.customerProfile);
@@ -1791,7 +1789,7 @@
 //   });
 
 //   // ── Effects ─────────────────────────────────────────────────────────────────
-  
+
 //   // 1. Prefill Name
 //   useEffect(() => {
 //     if (schemeHolder?.name) {
@@ -1806,9 +1804,8 @@
 //     }
 //   }, [dispatch, userId]);
 
-
 // const handlePay = () => {
- 
+
 //   if (!userName.trim()) return Alert.alert('Missing Field', 'Please enter your Full Name');
 //   if (!agentName.trim()) return Alert.alert('Missing Field', 'Please enter Agent Name');
 //   if (!tenure) return Alert.alert('Missing Field', 'Please select Tenure');
@@ -1826,10 +1823,10 @@
 //     .then(({ orderId, payment_key_id }) => {
 //       const options = {
 //         description: 'Gold Scheme Installment',
-//         image: 'https://geetajewellers.co.in/logo.png', 
+//         image: 'https://geetajewellers.co.in/logo.png',
 //         currency: 'INR',
 //         key: payment_key_id,
-//         amount: orderId.amount,           
+//         amount: orderId.amount,
 //         name: 'Geeta Jewellers',
 //         order_id: orderId.id,
 //         prefill: {
@@ -1838,17 +1835,15 @@
 //           contact: customerProfile?.customer_mobile_number || '9999999999',
 //         },
 //         theme: { color: ACCENT_COLOR },
-        
+
 //         modal: {
 //           ondismiss: () => {
 //             console.log('Razorpay modal dismissed by user');
-            
+
 //           },
 //         },
 //       };
 
-    
-    
 //     RazorpayCheckout.open(options)
 //   .then(async (successData) => {
 //     console.log('Razorpay Payment SUCCESS:', successData);
@@ -1884,13 +1879,13 @@
 //     console.log('Razorpay FAILED / CANCELLED:', error);
 
 //     if (error.code === 0 || String(error.description || '').toLowerCase().includes('cancel')) {
-      
+
 //       console.log('User cancelled payment');
 //     } else {
 //       Alert.alert('Payment Failed', error.description || 'Something went wrong');
 //     }
 //   });
-    
+
 //     })
 //     .catch((err) => {
 //       console.error('Failed to generate Razorpay order:', err);
@@ -1923,8 +1918,8 @@
 //         <View style={styles.headerPlaceholder} />
 //       </View>
 
-//       <KeyboardAvoidingView 
-//         style={{ flex: 1 }} 
+//       <KeyboardAvoidingView
+//         style={{ flex: 1 }}
 //         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
 //       >
 //         {isLoading ? (
@@ -1939,7 +1934,7 @@
 //             showsVerticalScrollIndicator={false}
 //           >
 //             <View style={styles.formContainer}>
-              
+
 //               {/* User Name */}
 //               <View style={styles.inputGroup}>
 //                 <Text style={styles.label}>Your Full Name</Text>
@@ -2043,7 +2038,7 @@
 //               </View>
 
 //               <Text style={styles.noteText}>
-//                 Note: You will pay ₹{installmentAmount ? parseInt(installmentAmount).toLocaleString('en-IN') : '0'} monthly 
+//                 Note: You will pay ₹{installmentAmount ? parseInt(installmentAmount).toLocaleString('en-IN') : '0'} monthly
 //                 for {tenure ? `${tenure} months` : '...'} .
 //               </Text>
 //             </View>
@@ -2053,8 +2048,8 @@
 //         {/* Pay Button */}
 //         {!isLoading && (
 //           <View style={[styles.bottomContainer, { paddingBottom: Math.max(insets.bottom, 10) }]}>
-//             <TouchableOpacity 
-//               style={styles.payButton} 
+//             <TouchableOpacity
+//               style={styles.payButton}
 //               onPress={handlePay}
 //             >
 //               <Text style={styles.payButtonText}>Pay & Enroll</Text>
@@ -2141,7 +2136,7 @@
 // });
 
 // export default SchemeApplicationScreen;
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -2157,11 +2152,11 @@ import {
   ActivityIndicator,
   Modal,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useNavigation } from '@react-navigation/native';
-import { Dropdown } from 'react-native-element-dropdown';
-import { useDispatch, useSelector } from 'react-redux';
+import {useNavigation} from '@react-navigation/native';
+import {Dropdown} from 'react-native-element-dropdown';
+import {useDispatch, useSelector} from 'react-redux';
 import RazorpayCheckout from 'react-native-razorpay';
 
 // Import Actions
@@ -2187,12 +2182,8 @@ const SchemeApplicationScreen = () => {
   const dispatch = useDispatch();
 
   // ── Redux State ─────────────────────────────────────────────────────────────
-  const {
-    checkLoading,
-    paymentLoading,
-    updateSchemeLoading,
-    schemeHolder, 
-  } = useSelector(state => state.scheme);
+  const {checkLoading, paymentLoading, updateSchemeLoading, schemeHolder} =
+    useSelector(state => state.scheme);
 
   const customerProfile = useSelector(state => state.Auth.customerProfile);
   const userId = customerProfile?.id || customerProfile?.user_id;
@@ -2209,11 +2200,11 @@ const SchemeApplicationScreen = () => {
   const [amountFocus, setAmountFocus] = useState(false);
 
   const tenureOptions = [
-    { label: '6 Months', value: '6' },
-    { label: '12 Months', value: '12' },
+    {label: '6 Months', value: '6'},
+    {label: '12 Months', value: '12'},
   ];
 
-  const installmentOptions = Array.from({ length: 50 }, (_, i) => {
+  const installmentOptions = Array.from({length: 50}, (_, i) => {
     const amount = (i + 1) * 1000;
     return {
       label: `₹${amount.toLocaleString('en-IN')}`,
@@ -2222,7 +2213,7 @@ const SchemeApplicationScreen = () => {
   });
 
   // ── Effects ─────────────────────────────────────────────────────────────────
-  
+
   useEffect(() => {
     if (schemeHolder?.name) {
       setUserName(schemeHolder.name);
@@ -2236,24 +2227,33 @@ const SchemeApplicationScreen = () => {
   }, [dispatch, userId]);
 
   const handlePay = () => {
-    if (!userName.trim()) return Alert.alert('Missing Field', 'Please enter your Full Name');
-    if (!agentName.trim()) return Alert.alert('Missing Field', 'Please enter Agent Name');
+    if (!userName.trim())
+      return Alert.alert('Missing Field', 'Please enter your Full Name');
+    if (!agentName.trim())
+      return Alert.alert('Missing Field', 'Please enter Agent Name');
     if (!tenure) return Alert.alert('Missing Field', 'Please select Tenure');
-    if (!installmentAmount) return Alert.alert('Missing Field', 'Please select Monthly Installment Amount');
+    if (!installmentAmount)
+      return Alert.alert(
+        'Missing Field',
+        'Please select Monthly Installment Amount',
+      );
 
     if (!schemeHolder?.id) {
-      return Alert.alert('Error', 'Scheme registration not found. Please contact support.');
+      return Alert.alert(
+        'Error',
+        'Scheme registration not found. Please contact support.',
+      );
     }
 
     dispatch(generateOrderId(installmentAmount))
       .unwrap()
-      .then(({ orderId, payment_key_id }) => {
+      .then(({orderId, payment_key_id}) => {
         const options = {
           description: 'Gold Scheme Installment',
-          image: 'https://geetajewellers.co.in/logo.png', 
+          image: 'https://geetajewellers.co.in/logo.png',
           currency: 'INR',
           key: payment_key_id,
-          amount: orderId.amount,           
+          amount: orderId.amount,
           name: 'Geeta Jewellers',
           order_id: orderId.id,
           prefill: {
@@ -2261,7 +2261,7 @@ const SchemeApplicationScreen = () => {
             email: customerProfile?.customer_email || 'no-email@provided.com',
             contact: customerProfile?.customer_mobile_number || '9999999999',
           },
-          theme: { color: ACCENT_COLOR },
+          theme: {color: ACCENT_COLOR},
           modal: {
             ondismiss: () => {
               console.log('Razorpay modal dismissed by user');
@@ -2270,7 +2270,7 @@ const SchemeApplicationScreen = () => {
         };
 
         RazorpayCheckout.open(options)
-          .then(async (successData) => {
+          .then(async successData => {
             console.log('Razorpay Payment SUCCESS:', successData);
 
             try {
@@ -2282,7 +2282,7 @@ const SchemeApplicationScreen = () => {
                 card_no: cardNumber.replace(/\s/g, ''),
                 payment_id: successData.razorpay_payment_id,
                 id: schemeHolder.id,
-                user_id:userId
+                user_id: userId,
               };
 
               await dispatch(updateSchemeDetails(updatePayload)).unwrap();
@@ -2291,24 +2291,32 @@ const SchemeApplicationScreen = () => {
               console.error('Backend update FAILED after payment:', backendErr);
               Alert.alert(
                 'Payment Received but Update Failed',
-                `Payment ID: ${successData.razorpay_payment_id}\n\nPlease contact support.`
+                `Payment ID: ${successData.razorpay_payment_id}\n\nPlease contact support.`,
               );
             }
           })
-          .catch((error) => {
+          .catch(error => {
             console.log('Razorpay FAILED / CANCELLED:', error);
-            if (error.code === 0 || String(error.description || '').toLowerCase().includes('cancel')) {
+            if (
+              error.code === 0 ||
+              String(error.description || '')
+                .toLowerCase()
+                .includes('cancel')
+            ) {
               console.log('User cancelled payment');
             } else {
-              Alert.alert('Payment Failed', error.description || 'Something went wrong');
+              Alert.alert(
+                'Payment Failed',
+                error.description || 'Something went wrong',
+              );
             }
           });
       })
-      .catch((err) => {
+      .catch(err => {
         console.error('Failed to generate Razorpay order:', err);
         Alert.alert(
           'Error',
-          'Unable to start payment process. Please check your internet connection and try again.'
+          'Unable to start payment process. Please check your internet connection and try again.',
         );
       });
   };
@@ -2321,22 +2329,23 @@ const SchemeApplicationScreen = () => {
   const isLoading = checkLoading || paymentLoading || updateSchemeLoading;
 
   return (
-    <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
+    <SafeAreaView style={[styles.container, {paddingTop: insets.top}]}>
       <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
 
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color="#000" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Apply for Scheme</Text>
         <View style={styles.headerPlaceholder} />
       </View>
 
-      <KeyboardAvoidingView 
-        style={{ flex: 1 }} 
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
+      <KeyboardAvoidingView
+        style={{flex: 1}}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         {isLoading ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color={ACCENT_COLOR} />
@@ -2346,10 +2355,8 @@ const SchemeApplicationScreen = () => {
           <ScrollView
             contentContainerStyle={styles.scrollContent}
             keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-          >
+            showsVerticalScrollIndicator={false}>
             <View style={styles.formContainer}>
-              
               {/* User Name */}
               <View style={styles.inputGroup}>
                 <Text style={styles.label}>Your Full Name</Text>
@@ -2363,19 +2370,22 @@ const SchemeApplicationScreen = () => {
                   editable={!schemeHolder?.name}
                 /> */}
                 <TextInput
-  style={styles.input}
-  placeholder="Enter your full name"
-  placeholderTextColor="#999"
-  value={userName}
-  onChangeText={setUserName}
-  autoCapitalize="words"
-  editable={true} // Hardcoded to true
-/>
+                  style={styles.input}
+                  placeholder="Enter your full name"
+                  placeholderTextColor="#999"
+                  value={userName}
+                  onChangeText={setUserName}
+                  autoCapitalize="words"
+                  editable={true} // Hardcoded to true
+                />
               </View>
 
               {/* Agent Name */}
               <View style={styles.inputGroup}>
-                <Text style={styles.label}>Agent Name</Text>
+                <Text style={styles.label}>
+                  Agent Name
+                  <Text style={{color: 'red', alignSelf: 'center'}}>*</Text>
+                </Text>
                 <TextInput
                   style={styles.input}
                   placeholder="Enter agent name"
@@ -2389,7 +2399,10 @@ const SchemeApplicationScreen = () => {
               <View style={styles.inputGroup}>
                 <Text style={styles.label}>Select Tenure</Text>
                 <Dropdown
-                  style={[styles.dropdown, tenureFocus && { borderColor: ACCENT_COLOR }]}
+                  style={[
+                    styles.dropdown,
+                    tenureFocus && {borderColor: ACCENT_COLOR},
+                  ]}
                   placeholderStyle={styles.placeholderStyle}
                   selectedTextStyle={styles.selectedTextStyle}
                   data={tenureOptions}
@@ -2417,7 +2430,10 @@ const SchemeApplicationScreen = () => {
               <View style={styles.inputGroup}>
                 <Text style={styles.label}>Monthly Installment Amount</Text>
                 <Dropdown
-                  style={[styles.dropdown, amountFocus && { borderColor: ACCENT_COLOR }]}
+                  style={[
+                    styles.dropdown,
+                    amountFocus && {borderColor: ACCENT_COLOR},
+                  ]}
                   placeholderStyle={styles.placeholderStyle}
                   selectedTextStyle={styles.selectedTextStyle}
                   data={installmentOptions}
@@ -2470,11 +2486,12 @@ const SchemeApplicationScreen = () => {
 
         {/* Pay Button */}
         {!isLoading && (
-          <View style={[styles.bottomContainer, { paddingBottom: Math.max(insets.bottom, 10) }]}>
-            <TouchableOpacity 
-              style={styles.payButton} 
-              onPress={handlePay}
-            >
+          <View
+            style={[
+              styles.bottomContainer,
+              {paddingBottom: Math.max(insets.bottom, 10)},
+            ]}>
+            <TouchableOpacity style={styles.payButton} onPress={handlePay}>
               <Text style={styles.payButtonText}>Pay & Enroll</Text>
             </TouchableOpacity>
           </View>
@@ -2486,8 +2503,7 @@ const SchemeApplicationScreen = () => {
         visible={showSuccessModal}
         transparent={true}
         animationType="fade"
-        onRequestClose={handleSuccessClose}
-      >
+        onRequestClose={handleSuccessClose}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <View style={styles.successIconContainer}>
@@ -2497,7 +2513,9 @@ const SchemeApplicationScreen = () => {
             <Text style={styles.modalText}>
               Your scheme enrollment is complete.
             </Text>
-            <TouchableOpacity style={styles.modalButton} onPress={handleSuccessClose}>
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={handleSuccessClose}>
               <Text style={styles.modalButtonText}>Track Scheme</Text>
             </TouchableOpacity>
           </View>
@@ -2508,167 +2526,167 @@ const SchemeApplicationScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    backgroundColor: '#FFFFFF' 
+  container: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
   },
   header: {
-    flexDirection: 'row', 
-    alignItems: 'center', 
+    flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16, 
-    paddingVertical: 16, 
+    paddingHorizontal: 16,
+    paddingVertical: 16,
     backgroundColor: '#fff',
-    borderBottomWidth: 1, 
+    borderBottomWidth: 1,
     borderBottomColor: '#E0E0E0',
   },
-  backButton: { 
-    padding: 4, 
-    width: 32 
+  backButton: {
+    padding: 4,
+    width: 32,
   },
-  headerTitle: { 
-    fontSize: 18, 
+  headerTitle: {
+    fontSize: 18,
     fontFamily: FONTS.bold,
-    color: '#000', 
-    flex: 1, 
-    textAlign: 'center' 
+    color: '#000',
+    flex: 1,
+    textAlign: 'center',
   },
-  headerPlaceholder: { 
-    width: 32 
+  headerPlaceholder: {
+    width: 32,
   },
-  scrollContent: { 
-    paddingBottom: 100 
+  scrollContent: {
+    paddingBottom: 100,
   },
-  formContainer: { 
-    padding: 20 
+  formContainer: {
+    padding: 20,
   },
-  inputGroup: { 
-    marginBottom: 20 
+  inputGroup: {
+    marginBottom: 20,
   },
-  label: { 
-    fontSize: 15, 
+  label: {
+    fontSize: 15,
     fontFamily: FONTS.semibold,
-    color: '#333', 
-    marginBottom: 8 
+    color: '#333',
+    marginBottom: 8,
   },
   input: {
-    borderWidth: 1, 
-    borderColor: '#E0E0E0', 
-    borderRadius: 8, 
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    borderRadius: 8,
     padding: 14,
-    fontSize: 16, 
+    fontSize: 16,
     fontFamily: FONTS.regular,
-    backgroundColor: '#F9F9F9', 
+    backgroundColor: '#F9F9F9',
     color: '#000',
   },
   dropdown: {
-    height: 50, 
-    borderColor: '#E0E0E0', 
-    borderWidth: 1, 
+    height: 50,
+    borderColor: '#E0E0E0',
+    borderWidth: 1,
     borderRadius: 8,
-    paddingHorizontal: 14, 
+    paddingHorizontal: 14,
     backgroundColor: '#F9F9F9',
   },
-  placeholderStyle: { 
-    fontSize: 16, 
+  placeholderStyle: {
+    fontSize: 16,
     fontFamily: FONTS.regular,
-    color: '#999' 
+    color: '#999',
   },
-  selectedTextStyle: { 
-    fontSize: 16, 
+  selectedTextStyle: {
+    fontSize: 16,
     fontFamily: FONTS.regular,
-    color: '#000' 
+    color: '#000',
   },
   noteText: {
-    fontSize: 14, 
+    fontSize: 14,
     fontFamily: FONTS.regular,
-    color: '#666', 
-    textAlign: 'center', 
-    marginTop: 20, 
-    marginBottom: 30, 
+    color: '#666',
+    textAlign: 'center',
+    marginTop: 20,
+    marginBottom: 30,
     fontStyle: 'italic',
   },
   bottomContainer: {
-    position: 'absolute', 
-    bottom: 0, 
-    left: 0, 
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
     right: 0,
-    backgroundColor: '#FFFFFF', 
-    paddingHorizontal: 16, 
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 16,
     paddingTop: 12,
-    borderTopWidth: 1, 
+    borderTopWidth: 1,
     borderTopColor: '#E0E0E0',
   },
   payButton: {
-    backgroundColor: ACCENT_COLOR, 
-    borderRadius: 12, 
-    paddingVertical: 16, 
+    backgroundColor: ACCENT_COLOR,
+    borderRadius: 12,
+    paddingVertical: 16,
     alignItems: 'center',
   },
-  payButtonText: { 
-    color: '#FFFFFF', 
-    fontSize: 16, 
+  payButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
     fontFamily: FONTS.bold,
   },
   loadingContainer: {
-    flex: 1, 
-    justifyContent: 'center', 
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
   },
-  loadingText: { 
-    marginTop: 10, 
-    fontSize: 16, 
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
     fontFamily: FONTS.medium,
-    color: '#666' 
+    color: '#666',
   },
   // Modal
-  modalOverlay: { 
-    flex: 1, 
-    backgroundColor: 'rgba(0,0,0,0.6)', 
-    justifyContent: 'center', 
-    alignItems: 'center' 
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  modalContent: { 
-    width: '80%', 
-    backgroundColor: '#fff', 
-    borderRadius: 16, 
-    padding: 24, 
-    alignItems: 'center', 
-    elevation: 5 
+  modalContent: {
+    width: '80%',
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 24,
+    alignItems: 'center',
+    elevation: 5,
   },
-  successIconContainer: { 
-    width: 70, 
-    height: 70, 
-    borderRadius: 35, 
-    backgroundColor: '#4CAF50', 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    marginBottom: 16 
+  successIconContainer: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: '#4CAF50',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
   },
-  modalTitle: { 
-    fontSize: 20, 
+  modalTitle: {
+    fontSize: 20,
     fontFamily: FONTS.bold,
-    color: '#000', 
-    marginBottom: 8 
+    color: '#000',
+    marginBottom: 8,
   },
-  modalText: { 
-    fontSize: 14, 
+  modalText: {
+    fontSize: 14,
     fontFamily: FONTS.regular,
-    color: '#666', 
-    textAlign: 'center', 
-    marginBottom: 24 
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 24,
   },
-  modalButton: { 
-    backgroundColor: ACCENT_COLOR, 
-    paddingHorizontal: 32, 
-    paddingVertical: 12, 
-    borderRadius: 24, 
-    width: '100%', 
-    alignItems: 'center' 
+  modalButton: {
+    backgroundColor: ACCENT_COLOR,
+    paddingHorizontal: 32,
+    paddingVertical: 12,
+    borderRadius: 24,
+    width: '100%',
+    alignItems: 'center',
   },
-  modalButtonText: { 
-    color: '#fff', 
-    fontSize: 16, 
+  modalButtonText: {
+    color: '#fff',
+    fontSize: 16,
     fontFamily: FONTS.semibold,
   },
 });

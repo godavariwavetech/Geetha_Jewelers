@@ -783,7 +783,11 @@ useEffect(() => {
         style={{flex: 1}}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 20}>
-        <ImageBackground
+ <ScrollView
+    contentContainerStyle={{flexGrow: 1}}
+    keyboardShouldPersistTaps="handled"
+    showsVerticalScrollIndicator={false}> 
+    <ImageBackground
           source={require('../assets/lg.png')}
           style={styles.backgroundImage}
           resizeMode="cover">
@@ -845,12 +849,15 @@ useEffect(() => {
             {/* MAIN CONTENT: same layout as SignIn, but OTP UI inside */}
             <View style={styles.contentContainer}>
               {/* Title & subtitle for OTP */}
-              <Text style={styles.title} includeFontPadding={false}>
-                Enter OTP
-              </Text>
-              <Text style={styles.subtitle} includeFontPadding={false}>
-                Enter the OTP sent to {maskPhoneNumber(phoneNumber)}
-              </Text>
+             <Text style={styles.title} includeFontPadding={false}>
+    {showProfileForm ? 'Complete Your Profile' : 'Enter OTP'}
+  </Text>
+  
+  <Text style={styles.subtitle} includeFontPadding={false}>
+    {showProfileForm 
+      ? 'Please provide your details to get started' 
+      : `Enter the OTP sent to ${maskPhoneNumber(phoneNumber)}`}
+  </Text>
 
               {/* OTP part (unchanged logic) */}
               {!showProfileForm ? (
@@ -953,7 +960,10 @@ useEffect(() => {
               )}
             </View>
           </View>
-        </ImageBackground>
+        </ImageBackground></ScrollView>
+        
+       
+
       </KeyboardAvoidingView>
 
       {/* Error Modal */}
@@ -1172,4 +1182,8 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     textAlign: 'center',
   },
+
+
+
+  
 });
