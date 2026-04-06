@@ -1667,19 +1667,19 @@ const GoldScheme = () => {
         <Text style={styles.formTitle}>Join Geeta Jewellers Scheme</Text>
         <Text style={styles.formSubtitle}>Please enter your details to enroll in the scheme.</Text>
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>Full Name</Text>
+          <Text style={styles.label}>Full Name *</Text>
           <TextInput style={styles.input} placeholder="Enter your name" placeholderTextColor="#999" value={name} onChangeText={setName} />
         </View>
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>Phone Number</Text>
+          <Text style={styles.label}>Phone Number *</Text>
           <TextInput style={styles.input} placeholder="Enter phone number" placeholderTextColor="#999" keyboardType="phone-pad" maxLength={10} value={phone} onChangeText={setPhone} />
         </View>
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>Address</Text>
+          <Text style={styles.label}>Address *</Text>
           <TextInput style={[styles.input, styles.textArea]} placeholder="Enter your full address" placeholderTextColor="#999" multiline numberOfLines={3} value={address} onChangeText={setAddress} />
         </View>
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>Document Proof (ID/Aadhar)</Text>
+          <Text style={styles.label}>Document Proof * (ID/Aadhar)</Text>
           <TouchableOpacity style={styles.uploadButton} onPress={handleImagePick}>
             {documentUri ? (
               <Image source={{ uri: documentUri }} style={styles.uploadedImage} resizeMode="cover" />

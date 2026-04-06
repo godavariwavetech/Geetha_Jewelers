@@ -1282,29 +1282,29 @@ const handleCardNavigation = (card, sectionType) => {
           )}
         </ScrollView>
 
-        {/* Main Banner Carousel */}
+        {/* Main Banner Carousel */}                                      
         <View style={styles.bannerWrapper}>
-          <Carousel
-            autoPlayInterval={3000}
-            data={bannersLoading ? [] : banners.length > 0 ? banners : []}
-            height={320}
-            loop
-            pagingEnabled
-            snapEnabled
-            width={width}
-            mode="parallax"
-            modeConfig={{
-              parallaxScrollingScale: 0.9,
-              parallaxScrollingOffset: 50,
-            }}
-            onProgressChange={(_, abs) => (progress.value = abs)}
-            renderItem={renderBannerItem}
-          />
-
-          {bannersLoading && (
-            <View style={styles.bannerShimmerOverlay}>
+          {bannersLoading ? (
+            <View style={{ height: 320, justifyContent: 'center', alignItems: 'center' }}>
               <ShimmerPlaceHolder style={styles.bannerShimmer} />
             </View>
+          ) : (
+            <Carousel
+              autoPlayInterval={3000}
+              data={banners.length > 0 ? banners : []}
+              height={320}
+              loop
+              pagingEnabled
+              snapEnabled
+              width={width}
+              mode="parallax"
+              modeConfig={{
+                parallaxScrollingScale: 0.9,
+                parallaxScrollingOffset: 50,
+              }}
+              onProgressChange={(_, abs) => (progress.value = abs)}
+              renderItem={renderBannerItem}
+            />
           )}
         </View>
 

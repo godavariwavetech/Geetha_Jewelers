@@ -100,14 +100,14 @@ function Profile({ navigation }) {
 
   // If permission granted (or if iOS), launch camera
   launchCamera(
-    { mediaType: 'photo', includeBase64: true, cameraType: 'front' },
+    { mediaType: 'photo', includeBase64: true, cameraType: 'front', quality: 0.5, maxWidth: 800, maxHeight: 800 },
     (response) => handleImageResponse(response)
   );
 };
 
   const openGallery = () => {
     launchImageLibrary(
-      { mediaType: 'photo', includeBase64: true },
+      { mediaType: 'photo', includeBase64: true, quality: 0.5, maxWidth: 800, maxHeight: 800 },
       (response) => handleImageResponse(response)
     );
   };
@@ -203,6 +203,7 @@ function Profile({ navigation }) {
             style={styles.input}
             placeholder="Enter email address"
             placeholderTextColor="#aaa"
+            
             keyboardType="email-address"
             autoCapitalize="none"
           />

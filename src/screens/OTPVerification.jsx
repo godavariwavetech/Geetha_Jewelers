@@ -995,7 +995,7 @@ useEffect(() => {
 export default OTPVerificationScreen;
 
 const styles = StyleSheet.create({
-  // layout & background copied from SignIn
+  
   container: {
     flex: 1,
     backgroundColor: '#fff',

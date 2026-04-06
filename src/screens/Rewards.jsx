@@ -503,7 +503,7 @@ const DiamondEarringCatalogueScreen = () => {
         styles.container,
         {
           paddingTop: insets.top + 15,
-          paddingBottom: insets.bottom+100,
+         
         },
       ]}
     >
@@ -525,7 +525,7 @@ const DiamondEarringCatalogueScreen = () => {
           numColumns={2}
           showsVerticalScrollIndicator={false}
           columnWrapperStyle={styles.row}
-          contentContainerStyle={{ paddingBottom: 20 }}
+          contentContainerStyle={{ paddingBottom: insets.bottom+100,}}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
               <Text style={styles.emptyText}>No products available</Text>

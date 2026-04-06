@@ -1295,10 +1295,8 @@ const CategoryNavigationScreen = () => {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const dispatch = useDispatch();
-
   const [expandedCategoryId, setExpandedCategoryId] = useState(null);
   const [selectedChipIndex, setSelectedChipIndex] = useState(0);
-
   // Refs for scrolling
   const scrollViewRef = useRef(null);
   const categoryRefs = useRef({});
@@ -1319,7 +1317,6 @@ const CategoryNavigationScreen = () => {
   const toggleCategory = (categoryId) => {
     setExpandedCategoryId(prev => prev === categoryId ? null : categoryId);
   };
-
   const handleSubcategoryPress = (subcategoryName, categoryName, categoryId) => {
     navigation.navigate('IndividualCategory', {
       subcategoryName,
@@ -1381,9 +1378,9 @@ const CategoryNavigationScreen = () => {
         />
 
         <View style={styles.headerIcons}>
-          <TouchableOpacity style={styles.iconButton}>
+          {/* <TouchableOpacity style={styles.iconButton}>
             <Ionicons name="notifications-outline" size={22} color="#000" />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate("WishList")}>
             <Ionicons name="heart-outline" size={22} color="#000" />
           </TouchableOpacity>
@@ -1394,15 +1391,17 @@ const CategoryNavigationScreen = () => {
       </View>
 
       {/* Search Bar */}
+<TouchableOpacity onPress={() => navigation.navigate("SearchScreen")}>
       <View style={styles.searchContainer}>
         <Ionicons name="search-outline" size={20} color="#666" />
         <TextInput
           placeholder="Search here Your favourite Jewellery"
           style={styles.searchInput}
           placeholderTextColor="#999"
+          editable={false}
         />
       </View>
-
+</TouchableOpacity>
       {/* Filter Chips */}
       <View>
         <ScrollView
@@ -1581,7 +1580,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#fff',
     marginHorizontal: 16,
     marginVertical: 12,
     paddingHorizontal: 12,

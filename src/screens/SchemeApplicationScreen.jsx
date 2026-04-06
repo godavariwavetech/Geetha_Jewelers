@@ -2359,7 +2359,7 @@ const SchemeApplicationScreen = () => {
             <View style={styles.formContainer}>
               {/* User Name */}
               <View style={styles.inputGroup}>
-                <Text style={styles.label}>Your Full Name</Text>
+                <Text style={styles.label}>Your Full Name *</Text>
                 {/* <TextInput
                   style={styles.input}
                   placeholder="Enter your full name"
@@ -2397,7 +2397,7 @@ const SchemeApplicationScreen = () => {
 
               {/* Tenure Dropdown */}
               <View style={styles.inputGroup}>
-                <Text style={styles.label}>Select Tenure</Text>
+                <Text style={styles.label}>Select Tenure *</Text>
                 <Dropdown
                   style={[
                     styles.dropdown,
@@ -2428,7 +2428,7 @@ const SchemeApplicationScreen = () => {
 
               {/* Installment Dropdown */}
               <View style={styles.inputGroup}>
-                <Text style={styles.label}>Monthly Installment Amount</Text>
+                <Text style={styles.label}>Monthly Installment Amount *</Text>
                 <Dropdown
                   style={[
                     styles.dropdown,

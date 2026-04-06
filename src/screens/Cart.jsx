@@ -2944,14 +2944,18 @@ const confirmRemove = async () => {
                     <TextInput
                       placeholder="Enter Custom Type"
                       placeholderTextColor="#999"
-                      style={styles.input}
+                      style={[styles.input,{marginTop:10}]}
                       value={customAddressType}
                       onChangeText={setCustomAddressType}
                     />
                   )}
                 </View>
 
-                <TextInput placeholder="Full Name" style={styles.input} value={name} onChangeText={setName} />
+                <TextInput placeholder="Full Name" style={styles.input} value={name}
+                  
+                  placeholderTextColor="#999"
+                
+                onChangeText={setName} />
                 {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
 
                 <TextInput

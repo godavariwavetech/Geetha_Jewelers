@@ -1977,7 +1977,7 @@ const [selectedWeightData, setSelectedWeightData] = useState(null);
             <Text style={styles.breakupSubValue}>
               ₹{stone.stone_charges ? stone.stone_charges.toLocaleString() : '0'}
             </Text>
-          </View>
+          </View> 
         </View>
       ))}
     </>
@@ -2014,21 +2014,23 @@ const [selectedWeightData, setSelectedWeightData] = useState(null);
             </TouchableOpacity>
           </TouchableOpacity> */}
 
-          <Text style={styles.sectionTitle}>You may also like</Text>
-          {recommendedProductsLoading ? (
-            <View style={{ padding: 20, alignItems: 'center' }}>
-              <ActivityIndicator size="small" color="#832729" />
-            </View>
-          ) : localRecommendedProducts.length > 0 ? (
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              <View style={styles.similarProducts}>
-                {localRecommendedProducts.map((item) => (
-                  <RecommendedProductCard key={item.id} item={item} />
-                ))}
-              </View>
-            </ScrollView>
-          ) : (
-            <Text style={{ textAlign: 'center', color: '#666', padding: 20 }}>No recommendations available</Text>
+          {(recommendedProductsLoading || localRecommendedProducts.length > 0) && (
+            <>
+              <Text style={styles.sectionTitle}>You may also like</Text>
+              {recommendedProductsLoading ? (
+                <View style={{ padding: 20, alignItems: 'center' }}>
+                  <ActivityIndicator size="small" color="#832729" />
+                </View>
+              ) : (
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                  <View style={styles.similarProducts}>
+                    {localRecommendedProducts.map((item) => (
+                      <RecommendedProductCard key={item.id} item={item} />
+                    ))}
+                  </View>
+                </ScrollView>
+              )}
+            </>
           )}
         </View>
       </ScrollView>

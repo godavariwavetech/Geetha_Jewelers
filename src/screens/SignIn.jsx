@@ -429,7 +429,7 @@ const SignIn = ({ navigation }) => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [errorModalVisible, setErrorModalVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-
+const [checkboxAgreed, setCheckboxAgreed] = useState(false);
   const dispatch = useDispatch();
   const { loading } = useSelector((state) => state.Auth);
 
@@ -466,7 +466,7 @@ const SignIn = ({ navigation }) => {
     try {
       const result = await dispatch(requestOtp({ phoneNumber })).unwrap();
 
-      navigation.navigate('OTPVerification', {
+      navigation.replace('OTPVerification', {
         phoneNumber: phoneNumber,
         serverOtp: result.loginotp?.toString(),
         userInd: result.user_ind,
@@ -534,7 +534,7 @@ const SignIn = ({ navigation }) => {
               <View style={styles.whiteBackground} />
 
               {/* Main Content */}
-              <View style={styles.contentContainer}>
+              {/* <View style={styles.contentContainer}>
                 <Text style={styles.title} includeFontPadding={false}>
                   login / Sign up
                 </Text>
@@ -583,7 +583,73 @@ const SignIn = ({ navigation }) => {
                     </Text>
                   )}
                 </TouchableOpacity>
-              </View>
+              </View> */}
+              <View style={styles.contentContainer}>
+  <Text style={styles.title} includeFontPadding={false}>
+    login / Sign up
+  </Text>
+  <Text style={styles.subtitle} includeFontPadding={false}>
+    Enter Mobile number for OTP
+  </Text>
+
+  <View style={styles.inputContainer}>
+    <Text style={styles.inputLabel} includeFontPadding={false}>
+      Enter Mobile Number
+    </Text>
+    <TextInput
+      style={styles.input}
+      placeholder="Enter 10-digit mobile number"
+      placeholderTextColor="#999"
+      keyboardType="phone-pad"
+      value={phoneNumber}
+      onChangeText={handlePhoneNumberChange}
+      maxLength={10}
+      returnKeyType="done"
+      onSubmitEditing={handleSendOTP}
+    />
+  </View>
+
+  {/* NEW CHECKBOX SECTION */}
+  <View style={styles.checkboxWrapper}>
+    <TouchableOpacity 
+      style={styles.checkboxTouch} 
+      onPress={() => setCheckboxAgreed(!checkboxAgreed)}
+      activeOpacity={0.7}
+    >
+      <Ionicons 
+        name={checkboxAgreed ? "checkbox" : "square-outline"} 
+        size={22} 
+        color={checkboxAgreed ? "#832729" : "#666666"} 
+      />
+    </TouchableOpacity>
+    
+    <Text style={styles.termsText} includeFontPadding={false}>
+      By Continuing, I agree to{' '}
+      <Text style={styles.termsLink}>Terms of use</Text>
+      {' & '}
+      <Text style={styles.termsLink}>Privacy Policy</Text>
+    </Text>
+  </View>
+
+  <TouchableOpacity
+    style={[
+      styles.sendOTPButton,
+      (phoneNumber.length !== 10 || !checkboxAgreed || loading) && styles.sendOTPButtonDisabled,
+    ]}
+    onPress={handleSendOTP}
+    activeOpacity={0.8}
+    // Updated disabled logic: must have 10 digits AND checkbox checked
+    disabled={phoneNumber.length !== 10 || !checkboxAgreed || loading}
+  >
+    {loading ? (
+      <ActivityIndicator color="#FFFFFF" size="small" />
+    ) : (
+      <Text style={styles.sendOTPButtonText} includeFontPadding={false}>
+        Send OTP
+      </Text>
+    )}
+  </TouchableOpacity>
+</View>
             </View>
           </ImageBackground>
         </ScrollView>
@@ -778,5 +844,29 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#FFFFFF',
     textAlign: 'center',
+  },
+
+  //
+  checkboxWrapper: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: responsiveHeight(3),
+    paddingRight: responsiveWidth(5), // Prevents text from hitting the edge
+  },
+  checkboxTouch: {
+    marginRight: 10,
+    marginTop: -2, // Aligns icon perfectly with the first line of text
+  },
+  termsText: {
+    flex: 1, // Allows text to wrap properly next to checkbox
+    fontSize: responsiveFontSize(1.5),
+    color: '#666666',
+    lineHeight: 20,
+    marginBottom: 0, // Removed margin as wrapper handles it
+  },
+  termsLink: {
+    color: '#832729',
+    fontWeight: '700',
+    textDecorationLine: 'underline', // Makes it look clickable
   },
 });
