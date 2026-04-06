@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "yolo.app"
-               BlueprintName = "yolo"
-               ReferencedContainer = "container:yolo.xcodeproj">
+               BuildableName = "geetajewellers.app"
+               BlueprintName = "geetajewellers"
+               ReferencedContainer = "container:geetajewellers.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "yoloTests.xctest"
-               BlueprintName = "yoloTests"
-               ReferencedContainer = "container:yolo.xcodeproj">
+               BuildableName = "geetajewellersTests.xctest"
+               BlueprintName = "geetajewellersTests"
+               ReferencedContainer = "container:geetajewellers.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "yolo.app"
-            BlueprintName = "yolo"
-            ReferencedContainer = "container:yolo.xcodeproj">
+            BuildableName = "geetajewellers.app"
+            BlueprintName = "geetajewellers"
+            ReferencedContainer = "container:geetajewellers.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "yolo.app"
-            BlueprintName = "yolo"
-            ReferencedContainer = "container:yolo.xcodeproj">
+            BuildableName = "geetajewellers.app"
+            BlueprintName = "geetajewellers"
+            ReferencedContainer = "container:geetajewellers.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
