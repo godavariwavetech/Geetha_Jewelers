@@ -416,6 +416,7 @@ import {
   Platform,
   ScrollView,
   KeyboardAvoidingView,
+  Linking,
 } from 'react-native';
 import Svg, { Path, Defs, Filter, FeFlood, FeColorMatrix, FeOffset, FeGaussianBlur, FeComposite, FeBlend, G } from 'react-native-svg';
 import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-native-responsive-dimensions';
@@ -459,6 +460,12 @@ const [checkboxAgreed, setCheckboxAgreed] = useState(false);
 
     if (!validatePhoneNumber(phoneNumber)) {
       setErrorMessage('Please enter a valid Indian mobile number');
+      setErrorModalVisible(true);
+      return;
+    }
+
+    if (!checkboxAgreed) {
+      setErrorMessage('Please agree to the Terms of use & Privacy Policy before proceeding');
       setErrorModalVisible(true);
       return;
     }
@@ -625,9 +632,9 @@ const [checkboxAgreed, setCheckboxAgreed] = useState(false);
     
     <Text style={styles.termsText} includeFontPadding={false}>
       By Continuing, I agree to{' '}
-      <Text style={styles.termsLink}>Terms of use</Text>
+      <Text style={styles.termsLink} onPress={() => Linking.openURL('https://geetajewellers.co.in/policies/Privacy%20Policy.pdf')}>Terms of use</Text>
       {' & '}
-      <Text style={styles.termsLink}>Privacy Policy</Text>
+      <Text style={styles.termsLink} onPress={() => Linking.openURL('https://geetajewellers.co.in/policies/Privacy%20Policy.pdf')}>Privacy Policy</Text>
     </Text>
   </View>
 

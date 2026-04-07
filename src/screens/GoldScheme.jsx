@@ -1549,13 +1549,15 @@ import {
   ImageBackground,
   TextInput,
   Alert,
-  ActivityIndicator
+  ActivityIndicator,
+  PermissionsAndroid,
+  Platform
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
-import { launchImageLibrary } from 'react-native-image-picker';
+import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
 import { fetchUserSchemes } from '../redux/slices/schemeSlice';
 import { 
   addSchemeHolderDetails, 
@@ -1627,6 +1629,52 @@ const GoldScheme = () => {
   const displayRates = getDisplayRates();
 
   // ... (handleImagePick & handleSubmit remain the same)
+  const handleImageSelection = () => {
+    Alert.alert(
+      "Upload Document",
+      "Choose an option",
+      [
+        { text: "Cancel", style: "cancel" },
+        { text: "Take Photo", onPress: handleCameraPick },
+        { text: "Choose from Gallery", onPress: handleImagePick }
+      ]
+    );
+  };
+
+  const handleCameraPick = async () => {
+    if (Platform.OS === 'android') {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.CAMERA,
+          {
+            title: "Camera Permission",
+            message: "App needs access to your camera",
+            buttonNeutral: "Ask Me Later",
+            buttonNegative: "Cancel",
+            buttonPositive: "OK"
+          }
+        );
+        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+          Alert.alert("Permission Denied", "Camera permission is required to take photos.");
+          return;
+        }
+      } catch (err) {
+        console.warn(err);
+        return;
+      }
+    }
+
+    const options = { mediaType: 'photo', includeBase64: true, quality: 0.7 };
+    try {
+      const result = await launchCamera(options);
+      if (result.assets && result.assets.length > 0) {
+        const asset = result.assets[0];
+        setDocumentUri(asset.uri);
+        setDocumentProof(`data:${asset.type};base64,${asset.base64}`);
+      }
+    } catch (error) { console.error("Camera Error:", error); }
+  };
+
   const handleImagePick = async () => {
     const options = { mediaType: 'photo', includeBase64: true, quality: 0.7 };
     try {
@@ -1680,7 +1728,7 @@ const GoldScheme = () => {
         </View>
         <View style={styles.inputGroup}>
           <Text style={styles.label}>Document Proof * (ID/Aadhar)</Text>
-          <TouchableOpacity style={styles.uploadButton} onPress={handleImagePick}>
+          <TouchableOpacity style={styles.uploadButton} onPress={handleImageSelection}>
             {documentUri ? (
               <Image source={{ uri: documentUri }} style={styles.uploadedImage} resizeMode="cover" />
             ) : (

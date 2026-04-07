@@ -623,13 +623,61 @@ import {customerLogin, requestOtp} from '../redux/slices/authSlice';
 
 const {height} = Dimensions.get('window');
 
+const ResendTimer = ({ phoneNumber, onResendSuccess, onError }) => {
+  const dispatch = useDispatch();
+  const [timer, setTimer] = useState(30);
+  const [canResend, setCanResend] = useState(false);
+
+  useEffect(() => {
+    let interval;
+    if (timer > 0) {
+      interval = setInterval(() => {
+        setTimer(prev => prev - 1);
+      }, 1000);
+    } else {
+      setCanResend(true);
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+  }, [timer]);
+
+  const handleResendOTP = async () => {
+    if (!canResend) return;
+
+    try {
+      const response = await dispatch(requestOtp({ phoneNumber })).unwrap();
+      onResendSuccess(response.loginotp);
+
+      setTimer(30);
+      setCanResend(false);
+    } catch (err) {
+      onError('Failed to resend OTP');
+    }
+  };
+
+  return (
+    <View style={styles.resendContainer}>
+      <Text style={styles.resendText} includeFontPadding={false}>
+        {timer > 0 ? `Resend OTP in ${timer}s` : 'Didn’t receive OTP?'}
+      </Text>
+      <TouchableOpacity onPress={handleResendOTP} disabled={!canResend}>
+        <Text
+          style={[styles.resendLink, !canResend && styles.resendLinkDisabled]}
+          includeFontPadding={false}>
+          Resend OTP
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
 const OTPVerificationScreen = ({navigation, route}) => {
   const {phoneNumber, serverOtp, userInd} = route.params || {};
   const isNewUser = userInd === 0;
-  console.log(serverOtp);
+  
+  // Track the most recent server OTP for validation
+  const [currentServerOtp, setCurrentServerOtp] = useState(serverOtp);
   const [otp, setOtp] = useState(['', '', '', '']);
-  const [timer, setTimer] = useState(30);
-  const [canResend, setCanResend] = useState(false);
   const [showProfileForm, setShowProfileForm] = useState(false);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -640,38 +688,6 @@ const OTPVerificationScreen = ({navigation, route}) => {
   const dispatch = useDispatch();
   const inputRefs = useRef([]);
 
-  // Timer countdown
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     setTimer(prev => {
-  //       if (prev <= 1) {
-  //         clearInterval(interval);
-  //         setCanResend(true);
-  //         return 0;
-  //       }
-  //       return prev - 1;
-  //     });
-  //   }, 1000);
-
-  //   return () => clearInterval(interval);
-  // }, []);
-useEffect(() => {
-    let interval;
-    
-    if (timer > 0) {
-      interval = setInterval(() => {
-        setTimer(prev => prev - 1);
-      }, 1000);
-    } else {
-      setCanResend(true);
-      clearInterval(interval);
-    }
-
-    // Cleanup: This clears the interval if the component unmounts 
-    // or before the next effect runs
-    return () => clearInterval(interval);
-  }, [timer]);
-  
   const handleOtpChange = (text, index) => {
     const value = text.replace(/[^0-9]/g, '');
     if (value.length > 1) return;
@@ -684,27 +700,16 @@ useEffect(() => {
     if (!value && index > 0) inputRefs.current[index - 1]?.focus();
   };
 
-  const handleResendOTP = async () => {
-    if (!canResend) return;
+  const handleResendSuccess = (newOtp) => {
+    setCurrentServerOtp(newOtp);
+    setOtp(['', '', '', '']);
+    inputRefs.current[0]?.focus();
+    setShowProfileForm(false);
+  };
 
-    try {
-      // Capture the result of the dispatch
-      const response = await dispatch(requestOtp({phoneNumber})).unwrap();
-
-      // Update the serverOtp in the navigation params so the validation matches the NEW code
-      navigation.setParams({
-        serverOtp: response.loginotp,
-      });
-
-      setTimer(30);
-      setCanResend(false);
-      setOtp(['', '', '', '']);
-      inputRefs.current[0]?.focus();
-      setShowProfileForm(false);
-    } catch (err) {
-      setErrorMessage('Failed to resend OTP');
-      setErrorModalVisible(true);
-    }
+  const handleError = (msg) => {
+    setErrorMessage(msg);
+    setErrorModalVisible(true);
   };
 
   const handleVerifyOTP = async () => {
@@ -720,7 +725,7 @@ useEffect(() => {
 
     // 2. High-End Validation: Compare entered OTP with server response
     // We convert both to strings to ensure "9099" === 9099
-    if (serverOtp && enteredOtp !== serverOtp.toString()) {
+    if (currentServerOtp && enteredOtp !== currentServerOtp.toString()) {
       setErrorMessage('Please enter correct OTP to proceed'); // Your specific error message
       setErrorModalVisible(true);
       // Optional: Clear OTP fields on failure for better UX
@@ -878,25 +883,11 @@ useEffect(() => {
                     ))}
                   </View>
 
-                  <View style={styles.resendContainer}>
-                    <Text style={styles.resendText} includeFontPadding={false}>
-                      {timer > 0
-                        ? `Resend OTP in ${timer}s`
-                        : 'Didn’t receive OTP?'}
-                    </Text>
-                    <TouchableOpacity
-                      onPress={handleResendOTP}
-                      disabled={!canResend}>
-                      <Text
-                        style={[
-                          styles.resendLink,
-                          !canResend && styles.resendLinkDisabled,
-                        ]}
-                        includeFontPadding={false}>
-                        Resend OTP
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
+                  <ResendTimer 
+                    phoneNumber={phoneNumber}
+                    onResendSuccess={handleResendSuccess}
+                    onError={handleError}
+                  />
 
                   <TouchableOpacity
                     style={[

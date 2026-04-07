@@ -13,7 +13,7 @@ const SplashScreen = ({ navigation }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       navigation.replace('Splash2');
-    }, 2000);
+    }, 1000000);
 
     return () => clearTimeout(timer);
   }, [navigation]);
@@ -22,7 +22,9 @@ const SplashScreen = ({ navigation }) => {
     <View style={styles.container}>
       <StatusBar
         barStyle="light-content"
-        backgroundColor="#832729"
+        // backgroundColor="transparent"
+        backgroundColor="#6b0202ff"
+        // backgroundColor="#832729"
         translucent={false}
       />
       <ImageBackground
@@ -33,7 +35,7 @@ const SplashScreen = ({ navigation }) => {
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.content}>
             <Text style={styles.welcomeText}>Welcome to</Text>
-            <Text style={styles.brandName}>Geeta jewelers</Text>
+            <Text style={styles.brandName}>Geeta jewellers</Text>
             <Text style={styles.tagline}>
               Your trusted platform for investing in{'\n'}precious metals
             </Text>
