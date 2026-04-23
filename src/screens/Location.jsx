@@ -1251,7 +1251,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
-
+import Icon from "react-native-vector-icons/Feather";
 // Redux
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCategoriesWithSubcategories } from "../redux/slices/categorySlice";
@@ -1371,6 +1371,10 @@ const CategoryNavigationScreen = () => {
 
       {/* Header */}
       <View style={styles.header}>
+
+         <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <Icon name="arrow-left" size={24} color="#000" />
+                  </TouchableOpacity>
         <Image
           source={require('../assets/geethalogo1.png')}
           style={styles.logo}

@@ -556,7 +556,7 @@ import { useDispatch } from 'react-redux';
 import { logout } from '../redux/slices/authSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 const { width } = Dimensions.get("window");
 
 // Font family constants
@@ -569,7 +569,7 @@ const FONTS = {
 
 const ProfileScreen = ({ navigation }) => {
   const dispatch = useDispatch();
-
+const insets = useSafeAreaInsets();
   const handleLogout = () => {
     Alert.alert(
       "Logout",
@@ -604,7 +604,7 @@ const ProfileScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-      <View style={styles.mainContainer}>
+      <View style={[styles.mainContainer,{paddingTop:insets.top  +5}]}>
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -688,7 +688,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "flex-start",
+    justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 16,
     backgroundColor: "#fff",

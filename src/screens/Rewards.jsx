@@ -417,7 +417,8 @@ import { fetchCatalogueProducts } from '../redux/slices/categorySlice';
 import LinearGradient from 'react-native-linear-gradient';
 import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder';
 import { useNavigation } from '@react-navigation/native';
-
+import Icon from "react-native-vector-icons/Feather";
+import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 const { width } = Dimensions.get('window');
 const ITEM_WIDTH = (width - 36) / 2;
@@ -446,6 +447,24 @@ const DiamondEarringCatalogueScreen = () => {
   useEffect(() => {
     dispatch(fetchCatalogueProducts());
   }, [dispatch]);
+
+
+const renderEmptyCatalogue = () => (
+  <View style={styles.emptyContainer}>
+    <MaterialIcon name="ring" size={80} color="#E0E0E0" />
+    <Text style={styles.emptyTitle}>No Products Found</Text>
+    <Text style={styles.emptySubtitle}>
+      We couldn't find any items in this category right now. Please check back later!
+    </Text>
+    <TouchableOpacity 
+      style={styles.goBackButton} 
+      onPress={() => navigation.goBack()}
+    >
+      <Text style={styles.goBackText}>Go Back</Text>
+    </TouchableOpacity>
+  </View>
+);
+
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
@@ -498,15 +517,25 @@ const DiamondEarringCatalogueScreen = () => {
   }
 
   return (
+
     <View
       style={[
         styles.container,
         {
-          paddingTop: insets.top + 15,
+          paddingTop: insets.top ,
          
         },
       ]}
     >
+
+ <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Icon name="arrow-left" size={24} color="#000" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Catalogue</Text>
+          <View style={{ width: 24 }} />
+        </View>
+
       {catalogueProductsLoading ? (
         <FlatList
           data={[1, 2, 3, 4, 5, 6, 7, 8]}
@@ -515,7 +544,13 @@ const DiamondEarringCatalogueScreen = () => {
           numColumns={2}
           showsVerticalScrollIndicator={false}
           columnWrapperStyle={styles.row}
-          contentContainerStyle={{ paddingBottom: 20 }}
+         // FIX: Added paddingTop here so content starts below the header
+  contentContainerStyle={{ 
+    paddingTop: 16, 
+    paddingBottom: insets.bottom + 100,
+    flexGrow: 1 // Necessary for ListEmptyComponent to center correctly
+  }}
+  ListEmptyComponent={renderEmptyCatalogue}
         />
       ) : (
         <FlatList
@@ -525,12 +560,13 @@ const DiamondEarringCatalogueScreen = () => {
           numColumns={2}
           showsVerticalScrollIndicator={false}
           columnWrapperStyle={styles.row}
-          contentContainerStyle={{ paddingBottom: insets.bottom+100,}}
-          ListEmptyComponent={
-            <View style={styles.emptyContainer}>
-              <Text style={styles.emptyText}>No products available</Text>
-            </View>
-          }
+          // FIX: Added paddingTop here so content starts below the header
+  contentContainerStyle={{ 
+    paddingTop: 16, 
+    paddingBottom: insets.bottom + 100,
+    flexGrow: 1 // Necessary for ListEmptyComponent to center correctly
+  }}
+  ListEmptyComponent={renderEmptyCatalogue}
         />
       )}
     </View>
@@ -606,5 +642,22 @@ const styles = StyleSheet.create({
     height: 12,
     width: '80%',
     borderRadius: 6,
+  },
+
+    header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    backgroundColor: "#fff",
+    borderBottomWidth: 1,
+    borderBottomColor: "#f0f0f0",
+    // gap: 5,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontFamily: FONTS.bold,
+    color: "#000",
   },
 });

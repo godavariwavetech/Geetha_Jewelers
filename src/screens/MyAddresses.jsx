@@ -263,7 +263,7 @@ const MyAddresses = () => {
                 </View>
               ))
             ) : (
-              <Text style={commonstyles.text7}>No addresses found.</Text>
+              <Text style={[commonstyles.text7,{textAlign:'center'}]}>No addresses found.</Text>
             )}
           </ScrollView>
 
@@ -444,8 +444,8 @@ const styles = StyleSheet.create({
   borderBottomWidth: 1,
   borderBottomColor: '#E0E0E0',
 
-  zIndex: 10,
-  elevation: 10,
+  // zIndex: 10,
+  // elevation: 10,
   },
   headerTitle: {
     fontSize: 20,

@@ -17,6 +17,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { useDispatch, useSelector } from 'react-redux';
+import Icon from "react-native-vector-icons/Feather";
 import {
   getUserProfileDetails,
   updateUserProfile,
@@ -161,12 +162,17 @@ function Profile({ navigation }) {
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
 
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="chevron-back" size={26} color="#832729" />
-        </TouchableOpacity>
-        <Text style={styles.headerText}>Profile</Text>
-      </View>
+     <View style={styles.header}>
+  <TouchableOpacity onPress={() => navigation.goBack()} style={{ width: 40 }}>
+    <Icon name="arrow-left" size={24} color="#000" />
+  </TouchableOpacity>
+
+  <View style={{ flex: 1, alignItems: 'center' }}>
+    <Text style={styles.headerTitle}>Profile</Text>
+  </View>
+
+  <View style={{ width: 40 }} /> 
+</View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
         {/* Avatar */}
@@ -246,19 +252,22 @@ function Profile({ navigation }) {
 
 const styles = StyleSheet.create({
   container: { backgroundColor: '#fff', flex: 1 },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingBottom: 12,
-    paddingTop: 16,
-    backgroundColor: '#fff',
+   header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    backgroundColor: "#fff",
+    borderBottomWidth: 1,
+    borderBottomColor: "#f0f0f0",
+    gap: 5,
   },
-  headerText: {
-    fontWeight: '700',
+  headerTitle: {
     fontSize: 18,
-    marginLeft: 10,
-    color: '#004830',
+    fontFamily: 'bold',
+    color: "#000",
+    fontWeight: '700',
   },
   label: {
     marginLeft: 25,

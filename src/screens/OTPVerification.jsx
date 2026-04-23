@@ -765,11 +765,24 @@ const OTPVerificationScreen = ({navigation, route}) => {
       setErrorModalVisible(true);
       return;
     }
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setErrorMessage('Please enter a valid email');
+    // if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    //   setErrorMessage('Please enter a valid email');
+    //   setErrorModalVisible(true);
+    //   return;
+    // }
+if (email.trim().length > 0) {
+    // This regex ensures:
+    // 1. Standard email characters before the @
+    // 2. A domain name after the @
+    // 3. Ends strictly with .com
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.com$/;
+    
+    if (!emailRegex.test(email.toLowerCase().trim())) {
+      setErrorMessage('Please enter a valid email address ending in .com');
       setErrorModalVisible(true);
       return;
     }
+  }
     performLogin();
   };
 
@@ -920,15 +933,22 @@ const OTPVerificationScreen = ({navigation, route}) => {
                     onChangeText={setName}
                     autoCapitalize="words"
                   />
-                  <TextInput
-                    style={styles.emailInput}
-                    placeholder="Enter your email (optional)"
-                    placeholderTextColor="#000"
-                    value={email}
-                    onChangeText={setEmail}
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                  />
+                <TextInput
+    style={styles.emailInput}
+    placeholder="Email (Optional, No @gmail.com)" // Clearer hint
+    placeholderTextColor="#999"
+    value={email}
+    onChangeText={setEmail}
+    keyboardType="email-address"
+    autoCapitalize="none"
+  />
+  
+  {/* Small helper text if they start typing @gmail */}
+  {email.toLowerCase().includes('@gmail.com') && (
+    <Text style={{ color: '#D32F2F', fontSize: 12, marginTop: -10 }}>
+      Gmail addresses are not allowed.
+    </Text>
+  )}
                   <TouchableOpacity
                     style={[
                       styles.verifyButton,
