@@ -1546,7 +1546,6 @@ import {
   StatusBar,
   Image,
   Dimensions,
-  ImageBackground,
   TextInput,
   Alert,
   ActivityIndicator,
@@ -1771,7 +1770,7 @@ const renderGoldSchemeUI = () => (
             key={index}
             style={[
               styles.tabButton,
-              selectedTab === tab && [styles.selectedTabButton, { backgroundColor: ACCENT_COLOR, borderColor: ACCENT_COLOR }]
+              selectedTab === tab && styles.selectedTabButton
             ]}
             onPress={() => setSelectedTab(tab)}
           >
@@ -1820,11 +1819,10 @@ const renderGoldSchemeUI = () => (
             onPress={() => handleBannerPress(banner.banner_image)} 
             style={styles.bannerTouchable}
           >
-            <ImageBackground 
-              source={{ uri: banner.banner_image }} 
-              style={styles.promoBanner} 
-              resizeMode="cover" 
-              imageStyle={styles.bannerImageStyle} 
+            <Image
+              source={{ uri: banner.banner_image }}
+              style={styles.promoBanner}
+              resizeMode="cover"
             />
           </TouchableOpacity>
         ))
@@ -1849,7 +1847,7 @@ const renderGoldSchemeUI = () => (
   if (checkLoading) {
     return (
       <SafeAreaView style={styles.container}>
-        <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
+        <StatusBar backgroundColor="#832729" barStyle="light-content" />
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <ActivityIndicator size="large" color={ACCENT_COLOR} />
         </View>
@@ -1901,12 +1899,12 @@ const renderGoldSchemeUI = () => (
 );
 return (
     <SafeAreaView style={styles.container}>
-      <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
+      <StatusBar backgroundColor="#832729" barStyle="light-content" />
       
       {/* Header stays fixed at top */}
       <View style={[styles.header,{paddingTop:insets.top+5}]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#000" />
+          <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>
           {isRegistered ? 'Gold Rates & Schemes' : 'Scheme Registration'}
@@ -1926,9 +1924,9 @@ return (
 const styles = StyleSheet.create({
   // ... (Paste existing styles here)
   container: { flex: 1, backgroundColor: '#F8F9FA' },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 16, backgroundColor: '#fff', borderBottomWidth: 1, borderBottomColor: '#f0f0f0' },
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 16, backgroundColor: '#832729' },
   backButton: { padding: 4, width: 32 },
-  headerTitle: { fontSize: 18, fontWeight: '600', color: '#000', flex: 1, textAlign: 'center' },
+  headerTitle: { fontSize: 18, fontWeight: '600', color: '#fff', flex: 1, textAlign: 'center' },
   headerPlaceholder: { width: 32 },
   scrollContent: { paddingBottom: 20 },
   formContainer: { padding: 20, backgroundColor: '#fff', marginTop: 10 },
@@ -1950,7 +1948,7 @@ const styles = StyleSheet.create({
   tabsContainer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, paddingBottom: 16, backgroundColor: '#fff' },
   tabsWrapper: { flexDirection: 'row', alignItems: 'center' },
   tabButton: { paddingHorizontal: 18, paddingVertical: 8, borderRadius: 20, marginRight: 10, backgroundColor: '#fff', borderWidth: 1, borderColor: '#E0E0E0' },
-  selectedTabButton: { borderColor: '#832729' },
+  selectedTabButton: { backgroundColor: '#832729', borderColor: '#832729' },
   tabText: { fontSize: 13, fontWeight: '500', color: '#666' },
   selectedTabText: { color: '#fff' },
   coinIconContainer: { width: 60, height: 60, justifyContent: 'center', alignItems: 'center' },
@@ -1958,7 +1956,7 @@ const styles = StyleSheet.create({
   ratesContainer: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: CONTAINER_PADDING, paddingBottom: 20, backgroundColor: '#fff', gap: GAP_SIZE },
   rateCard: { width: CARD_WIDTH, backgroundColor: '#F9F9F9', borderRadius: 12, paddingVertical: 12, paddingHorizontal: 4, borderWidth: 1, borderColor: '#EEEEEE', alignItems: 'center' },
   rateType: { fontSize: 10, fontWeight: '600', color: '#555', textAlign: 'center' },
-  ratePrice: { fontSize: 13, fontWeight: '700', color: '#000', marginBottom: 4, marginTop: 2, textAlign: 'center' },
+  ratePrice: { fontSize: 13, fontWeight: '700', color: '#832729', marginBottom: 4, marginTop: 2, textAlign: 'center' },
   changeContainer: { flexDirection: 'row', alignItems: 'center' },
   changeText: { fontSize: 10, fontWeight: '600', marginRight: 2 },
   bannersContainer: { marginTop: 16, paddingHorizontal: 16, gap: 12 },

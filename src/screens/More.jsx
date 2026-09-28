@@ -603,12 +603,12 @@ const insets = useSafeAreaInsets();
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-      <View style={[styles.mainContainer,{paddingTop:insets.top  +5}]}>
+      <StatusBar barStyle="light-content" backgroundColor="#832729" />
+      <View style={styles.mainContainer}>
         {/* Header */}
-        <View style={styles.header}>
+        <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Icon name="arrow-left" size={24} color="#000" />
+            <Icon name="arrow-left" size={24} color="#fff" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Profile</Text>
           <View style={{ width: 24 }} />
@@ -621,10 +621,10 @@ const insets = useSafeAreaInsets();
           {/* Options */}
           <TouchableOpacity style={styles.optionCard} onPress={() => navigation.navigate("MyOrders")}>
             <View style={styles.optionLeft}>
-              <Icon name="shopping-bag" size={20} color="#832729" />
+              <Icon name="shopping-bag" size={20} color="#fff" />
               <Text style={styles.optionText}>My Bookings</Text>
             </View>
-            <Icon name="chevron-right" size={20} color="#832729" />
+            <Icon name="chevron-right" size={20} color="#fff" />
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -632,26 +632,26 @@ const insets = useSafeAreaInsets();
             onPress={() => navigation.navigate('MySchemesScreen')}
           >
             <View style={styles.optionLeft}>
-              <MaterialCommunityIcons name="file-document-outline" size={20} color="#832729" />
+              <MaterialCommunityIcons name="file-document-outline" size={20} color="#fff" />
               <Text style={styles.optionText}>My Schemes</Text>
             </View>
-            <Icon name="chevron-right" size={20} color="#832729" />
+            <Icon name="chevron-right" size={20} color="#fff" />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.optionCard} onPress={() => navigation.navigate("Profile1")}>
             <View style={styles.optionLeft}>
-              <Icon name="user" size={20} color="#832729" />
+              <Icon name="user" size={20} color="#fff" />
               <Text style={styles.optionText}>Profile</Text>
             </View>
-            <Icon name="chevron-right" size={20} color="#832729" />
+            <Icon name="chevron-right" size={20} color="#fff" />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.optionCard} onPress={() => navigation.navigate("MyAddresses")}>
             <View style={styles.optionLeft}>
-              <MaterialIcon name="location-on" size={20} color="#832729" />
+              <MaterialIcon name="location-on" size={20} color="#fff" />
               <Text style={styles.optionText}>My Addresses</Text> 
             </View>
-            <Icon name="chevron-right" size={20} color="#832729" />
+            <Icon name="chevron-right" size={20} color="#fff" />
           </TouchableOpacity>
 
           {/* Banner */}
@@ -691,15 +691,13 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 16,
-    backgroundColor: "#fff",
-    borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
+    backgroundColor: "#832729",
     gap: 5,
   },
   headerTitle: {
     fontSize: 18,
     fontFamily: FONTS.bold,
-    color: "#000",
+    color: "#fff",
   },
   scrollContent: {
     paddingBottom: 100,
@@ -743,9 +741,9 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
   },
   optionCard: {
-    backgroundColor: "#fff",
+    backgroundColor: "#832729",
     borderWidth: 1,
-    borderColor: "#D9D9D9",
+    borderColor: "#832729",
     marginHorizontal: 16,
     borderRadius: 10,
     paddingVertical: 12,
@@ -763,7 +761,7 @@ const styles = StyleSheet.create({
   optionText: {
     fontSize: 15,
     fontFamily: FONTS.medium,
-    color: "#832729",
+    color: "#fff",
   },
   bannerCard: {
     marginHorizontal: 16,

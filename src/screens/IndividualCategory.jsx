@@ -3941,7 +3941,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { responsiveWidth } from 'react-native-responsive-dimensions';
+import { responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -4387,26 +4387,26 @@ const renderProductCard = (item) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
+      <StatusBar backgroundColor="#832729" barStyle="light-content" />
 
       {/* Header */}
       <View style={[styles.topHeader, { paddingTop: insets.top + 10 }]}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="#000" />
+          <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
 
         <Image
-          source={require('../assets/geethalogo1.png')}
+          source={require('../assets/testlogo.png')}
           style={styles.headerLogo}
           resizeMode="contain"
         />
 
         <View style={styles.headerIcons}>
           <TouchableOpacity onPress={() => navigation.navigate('WishList')}>
-            <Ionicons name="heart-outline" size={22} color="#832729" />
+            <Ionicons name="heart-outline" size={22} color="#fff" />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate('Cart')}>
-            <Ionicons name="cart-outline" size={22} color="#832729" />
+            <Ionicons name="cart-outline" size={22} color="#fff" />
           </TouchableOpacity>
           {/* <TouchableOpacity>
             <Ionicons name="notifications-outline" size={22} color="#832729" />
@@ -4595,10 +4595,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    backgroundColor: '#832729',
   },
-  headerLogo: { width: responsiveWidth(30), height: 40 },
+  headerLogo: { width: responsiveWidth(35), height: responsiveHeight(5) },
   headerIcons: { flexDirection: 'row', gap: 12 },
   row: { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 16, marginBottom: 16, marginTop: 10 },
   cardWrapper: { width: ITEM_WIDTH },

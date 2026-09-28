@@ -950,13 +950,13 @@ const handlePayNextInstallment = async () => {
   if (!schemeDetails) return null;
 
   return (
-    <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
-      <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
+    <SafeAreaView style={styles.container}>
+      <StatusBar backgroundColor="#832729" barStyle="light-content" />
 
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#000" />
+          <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Track Scheme</Text>
         <View style={styles.headerPlaceholder} />
@@ -1147,15 +1147,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 16,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    backgroundColor: '#832729',
   },
   backButton: { padding: 4, width: 40 },
-  headerTitle: { 
-    fontSize: 18, 
+  headerTitle: {
+    fontSize: 18,
     fontFamily: FONTS.bold,
-    color: '#000', 
+    color: '#fff',
     flex: 1, 
     textAlign: 'center' 
   },

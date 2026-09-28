@@ -995,10 +995,10 @@ const MyOrders = ({ navigation }) => {
   if (groupedOrders.length === 0) {
     return (
       <SafeAreaView style={styles.container}>
-        <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-        <View style={[styles.header, { paddingTop: insets.top }]}>
+        <StatusBar barStyle="light-content" backgroundColor="#832729" />
+        <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name="chevron-back" size={22} color={PRIMARY_COLOR} />
+            <Ionicons name="chevron-back" size={22} color="#fff" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>My Orders</Text>
           <View style={{ width: 22 }} />
@@ -1017,12 +1017,12 @@ const MyOrders = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+      <StatusBar barStyle="light-content" backgroundColor="#832729" />
 
       {/* Header with safe area top padding */}
-      <View style={[styles.header, { paddingTop: insets.top }]}>
+      <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="chevron-back" size={22} color={PRIMARY_COLOR} />
+          <Ionicons name="chevron-back" size={22} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>My Orders</Text>
         <View style={{ width: 22 }} />
@@ -1051,14 +1051,12 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 12,
-    borderBottomWidth: 0.5,
-    borderBottomColor: "#eee",
-    backgroundColor: "#fff", // Ensure background covers status bar area
+    backgroundColor: "#832729", // Ensure background covers status bar area
   },
   headerTitle: {
     fontSize: 19,
     fontWeight: "600",
-    color: PRIMARY_COLOR,
+    color: "#fff",
   },
 
   listContent: {

@@ -197,19 +197,18 @@ const MyAddresses = () => {
 
   return (
     <>
-      <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
+      <StatusBar backgroundColor="#832729" barStyle="light-content" />
 
       <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
-        <View style={[styles.container, { paddingTop: insets.top }]}>
+        <View style={styles.container}>
           {/* Header */}
-         {/* Header */}
-          <View style={styles.header}>
+          <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
             <TouchableOpacity 
               onPress={() => navigation.goBack()}
               // ADD zIndex: 10 HERE so it sits above the absolute title
               style={{ zIndex: 10, padding: 5 }} 
             >
-              <Feather name="arrow-left" size={22} color="#000" />
+              <Feather name="arrow-left" size={22} color="#fff" />
             </TouchableOpacity>
 
             <Text style={styles.headerTitle}>My Addresses</Text>
@@ -440,9 +439,7 @@ const styles = StyleSheet.create({
   justifyContent: 'space-between',
   paddingHorizontal: 16,
   paddingVertical: 12,
-  backgroundColor: '#fff',
-  borderBottomWidth: 1,
-  borderBottomColor: '#E0E0E0',
+  backgroundColor: '#832729',
 
   // zIndex: 10,
   // elevation: 10,
@@ -450,7 +447,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: '600',
-    color: '#000',
+    color: '#fff',
     position: 'absolute',
     left: 0,
     right: 0,

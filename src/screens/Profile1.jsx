@@ -158,13 +158,13 @@ function Profile({ navigation }) {
   const isSaving = profileUpdateStatus === 'loading';
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
-      <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
 
       {/* Header */}
-     <View style={styles.header}>
+     <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
   <TouchableOpacity onPress={() => navigation.goBack()} style={{ width: 40 }}>
-    <Icon name="arrow-left" size={24} color="#000" />
+    <Icon name="arrow-left" size={24} color="#fff" />
   </TouchableOpacity>
 
   <View style={{ flex: 1, alignItems: 'center' }}>
@@ -258,15 +258,13 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     paddingHorizontal: 16,
     paddingVertical: 16,
-    backgroundColor: "#fff",
-    borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
+    backgroundColor: "#832729",
     gap: 5,
   },
   headerTitle: {
     fontSize: 18,
     fontFamily: 'bold',
-    color: "#000",
+    color: "#fff",
     fontWeight: '700',
   },
   label: {

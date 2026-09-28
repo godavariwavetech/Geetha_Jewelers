@@ -2448,6 +2448,7 @@ import {
   Platform,
   ActivityIndicator,
   Alert,
+  StatusBar,
 } from 'react-native';
 import Icon from "react-native-vector-icons/Feather";
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -2724,9 +2725,10 @@ const confirmRemove = async () => {
 
   return (
     <SafeAreaView style={styles.container}>
+     <StatusBar backgroundColor="#832729" barStyle="light-content" />
      <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
   <TouchableOpacity onPress={() => navigation.goBack()} style={{ width: 40 }}>
-    <Icon name="arrow-left" size={24} color="#000" />
+    <Icon name="arrow-left" size={24} color="#fff" />
   </TouchableOpacity>
 
   <View style={{ flex: 1, alignItems: 'center' }}>
@@ -3053,8 +3055,8 @@ const confirmRemove = async () => {
 };
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fff' },
-  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, backgroundColor: '#fff' ,justifyContent:'space-between'},
-  headerTitle: { flex: 1, fontSize: 20, fontWeight: '600', color: '#000' },
+  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingBottom: 12, backgroundColor: '#832729' ,justifyContent:'space-between'},
+  headerTitle: { flex: 1, fontSize: 20, fontWeight: '600', color: '#fff' },
 
   itemCard: { flexDirection: 'row', backgroundColor: '#F8F8F8', marginHorizontal: 16, marginVertical: 8, borderRadius: 12, padding: 12 },
   image: { width: 80, height: 80, borderRadius: 10 },

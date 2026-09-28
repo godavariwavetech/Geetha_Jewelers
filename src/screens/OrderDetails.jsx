@@ -512,12 +512,12 @@ const OrderDetails = ({ route, navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+      <StatusBar barStyle="light-content" backgroundColor="#832729" />
 
       {/* Header with proper top inset */}
-      <View style={[styles.header, { paddingTop: insets.top }]}>
+      <View style={[styles.header, { paddingTop: insets.top + responsiveHeight(1.5) }]}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back-outline" size={24} color="#000" />
+          <Ionicons name="arrow-back-outline" size={24} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Order Details</Text>
       </View>
@@ -720,15 +720,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: responsiveWidth(4),
     paddingVertical: responsiveHeight(1.5),
-    backgroundColor: "#fff", // Solid background
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
+    backgroundColor: "#832729", // Solid background
     // paddingTop is now dynamically added via insets.top in JSX
   },
   headerTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#000",
+    color: "#fff",
     marginLeft: responsiveWidth(3),
   },
 

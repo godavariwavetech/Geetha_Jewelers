@@ -410,6 +410,7 @@ import {
   Image,
   Dimensions,
   TouchableOpacity,
+  StatusBar,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
@@ -522,15 +523,15 @@ const renderEmptyCatalogue = () => (
       style={[
         styles.container,
         {
-          paddingTop: insets.top ,
          
         },
       ]}
     >
 
- <View style={styles.header}>
+ <StatusBar backgroundColor="#832729" barStyle="light-content" />
+ <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Icon name="arrow-left" size={24} color="#000" />
+            <Icon name="arrow-left" size={24} color="#fff" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Catalogue</Text>
           <View style={{ width: 24 }} />
@@ -609,7 +610,7 @@ const styles = StyleSheet.create({
   card: {
     width: ITEM_WIDTH,
     marginBottom: 16,
-    backgroundColor: '#fff',
+    backgroundColor: '#832729',
     borderRadius: 8,
     elevation: 2,
     shadowColor: '#000',
@@ -629,7 +630,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: FONTS.medium,
     textAlign: 'center',
-    color: '#333',
+    color: '#fff',
     paddingHorizontal: 4,
   },
   skeletonImage: {
@@ -650,14 +651,13 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 16,
-    backgroundColor: "#fff",
-    borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
+    marginHorizontal: -12,
+    backgroundColor: "#832729",
     // gap: 5,
   },
   headerTitle: {
     fontSize: 18,
     fontFamily: FONTS.bold,
-    color: "#000",
+    color: "#fff",
   },
 });

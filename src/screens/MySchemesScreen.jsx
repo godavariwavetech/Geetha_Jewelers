@@ -427,15 +427,15 @@ const MySchemesScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={[styles.safeArea, {}]}>
-      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-      
+      <StatusBar barStyle="light-content" backgroundColor="#832729" />
+
       {/* Header Section */}
-      <View style={styles.header}>
-        <TouchableOpacity 
-          onPress={() => navigation.goBack()} 
+      <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
           style={styles.backButton}
         >
-          <Ionicons name="arrow-back" size={24} color="#000" />
+          <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>My Schemes</Text>
         <View style={{ width: 32 }} /> 
@@ -464,9 +464,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 16,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    backgroundColor: '#832729',
   },
   backButton: {
     width: 32,
@@ -475,7 +473,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontFamily: FONTS.bold,
-    color: '#000',
+    color: '#fff',
     textAlign: 'center',
     flex: 1,
   },

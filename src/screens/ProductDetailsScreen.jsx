@@ -1622,16 +1622,16 @@ const [selectedWeightData, setSelectedWeightData] = useState(null);
   };
 
   return (
-    <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
-      <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
+    <SafeAreaView style={styles.container}>
+      <StatusBar backgroundColor="#832729" barStyle="light-content" />
 
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="#000" />
+          <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
         <View style={styles.headerIcons}>
           {/* <TouchableOpacity><Ionicons name="search-outline" size={24} color="#000" /></TouchableOpacity> */}
-          <TouchableOpacity><Ionicons name="home-outline" size={24} color="#000" onPress={()=>{navigation.navigate("DrawerNavigation")}} /></TouchableOpacity>
+          <TouchableOpacity><Ionicons name="home-outline" size={24} color="#fff" onPress={()=>{navigation.navigate("DrawerNavigation")}} /></TouchableOpacity>
           {/* <TouchableOpacity><Ionicons name="notifications-outline" size={24} color="#000" /></TouchableOpacity> */}
         </View>
       </View>
@@ -2097,7 +2097,7 @@ const styles = StyleSheet.create({
   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   loadingText: { marginTop: 10, fontSize: 16, color: '#832729' },
   errorText: { fontSize: 16, color: 'red', textAlign: 'center' },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#f0f0f0' },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, backgroundColor: '#832729' },
   headerIcons: { flexDirection: 'row', gap: 16 },
   scrollContent: { paddingBottom: 100 },
   mainImageContainer: { width, height: width * 0.9, backgroundColor: '#f9f9f9', position: 'relative' },
