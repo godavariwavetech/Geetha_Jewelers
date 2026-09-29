@@ -1,0 +1,103 @@
+default_platform(:ios)
+
+WORKSPACE = "yolo.xcworkspace"
+PROJECT   = "yolo.xcodeproj"
+SCHEME    = "yolo"
+TARGET    = "yolo"
+
+platform :ios do
+  before_all do
+    setup_ci if is_ci
+  end
+
+  # App Store Connect API key (preferred over Apple ID + 2FA on CI)
+  private_lane :asc_api_key do
+    app_store_connect_api_key(
+      key_id: ENV["ASC_KEY_ID"],
+      issuer_id: ENV["ASC_ISSUER_ID"],
+      key_content: ENV["ASC_KEY_CONTENT"], # contents of the .p8 file (base64 is fine, see below)
+      is_key_content_base64: ENV["ASC_KEY_IS_BASE64"] == "true",
+      in_house: false
+    )
+  end
+
+  desc "Install JS dependencies and CocoaPods"
+  lane :install_deps do
+    sh("cd ../.. && npm ci")
+    cocoapods(podfile: "Podfile", try_repo_update_on_error: true)
+  end
+
+  desc "Sync App Store signing certificates/profiles via match"
+  lane :certificates do |options|
+    api_key = asc_api_key
+    match(
+      type: "appstore",
+      readonly: options.fetch(:readonly, is_ci),
+      api_key: api_key
+    )
+  end
+
+  desc "Build a signed release .ipa"
+  lane :build do
+    api_key = asc_api_key
+    certificates
+
+    update_code_signing_settings(
+      use_automatic_signing: false,
+      path: PROJECT,
+      targets: [TARGET],
+      team_id: ENV["TEAM_ID"],
+      bundle_identifier: ENV["APP_IDENTIFIER"],
+      code_sign_identity: "iPhone Distribution",
+      profile_name: ENV["sigh_#{ENV['APP_IDENTIFIER']}_appstore_profile-name"]
+    )
+    update_app_identifier(
+      xcodeproj: PROJECT,
+      plist_path: "yolo/Info.plist",
+      app_identifier: ENV["APP_IDENTIFIER"]
+    )
+
+    # Build number = latest TestFlight build + 1
+    latest = latest_testflight_build_number(api_key: api_key, app_identifier: ENV["APP_IDENTIFIER"], initial_build_number: 0)
+    increment_build_number(xcodeproj: PROJECT, build_number: latest + 1)
+
+    build_app(
+      workspace: WORKSPACE,
+      scheme: SCHEME,
+      configuration: "Release",
+      export_method: "app-store",
+      clean: true,
+      output_directory: "./build",
+      output_name: "GeethaJewellers.ipa",
+      export_options: {
+        provisioningProfiles: {
+          ENV["APP_IDENTIFIER"] => ENV["sigh_#{ENV['APP_IDENTIFIER']}_appstore_profile-name"]
+        }
+      }
+    )
+  end
+
+  desc "Build and upload to TestFlight"
+  lane :beta do
+    install_deps
+    build
+    upload_to_testflight(
+      api_key: asc_api_key,
+      skip_waiting_for_build_processing: true
+    )
+  end
+
+  desc "Build and upload to the App Store (no auto-submit for review)"
+  lane :release do
+    install_deps
+    build
+    upload_to_app_store(
+      api_key: asc_api_key,
+      skip_metadata: true,
+      skip_screenshots: true,
+      submit_for_review: false,
+      force: true,
+      precheck_include_in_app_purchases: false
+    )
+  end
+end

@@ -73,3 +73,10 @@ yarn-error.log
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# fastlane secrets
+ios/fastlane/.env
+*.p8
+*.mobileprovision
+*.ipa
+*.dSYM.zip
