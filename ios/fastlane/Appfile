@@ -1,5 +1,0 @@
-# Values come from environment variables (CI secrets or ios/fastlane/.env locally).
-app_identifier(ENV["APP_IDENTIFIER"])   # e.g. com.geethajewellers.app
-apple_id(ENV["APPLE_ID"])               # Apple ID email (optional when using API key)
-team_id(ENV["TEAM_ID"])                 # Apple Developer Team ID
-itc_team_id(ENV["ITC_TEAM_ID"]) if ENV["ITC_TEAM_ID"]

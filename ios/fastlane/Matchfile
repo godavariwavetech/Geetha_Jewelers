@@ -1,6 +1,0 @@
-# Code signing certificates & profiles are stored (encrypted) in a private git repo.
-git_url(ENV["MATCH_GIT_URL"])
-storage_mode("git")
-type("appstore")
-app_identifier([ENV["APP_IDENTIFIER"]])
-team_id(ENV["TEAM_ID"])

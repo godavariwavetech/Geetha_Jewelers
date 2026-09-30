@@ -75,7 +75,7 @@ yarn-error.log
 !.yarn/versions
 
 # fastlane secrets
-ios/fastlane/.env
+fastlane/.env
 *.p8
 *.mobileprovision
 *.ipa

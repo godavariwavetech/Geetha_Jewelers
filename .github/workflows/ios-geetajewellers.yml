@@ -1,0 +1,19 @@
+name: iOS - geetajewellers
+
+# Runs only on the ios-deployment branch (never main). Trigger a build by
+# pushing to that branch.
+on:
+  push:
+    branches: [ios-deployment]
+  workflow_dispatch:
+
+concurrency:
+  group: ios-geetajewellers
+  cancel-in-progress: false
+
+jobs:
+  testflight:
+    uses: ./.github/workflows/ios-testflight.yml
+    with:
+      app_dir: "."
+    secrets: inherit
