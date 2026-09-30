@@ -65,9 +65,26 @@ jobs:
           path: ios/Pods
           key: pods-${{ runner.os }}-${{ hashFiles('ios/Podfile', 'package-lock.json') }}
 
+      - name: Check required secrets are set
+        run: |
+          for v in APP_IDENTIFIER TEAM_ID APPLE_ID ASC_KEY_ID ASC_ISSUER_ID ASC_KEY_CONTENT MATCH_GIT_URL MATCH_PASSWORD MATCH_GIT_BASIC_AUTHORIZATION; do
+            if [ -z "${!v}" ]; then echo "::warning title=Missing secret::$v is empty"; fi
+          done
+
       - name: Run fastlane
         working-directory: ios
-        run: bundle exec fastlane ios ${{ github.event.inputs.lane || 'beta' }}
+        run: |
+          set -o pipefail
+          bundle exec fastlane ios ${{ github.event.inputs.lane || 'beta' }} 2>&1 | tee fastlane-output.log
+
+      - name: Report fastlane error
+        if: failure()
+        working-directory: ios
+        run: |
+          # Surface the tail of the log as an annotation so it is visible without opening the logs
+          tail -n 80 fastlane-output.log | sed 's/\x1b\[[0-9;]*m//g' > tail.txt
+          msg=$(sed -e 's/%/%25/g' tail.txt | awk '{printf "%s%%0A", $0}')
+          echo "::error title=fastlane failed::$msg"
 
       - name: Upload IPA artifact
         if: always()
