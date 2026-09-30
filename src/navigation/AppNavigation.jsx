@@ -33,7 +33,8 @@ import ContactUs from '../screens/ContactUs';
 import RefundPolicyScreen from '../screens/RefundPolicyScreen';
 import ApplyCouponScreen from '../screens/ApplyCouponScreen';
 import VideoScreen from '../screens/VideoScreen';
-import SelectOnMap from '../screens/SelectOnMap';
+// Google Maps disabled (not used)
+// import SelectOnMap from '../screens/SelectOnMap';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Entypo from "react-native-vector-icons/Entypo";
 import Feather from "react-native-vector-icons/Feather";
@@ -230,7 +231,7 @@ const AppNavigation = () => {
    
         <Stack.Screen name="VideoScreen" component={VideoScreen} />
         <Stack.Screen name="SearchScreen" component={SearchScreen} />
-        <Stack.Screen name="SelectOnMap" component={SelectOnMap} />
+        {/* <Stack.Screen name="SelectOnMap" component={SelectOnMap} /> */}
         
        
         <Stack.Screen name="OrderSuccessScreen" component={OrderSuccessScreen} />

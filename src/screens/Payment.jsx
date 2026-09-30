@@ -805,6 +805,7 @@ const Payment = ({ navigation }) => {
           <View style={styles.addressSection}>
             <View style={[commonstyles.row, { justifyContent: 'space-between' }]}>
               <Text style={[commonstyles.text9, commonstyles.marginBottom16]}>Shipping Address</Text>
+              {/* Google Maps disabled (not used)
               <TouchableOpacity
                 style={styles.selectOnMapButton}
                 onPress={() => navigation.navigate('SelectOnMap')}
@@ -812,6 +813,7 @@ const Payment = ({ navigation }) => {
               >
                 <Text style={styles.selectOnMapText}>Select on map</Text>
               </TouchableOpacity>
+              */}
             </View>
             {Array.isArray(normalizedAddressList) && normalizedAddressList.length > 0 ? (
               <View style={styles.card}>
@@ -858,7 +860,7 @@ const Payment = ({ navigation }) => {
             ) : (
               <TouchableOpacity
                 style={styles.addNewAddressButton}
-                onPress={() => navigation.navigate('SelectOnMap')}
+                onPress={() => navigation.navigate('MyAddresses')}
               >
                 <Text style={[commonstyles.text4, { color: 'rgba(8, 118, 90, 1)', fontWeight: '600' }]}>Add New Address</Text>
               </TouchableOpacity>
@@ -1106,7 +1108,7 @@ const Payment = ({ navigation }) => {
                 style={styles.addNewAddress}
                 onPress={() => {
                   setAddressModalVisible(false);
-                  navigation.navigate('SelectOnMap');
+                  navigation.navigate('MyAddresses');
                 }}
               >
                 <Text style={[commonstyles.text4, { color: 'rgba(8, 118, 90, 1)', fontWeight: '600' }]}>Add New Address</Text>
