@@ -52,8 +52,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     // Libraries that look up the app's window through the app delegate still work.
     appDelegate.window = window
 
+    // Must match the name registered in index.js (app.json "name"), which is
+    // also what Android's MainActivity uses.
     factory.startReactNative(
-      withModuleName: "geetajewellers",
+      withModuleName: "yoloo",
       in: window,
       launchOptions: nil
     )
