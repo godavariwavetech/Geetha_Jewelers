@@ -377,7 +377,7 @@ const SearchScreen = () => {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#832729" />
-      <LinearGradient colors={['#832729', '#832729']} style={[styles.header, { paddingTop: insets.top }]}>
+      <View style={[styles.header, { paddingTop: insets.top, backgroundColor: '#832729' }]}>
         <View style={styles.searchRow}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.paddingRight}>
             <Ionicons name="arrow-back" size={24} color="#000" />
@@ -397,7 +397,7 @@ const SearchScreen = () => {
             </TouchableOpacity>
           )}
         </View>
-      </LinearGradient>
+      </View>
 
       <View style={styles.body}>
         {loading ? (

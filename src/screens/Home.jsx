@@ -430,7 +430,7 @@ const handleCardNavigation = (card, sectionType) => {
               <View style={styles.savingsLeftSection}>
                 <Image source={require("../assets/goldhand.png")} style={styles.goldHandImage} />
               </View>
-              <View style={styles.savingsRightSection}>
+              <View style={[styles.savingsRightSection, { paddingRight: 20 }]}>
                 <Text style={styles.savingsTitle}>Smart Savings Schemes</Text>
                 <Text style={styles.savingsSubtitle}>
                   Join flexible gold saving plans and grow your wealth with ease.
@@ -746,12 +746,13 @@ const styles = StyleSheet.create({
   savingsTitle: { color: "#fff", fontSize: 14, fontWeight: "700" },
   savingsSubtitle: { color: "#fff", fontSize: 12, opacity: 0.9, marginTop: 4 },
   savingsArrowButton: {
+    position: "absolute",
+    right: 15,
+    top: "50%",
+    transform: [{ translateY: -15 }],
     backgroundColor: "#fff",
-    width: 30,
-    height: 30,
-    borderRadius: 20,
-    justifyContent: "center",
-    alignItems: "center",
+    borderRadius: 15,
+    padding: 5,
   },
   collectionScrollContent: { paddingRight: 12 },
   collectionCard: {
