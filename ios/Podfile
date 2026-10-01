@@ -75,10 +75,12 @@ target 'geetajewellers' do
       # Razorpay's Swift @objc protocols are referenced through a module import,
       # so clang never emits their metadata ("Undefined symbols
       # __OBJC_PROTOCOL_$_ExternalWalletSelectionProtocol"). Include
-      # Razorpay-Swift.h textually so the protocols are emitted locally.
+      # Razorpay-Swift.h textually so the protocols are emitted locally. Without
+      # modules its `@import`s are skipped, so pre-include those frameworks.
       if target.name == 'react-native-razorpay'
         target.build_configurations.each do |config|
           config.build_settings['CLANG_ENABLE_MODULES'] = 'NO'
+          config.build_settings['OTHER_CFLAGS'] = '$(inherited) -include UIKit/UIKit.h -include WebKit/WebKit.h'
         end
       end
     end
