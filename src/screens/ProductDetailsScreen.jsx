@@ -1622,7 +1622,7 @@ const [selectedWeightData, setSelectedWeightData] = useState(null);
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar backgroundColor="#832729" barStyle="light-content" />
 
       <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
@@ -2088,7 +2088,7 @@ const [selectedWeightData, setSelectedWeightData] = useState(null);
           </View>
         </Pressable>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 };
 

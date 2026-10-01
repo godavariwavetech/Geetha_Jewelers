@@ -489,7 +489,7 @@ const [checkboxAgreed, setCheckboxAgreed] = useState(false);
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <View style={styles.container} edges={['top']}>
       <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
 
       <KeyboardAvoidingView
@@ -692,7 +692,7 @@ const [checkboxAgreed, setCheckboxAgreed] = useState(false);
           </View>
         </View>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 };
 

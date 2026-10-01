@@ -384,7 +384,7 @@ const SchemeDetailsScreen = () => {
   const bottomButtonPadding = Math.max(insets.bottom, 10) + TAB_BAR_HEIGHT;
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar backgroundColor="#832729" barStyle="light-content" />
 
       {/* Header */}
@@ -477,7 +477,7 @@ const SchemeDetailsScreen = () => {
           <Text style={styles.applyButtonText}>Apply Now</Text>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

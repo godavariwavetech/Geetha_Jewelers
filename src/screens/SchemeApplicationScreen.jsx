@@ -2329,7 +2329,7 @@ const SchemeApplicationScreen = () => {
   const isLoading = checkLoading || paymentLoading || updateSchemeLoading;
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar backgroundColor="#832729" barStyle="light-content" />
 
       {/* Header */}
@@ -2521,7 +2521,7 @@ const SchemeApplicationScreen = () => {
           </View>
         </View>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 };
 

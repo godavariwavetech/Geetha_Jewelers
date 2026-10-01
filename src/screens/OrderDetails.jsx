@@ -511,11 +511,11 @@ const OrderDetails = ({ route, navigation }) => {
   }));
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#832729" />
 
       {/* Header with proper top inset */}
-      <View style={[styles.header, { paddingTop: insets.top + responsiveHeight(1.5) }]}>
+      <View style={[styles.header, { paddingTop: insets.top }]}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back-outline" size={24} color="#fff" />
         </TouchableOpacity>
@@ -701,7 +701,7 @@ const OrderDetails = ({ route, navigation }) => {
           </TouchableOpacity>
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

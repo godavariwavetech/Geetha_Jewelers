@@ -199,7 +199,7 @@ const MyAddresses = () => {
     <>
       <StatusBar backgroundColor="#832729" barStyle="light-content" />
 
-      <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+      <View style={{ flex: 1, backgroundColor: '#fff' }}>
         <View style={styles.container}>
           {/* Header */}
           <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
@@ -280,7 +280,7 @@ const MyAddresses = () => {
             </TouchableOpacity>
           </View>
         </View>
-      </SafeAreaView>
+      </View>
 
       {/* Add/Edit Address Modal */}
       <Modal visible={modalVisible} animationType="slide" transparent>
@@ -441,8 +441,8 @@ const styles = StyleSheet.create({
   paddingVertical: 12,
   backgroundColor: '#832729',
 
-  // zIndex: 10,
-  // elevation: 10,
+  zIndex: 10,
+  elevation: 10,
   },
   headerTitle: {
     fontSize: 20,

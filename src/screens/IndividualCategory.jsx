@@ -4386,7 +4386,7 @@ const renderProductCard = (item) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar backgroundColor="#832729" barStyle="light-content" />
 
       {/* Header */}
@@ -4583,7 +4583,7 @@ const renderProductCard = (item) => {
           </View>
         </TouchableOpacity>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -4597,7 +4597,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     backgroundColor: '#832729',
   },
-  headerLogo: { width: responsiveWidth(35), height: responsiveHeight(5) },
+  headerLogo: { width: responsiveWidth(30), height: 40 },
   headerIcons: { flexDirection: 'row', gap: 12 },
   row: { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 16, marginBottom: 16, marginTop: 10 },
   cardWrapper: { width: ITEM_WIDTH },

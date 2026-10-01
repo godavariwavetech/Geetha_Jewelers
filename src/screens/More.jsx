@@ -602,7 +602,7 @@ const insets = useSafeAreaInsets();
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <View style={styles.safeArea}>
       <StatusBar barStyle="light-content" backgroundColor="#832729" />
       <View style={styles.mainContainer}>
         {/* Header */}
@@ -672,7 +672,7 @@ const insets = useSafeAreaInsets();
           </View>
         </ScrollView>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -688,7 +688,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
     paddingHorizontal: 16,
     paddingVertical: 16,
     backgroundColor: "#832729",

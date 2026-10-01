@@ -335,7 +335,6 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
-import Icon from "react-native-vector-icons/Feather";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -515,9 +514,8 @@ const renderItem = ({ item }) => (
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon name="arrow-left" size={24} color="#000" />
+          <Ionicons name="chevron-back" size={22} color="#000" />
         </TouchableOpacity>
-       
         <Text style={styles.headerTitle}>Wishlist ({wishlist.length})</Text>
         <View style={{ width: 22 }} />
       </View>
@@ -588,7 +586,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     paddingVertical: 10,
     borderBottomWidth: 0.5,
     borderBottomColor: '#ddd',

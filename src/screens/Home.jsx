@@ -299,7 +299,7 @@ const handleCardNavigation = (card, sectionType) => {
 
 
   return (
-    <SafeAreaView style={{ flex: 1 }} edges={["top", "left", "right"]}>
+    <View style={{ flex: 1 }} edges={["top", "left", "right"]}>
       <StatusBar backgroundColor="#832729" barStyle="light-content" />
       <ScrollView
         style={styles.container}
@@ -607,7 +607,7 @@ const handleCardNavigation = (card, sectionType) => {
           />
         </View> */}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 

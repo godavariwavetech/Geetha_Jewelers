@@ -375,9 +375,9 @@ const SearchScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#832729" />
-      <LinearGradient colors={['#832729', '#832729']} style={[styles.header, { paddingTop: insets.top + 10 }]}>
+      <LinearGradient colors={['#832729', '#832729']} style={[styles.header, { paddingTop: insets.top }]}>
         <View style={styles.searchRow}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.paddingRight}>
             <Ionicons name="arrow-back" size={24} color="#000" />
@@ -428,7 +428,7 @@ const SearchScreen = () => {
           />
         )}
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

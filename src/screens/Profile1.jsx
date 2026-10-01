@@ -17,7 +17,6 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { useDispatch, useSelector } from 'react-redux';
-import Icon from "react-native-vector-icons/Feather";
 import {
   getUserProfileDetails,
   updateUserProfile,
@@ -162,17 +161,12 @@ function Profile({ navigation }) {
       <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
 
       {/* Header */}
-     <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
-  <TouchableOpacity onPress={() => navigation.goBack()} style={{ width: 40 }}>
-    <Icon name="arrow-left" size={24} color="#fff" />
-  </TouchableOpacity>
-
-  <View style={{ flex: 1, alignItems: 'center' }}>
-    <Text style={styles.headerTitle}>Profile</Text>
-  </View>
-
-  <View style={{ width: 40 }} /> 
-</View>
+      <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="chevron-back" size={26} color="#fff" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Profile</Text>
+      </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
         {/* Avatar */}
@@ -252,20 +246,18 @@ function Profile({ navigation }) {
 
 const styles = StyleSheet.create({
   container: { backgroundColor: '#fff', flex: 1 },
-   header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-start",
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    backgroundColor: "#832729",
-    gap: 5,
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingBottom: 12,
+    backgroundColor: '#832729',
   },
   headerTitle: {
-    fontSize: 18,
-    fontFamily: 'bold',
-    color: "#fff",
     fontWeight: '700',
+    fontSize: 18,
+    marginLeft: 10,
+    color: '#fff',
   },
   label: {
     marginLeft: 25,

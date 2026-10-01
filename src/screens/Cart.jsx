@@ -2450,7 +2450,6 @@ import {
   Alert,
   StatusBar,
 } from 'react-native';
-import Icon from "react-native-vector-icons/Feather";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
@@ -2724,19 +2723,15 @@ const confirmRemove = async () => {
 };
 
   return (
-    <SafeAreaView style={styles.container}>
-     <StatusBar backgroundColor="#832729" barStyle="light-content" />
-     <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
-  <TouchableOpacity onPress={() => navigation.goBack()} style={{ width: 40 }}>
-    <Icon name="arrow-left" size={24} color="#fff" />
-  </TouchableOpacity>
-
-  <View style={{ flex: 1, alignItems: 'center' }}>
-    <Text style={styles.headerTitle}>Cart</Text>
-  </View>
-
-  <View style={{ width: 40 }} /> 
-</View>
+    <View style={styles.container}>
+      <StatusBar backgroundColor="#832729" barStyle="light-content" />
+      <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={24} color="#fff" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Cart</Text>
+        <View style={{ width: 24 }} />
+      </View>
 
       <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom + 100 }}>
    {cartLoading ? (
@@ -3050,13 +3045,13 @@ const confirmRemove = async () => {
         cancelText="Cancel"
         onConfirm={confirmRemove}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fff' },
-  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingBottom: 12, backgroundColor: '#832729' ,justifyContent:'space-between'},
-  headerTitle: { flex: 1, fontSize: 20, fontWeight: '600', color: '#fff' },
+  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingBottom: 12, backgroundColor: '#832729' },
+  headerTitle: { flex: 1, marginLeft: 16, fontSize: 20, fontWeight: '600', color: '#fff' },
 
   itemCard: { flexDirection: 'row', backgroundColor: '#F8F8F8', marginHorizontal: 16, marginVertical: 8, borderRadius: 12, padding: 12 },
   image: { width: 80, height: 80, borderRadius: 10 },

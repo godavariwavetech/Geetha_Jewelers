@@ -426,7 +426,7 @@ const MySchemesScreen = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={[styles.safeArea, {}]}>
+    <View style={[styles.safeArea, {}]}>
       <StatusBar barStyle="light-content" backgroundColor="#832729" />
 
       {/* Header Section */}
@@ -444,7 +444,7 @@ const MySchemesScreen = ({ navigation }) => {
       <View style={[styles.container, { paddingBottom: insets.bottom }]}>
         {renderContent()}
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
