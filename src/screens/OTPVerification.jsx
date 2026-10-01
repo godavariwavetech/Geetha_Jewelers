@@ -936,7 +936,7 @@ if (email.trim().length > 0) {
                 <TextInput
     style={styles.emailInput}
     placeholder="Email (Optional, No @gmail.com)" // Clearer hint
-    placeholderTextColor="#999"
+    placeholderTextColor="#000"
     value={email}
     onChangeText={setEmail}
     keyboardType="email-address"
