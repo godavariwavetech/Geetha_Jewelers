@@ -72,16 +72,19 @@ target 'geetajewellers' do
           config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++17'
         end
       end
-      # Razorpay's Swift @objc protocols are referenced through a module import,
-      # so clang never emits their metadata ("Undefined symbols
-      # __OBJC_PROTOCOL_$_ExternalWalletSelectionProtocol"). Include
-      # Razorpay-Swift.h textually so the protocols are emitted locally. Without
-      # modules its `@import`s are skipped, so pre-include those frameworks.
-      if target.name == 'react-native-razorpay'
-        target.build_configurations.each do |config|
-          config.build_settings['CLANG_ENABLE_MODULES'] = 'NO'
-          config.build_settings['OTHER_CFLAGS'] = '$(inherited) -include UIKit/UIKit.h -include WebKit/WebKit.h'
-        end
+    end
+
+    # razorpay-core-pod 1.0.6 moved the RazorpayPaymentCompletionProtocolWithData /
+    # ExternalWalletSelectionProtocol definitions into RazorpayCore-Swift.h;
+    # Razorpay-Swift.h only forward-declares them. react-native-razorpay 2.3.x
+    # imports just the latter, so clang can't emit the protocol metadata and the
+    # link fails with "Undefined symbols __OBJC_PROTOCOL_$_...". Add the import.
+    razorpay_m = File.join(__dir__, '../node_modules/react-native-razorpay/ios/RazorpayCheckout.m')
+    if File.exist?(razorpay_m)
+      src = File.read(razorpay_m)
+      core_import = '#import <RazorpayCore/RazorpayCore-Swift.h>'
+      unless src.include?(core_import)
+        File.write(razorpay_m, src.sub('#import <Razorpay/Razorpay-Swift.h>', "#{core_import}\n\\0"))
       end
     end
   end
