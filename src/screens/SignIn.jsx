@@ -416,13 +416,13 @@ import {
   Platform,
   ScrollView,
   KeyboardAvoidingView,
-  Linking,
 } from 'react-native';
 import Svg, { Path, Defs, Filter, FeFlood, FeColorMatrix, FeOffset, FeGaussianBlur, FeComposite, FeBlend, G } from 'react-native-svg';
 import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-native-responsive-dimensions';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useDispatch, useSelector } from 'react-redux';
 import { requestOtp } from '../redux/slices/authSlice';
+import { TERMS_OF_USE, PRIVACY_POLICY } from '../utils/policyContent';
 
 const { width, height } = Dimensions.get('window');
 
@@ -431,6 +431,7 @@ const SignIn = ({ navigation }) => {
   const [errorModalVisible, setErrorModalVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 const [checkboxAgreed, setCheckboxAgreed] = useState(false);
+  const [policy, setPolicy] = useState(null); // TERMS_OF_USE | PRIVACY_POLICY | null
   const dispatch = useDispatch();
   const { loading } = useSelector((state) => state.Auth);
 
@@ -632,9 +633,9 @@ const [checkboxAgreed, setCheckboxAgreed] = useState(false);
     
     <Text style={styles.termsText} includeFontPadding={false}>
       By Continuing, I agree to{' '}
-      <Text style={styles.termsLink} onPress={() => Linking.openURL('https://geetajewellers.co.in/policies/Privacy%20Policy.pdf')}>Terms of use</Text>
+      <Text style={styles.termsLink} onPress={() => setPolicy(TERMS_OF_USE)}>Terms of use</Text>
       {' & '}
-      <Text style={styles.termsLink} onPress={() => Linking.openURL('https://geetajewellers.co.in/policies/Privacy%20Policy.pdf')}>Privacy Policy</Text>
+      <Text style={styles.termsLink} onPress={() => setPolicy(PRIVACY_POLICY)}>Privacy Policy</Text>
     </Text>
   </View>
 
@@ -688,6 +689,51 @@ const [checkboxAgreed, setCheckboxAgreed] = useState(false);
               <Text style={styles.modalButtonText} includeFontPadding={false}>
                 OK
               </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Terms of Use / Privacy Policy Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={policy !== null}
+        onRequestClose={() => setPolicy(null)}
+      >
+        <View style={styles.policyOverlay}>
+          <View style={styles.policyContainer}>
+            <View style={styles.policyHeader}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.policyTitle}>{policy?.title}</Text>
+                <Text style={styles.policySubtitle}>{policy?.subtitle}</Text>
+              </View>
+              <TouchableOpacity onPress={() => setPolicy(null)} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+                <Ionicons name="close" size={26} color="#1A1A1A" />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView style={styles.policyScroll} contentContainerStyle={styles.policyScrollContent}>
+              <Text style={styles.policyText}>{policy?.intro}</Text>
+              {policy?.sections.map((section) => (
+                <View key={section.heading} style={styles.policySection}>
+                  <Text style={styles.policyHeading}>{section.heading}</Text>
+                  {section.lines.map((line, i) =>
+                    line.startsWith('• ') ? (
+                      <View key={i} style={styles.policyBulletRow}>
+                        <Text style={styles.policyBullet}>•</Text>
+                        <Text style={[styles.policyText, { flex: 1 }]}>{line.slice(2)}</Text>
+                      </View>
+                    ) : (
+                      <Text key={i} style={styles.policyText}>{line}</Text>
+                    ),
+                  )}
+                </View>
+              ))}
+            </ScrollView>
+
+            <TouchableOpacity style={styles.policyButton} onPress={() => setPolicy(null)} activeOpacity={0.8}>
+              <Text style={styles.modalButtonText}>Close</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -875,5 +921,75 @@ const styles = StyleSheet.create({
     color: '#832729',
     fontWeight: '700',
     textDecorationLine: 'underline', // Makes it look clickable
+  },
+
+  // Terms / Privacy modal
+  policyOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  policyContainer: {
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    maxHeight: '85%',
+    paddingTop: 20,
+    paddingHorizontal: 20,
+    paddingBottom: Platform.OS === 'ios' ? 34 : 20,
+  },
+  policyHeader: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#EEEEEE',
+  },
+  policyTitle: {
+    fontSize: responsiveFontSize(2.4),
+    fontWeight: '700',
+    color: '#832729',
+  },
+  policySubtitle: {
+    fontSize: responsiveFontSize(1.6),
+    color: '#666666',
+    marginTop: 2,
+  },
+  policyScroll: {
+    flexGrow: 0,
+  },
+  policyScrollContent: {
+    paddingVertical: 12,
+  },
+  policySection: {
+    marginTop: 14,
+  },
+  policyHeading: {
+    fontSize: responsiveFontSize(1.8),
+    fontWeight: '700',
+    color: '#1A1A1A',
+    marginBottom: 6,
+  },
+  policyText: {
+    fontSize: responsiveFontSize(1.6),
+    color: '#444444',
+    lineHeight: 21,
+    marginBottom: 4,
+  },
+  policyBulletRow: {
+    flexDirection: 'row',
+    paddingLeft: 6,
+  },
+  policyBullet: {
+    fontSize: responsiveFontSize(1.6),
+    color: '#832729',
+    lineHeight: 21,
+    marginRight: 8,
+  },
+  policyButton: {
+    backgroundColor: '#832729',
+    borderRadius: 8,
+    paddingVertical: 12,
+    marginTop: 8,
   },
 });
