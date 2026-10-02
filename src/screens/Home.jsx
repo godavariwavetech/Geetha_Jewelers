@@ -427,18 +427,20 @@ const handleCardNavigation = (card, sectionType) => {
         <View style={styles.section}>
           <TouchableOpacity activeOpacity={0.8} onPress={() => navigation.navigate("GoldScheme")}>
             <LinearGradient colors={["#832729", "#3F0F11"]} style={styles.savingsSchemeCard}>
-              <View style={styles.savingsLeftSection}>
-                <Image source={require("../assets/goldhand.png")} style={styles.goldHandImage} />
+              <View style={styles.savingsRow}>
+                <View style={styles.savingsLeftSection}>
+                  <Image source={require("../assets/goldhand.png")} style={styles.goldHandImage} />
+                </View>
+                <View style={styles.savingsRightSection}>
+                  <Text style={styles.savingsTitle}>Smart Savings Schemes</Text>
+                  <Text style={styles.savingsSubtitle}>
+                    Join flexible gold saving plans and grow your wealth with ease.
+                  </Text>
+                </View>
+                <TouchableOpacity style={styles.savingsArrowButton} onPress={() => navigation.navigate("GoldScheme")}>
+                  <Ionicons name="chevron-forward" size={20} color="#832729" />
+                </TouchableOpacity>
               </View>
-              <View style={[styles.savingsRightSection, { paddingRight: 20 }]}>
-                <Text style={styles.savingsTitle}>Smart Savings Schemes</Text>
-                <Text style={styles.savingsSubtitle}>
-                  Join flexible gold saving plans and grow your wealth with ease.
-                </Text>
-              </View>
-              <TouchableOpacity style={styles.savingsArrowButton} onPress={() => navigation.navigate("GoldScheme")}>
-                <Ionicons name="chevron-forward" size={20} color="#832729" />
-              </TouchableOpacity>
             </LinearGradient>
           </TouchableOpacity>
         </View>
@@ -730,29 +732,29 @@ const styles = StyleSheet.create({
   },
   dividerLine: { flex: 1, height: 1, backgroundColor: "#832729" },
   savingsSchemeCard: {
-    flexDirection: "row",
     borderRadius: 16,
     // marginVertical: 6,
     padding: 8,
-    alignItems: "center",
+    overflow: "hidden",
   },
+  savingsRow: { flexDirection: "row", alignItems: "center" },
   savingsLeftSection: { width: responsiveWidth(28) },
   goldHandImage: {
     width: "100%",
     height: responsiveHeight(8),
     resizeMode: "contain",
   },
-  savingsRightSection: { flex: 1, paddingHorizontal: 12 },
+  savingsRightSection: { flex: 1, minWidth: 0, paddingHorizontal: 12 },
   savingsTitle: { color: "#fff", fontSize: 14, fontWeight: "700" },
   savingsSubtitle: { color: "#fff", fontSize: 12, opacity: 0.9, marginTop: 4 },
   savingsArrowButton: {
-    position: "absolute",
-    right: 15,
-    top: "50%",
-    transform: [{ translateY: -15 }],
+    width: 30,
+    height: 30,
+    marginRight: 4,
     backgroundColor: "#fff",
     borderRadius: 15,
-    padding: 5,
+    justifyContent: "center",
+    alignItems: "center",
   },
   collectionScrollContent: { paddingRight: 12 },
   collectionCard: {
